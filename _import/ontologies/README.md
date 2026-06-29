@@ -5,20 +5,20 @@
 ## Structure
 
 Ontologies/
-  README.md                      # This file
-  DECISIONS.md                   # Rationale for ontology choices
+  README.md                      
+  DECISIONS.md                   
   ontologies/
     cidoc-crm/
-      README.md              # Our CIDOC CRM usage
-      reference.txt          # Official URI
+      README.md              
+      reference.txt          
     frbroo/
-      README.md              # Our FRBRoo usage
+      README.md              
       reference.txt
     afo/
-      README.md              # Our AFO usage
+      README.md              
       reference.txt
   examples/
-    lod-am-example.ttl         # Combined example
+    lod-am-example.ttl        
   queries/
     find-objects-by-type.rq
     find-analysis-by-object.rq
