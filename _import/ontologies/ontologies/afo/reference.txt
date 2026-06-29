@@ -1,0 +1,3 @@
+Official URI: http://www.allotrope.org/ontologies/result#
+Namespace: http://www.allotrope.org/ontologies/result#
+Prefix: afo
