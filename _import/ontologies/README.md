@@ -4,15 +4,16 @@
 
 ## Structure
 
-```mermaid
-graph TD
-    A[Ontologies/] --> B[README.md]
-    A --> C[DECISIONS.md]
-    A --> D[ontologies/]
-    A --> E[examples/]
-    D --> D1[cidoc-crm/]
-    D1 --> D1a[README.md]
-    D1 --> D1b[reference.txt]
+```
+Ontologies/
+├── README.md
+├── DECISIONS.md
+├── ontologies/
+│   ├── cidoc-crm/
+│   │   ├── README.md
+│   │   └── reference.txt
+└── examples/
+    └── lod-am-example.ttl
 ```
 
 ## Purpose
