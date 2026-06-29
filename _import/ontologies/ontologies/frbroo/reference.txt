@@ -1,0 +1,4 @@
+Official URI: http://iflastandards.info/ns/fr/frbr/frbroo/
+Version: 2.4
+Namespace: http://iflastandards.info/ns/fr/frbr/frbroo/
+Prefix: frbroo
