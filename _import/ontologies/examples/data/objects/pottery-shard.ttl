@@ -1,0 +1,162 @@
+@prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Pottery Shard from Site Alpha
+:pottery_shard_001 a crm:E22_Man-Made_Object ;
+    # Identification
+    crm:P1_is_identified_by :id_pottery_shard_001 ;
+    
+    # Classification
+    crm:P2_has_type :pottery_type, :storage_jar_type ;
+    
+    # Material
+    crm:P46_is_composed_of :clay_material ;
+    
+    # Dimensions
+    crm:P43_has_dimension :height_001, :width_001, :thickness_001 ;
+    
+    # Location (discovery)
+    crm:P53_has_former_or_current_location :site_alpha ;
+    
+    # Description
+    crm:P3_has_note "Fragment of a storage jar with red slip decoration, Late Bronze Age, approximately 1200-1000 BCE" .
+
+# Identifier
+:id_pottery_shard_001 a crm:E42_Identifier ;
+    crm:P2_has_type :local_id_type ;
+    crm:P190_has_symbolic_content "ART-2026-001" .
+
+# Types
+:pottery_type a crm:E55_Type ;
+    crm:P2_has_type :artifact_type ;
+    crm:P3_has_note "Pottery" .
+
+:storage_jar_type a crm:E55_Type ;
+    crm:P2_has_type :artifact_type ;
+    crm:P3_has_note "Storage jar" .
+
+:artifact_type a crm:E55_Type ;
+    crm:P2_has_type :type_type ;
+    crm:P3_has_note "Artifact type" .
+
+# Material
+:clay_material a crm:E57_Material ;
+    crm:P2_has_type :ceramic_material ;
+    crm:P3_has_note "Fine clay with temper, fired at approximately 800°C" .
+
+:ceramic_material a crm:E55_Type ;
+    crm:P2_has_type :material_category ;
+    crm:P3_has_note "Ceramic materials" .
+
+# Dimensions
+:height_001 a crm:E54_Dimension ;
+    crm:P2_has_type :height ;
+    crm:P90_has_value "12.5"^^xsd:decimal ;
+    crm:P91_has_unit :centimeter .
+
+:width_001 a crm:E54_Dimension ;
+    crm:P2_has_type :width ;
+    crm:P90_has_value "8.3"^^xsd:decimal ;
+    crm:P91_has_unit :centimeter .
+
+:thickness_001 a crm:E54_Dimension ;
+    crm:P2_has_type :thickness ;
+    crm:P90_has_value "0.7"^^xsd:decimal ;
+    crm:P91_has_unit :centimeter .
+
+# Dimension types
+:height a crm:E55_Type ;
+    crm:P2_has_type :dimension_type ;
+    crm:P3_has_note "Height" .
+
+:width a crm:E55_Type ;
+    crm:P2_has_type :dimension_type ;
+    crm:P3_has_note "Width" .
+
+:thickness a crm:E55_Type ;
+    crm:P2_has_type :dimension_type ;
+    crm:P3_has_note "Thickness" .
+
+:dimension_type a crm:E55_Type ;
+    crm:P2_has_type :type_type ;
+    crm:P3_has_note "Dimension type" .
+
+# Unit
+:centimeter a crm:E58_Measurement_Unit ;
+    crm:P2_has_type :length_unit ;
+    crm:P3_has_note "centimeter" .
+
+:length_unit a crm:E55_Type ;
+    crm:P2_has_type :unit_category ;
+    crm:P3_has_note "Length unit" .
+
+# Location
+:site_alpha a crm:E53_Place ;
+    crm:P1_is_identified_by :site_id_alpha ;
+    crm:P2_has_type :archaeological_site_type ;
+    crm:P89_falls_within :region_southern_germany ;
+    crm:P3_has_note "Prehistoric settlement site, Late Bronze Age" .
+
+:site_id_alpha a crm:E42_Identifier ;
+    crm:P2_has_type :local_id_type ;
+    crm:P190_has_symbolic_content "SITE-ALPHA" .
+
+:archaeological_site_type a crm:E55_Type ;
+    crm:P2_has_type :place_type ;
+    crm:P3_has_note "Archaeological site" .
+
+:region_southern_germany a crm:E53_Place ;
+    crm:P1_is_identified_by :region_id_sg ;
+    crm:P2_has_type :region_type ;
+    crm:P89_falls_within :country_germany ;
+    crm:P3_has_note "Southern Germany" .
+
+:region_id_sg a crm:E42_Identifier ;
+    crm:P2_has_type :local_id_type ;
+    crm:P190_has_symbolic_content "REGION-SG" .
+
+:region_type a crm:E55_Type ;
+    crm:P2_has_type :place_type ;
+    crm:P3_has_note "Region" .
+
+:country_germany a crm:E53_Place ;
+    crm:P1_is_identified_by :country_id_de ;
+    crm:P2_has_type :country_type ;
+    crm:P3_has_note "Germany" .
+
+:country_id_de a crm:E42_Identifier ;
+    crm:P2_has_type :iso_country_code ;
+    crm:P190_has_symbolic_content "DE" .
+
+:country_type a crm:E55_Type ;
+    crm:P2_has_type :place_type ;
+    crm:P3_has_note "Country" .
+
+:place_type a crm:E55_Type ;
+    crm:P2_has_type :type_type ;
+    crm:P3_has_note "Place type" .
+
+# Identifier types
+:local_id_type a crm:E55_Type ;
+    crm:P2_has_type :identifier_type ;
+    crm:P3_has_note "Local identifier" .
+
+:iso_country_code a crm:E55_Type ;
+    crm:P2_has_type :identifier_type ;
+    crm:P3_has_note "ISO country code" .
+
+:identifier_type a crm:E55_Type ;
+    crm:P2_has_type :type_type ;
+    crm:P3_has_note "Identifier type" .
+
+# Type categories
+:type_type a crm:E55_Type ;
+    crm:P3_has_note "Type" .
+
+:material_category a crm:E55_Type ;
+    crm:P2_has_type :type_type ;
+    crm:P3_has_note "Material category" .
+
+:unit_category a crm:E55_Type ;
+    crm:P2_has_type :type_type ;
+    crm:P3_has_note "Unit category" .

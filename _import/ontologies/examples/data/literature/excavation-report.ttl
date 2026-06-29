@@ -1,0 +1,138 @@
+@prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix frbroo: <http://iflastandards.info/ns/fr/frbr/frbroo/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Excavation Report for Site Alpha
+
+# The work (main bibliographic entity)
+:excavation_report_1985 a frbroo:F1_Work ;
+    # Identification
+    crm:P1_is_identified_by :local_id_arch_1985_001, :isbn_0123456789 ;
+    
+    # Title
+    crm:P102_has_title :title_excavation_report ;
+    
+    # Creator (author)
+    crm:P94_has_created :author_dr_jane_archaeologist ;
+    
+    # Publication date
+    crm:P4_has_time-span :publication_date_1987 ;
+    
+    # References to archaeological entities
+    crm:P67_refers_to :site_alpha, :pottery_shard_001, :stone_tool_002 ;
+    
+    # Description
+    crm:P3_has_note "Comprehensive excavation report for Site Alpha, covering the 1985 season. Includes detailed stratigraphy, artifact catalog, and preliminary analysis." .
+
+# Identifiers
+:local_id_arch_1985_001 a crm:E42_Identifier ;
+    crm:P2_has_type :local_id_type ;
+    crm:P190_has_symbolic_content "ARCH-1985-001" .
+
+:isbn_0123456789 a crm:E42_Identifier ;
+    crm:P2_has_type :isbn_type ;
+    crm:P190_has_symbolic_content "0-123456-78-9" .
+
+# Title
+:title_excavation_report a crm:E35_Title ;
+    crm:P190_has_symbolic_content "Excavation Report: Site Alpha, 1985 Season" .
+
+# Author
+:author_dr_jane_archaeologist a frbroo:F10_Person ;
+    crm:P131_is_identified_by :name_dr_jane_archaeologist .
+
+:name_dr_jane_archaeologist a crm:E82_Actor_Appellation ;
+    crm:P190_has_symbolic_content "Dr. Jane Archaeologist" .
+
+# Publication date
+:publication_date_1987 a crm:E52_Time-Span ;
+    crm:P82_at_some_time_within "1987"^^xsd:gYear .
+
+# Referenced entities
+:site_alpha a crm:E53_Place ;
+    crm:P1_is_identified_by :site_id_alpha ;
+    crm:P2_has_type :archaeological_site_type ;
+    crm:P3_has_note "Site Alpha" .
+
+:site_id_alpha a crm:E42_Identifier ;
+    crm:P2_has_type :local_id_type ;
+    crm:P190_has_symbolic_content "SITE-ALPHA" .
+
+:pottery_shard_001 a crm:E22_Man-Made_Object ;
+    crm:P1_is_identified_by :id_pottery_shard_001 ;
+    crm:P2_has_type :pottery_type .
+
+:id_pottery_shard_001 a crm:E42_Identifier ;
+    crm:P2_has_type :local_id_type ;
+    crm:P190_has_symbolic_content "ART-2026-001" .
+
+:stone_tool_002 a crm:E22_Man-Made_Object ;
+    crm:P1_is_identified_by :id_stone_tool_002 ;
+    crm:P2_has_type :stone_tool_type .
+
+:id_stone_tool_002 a crm:E42_Identifier ;
+    crm:P2_has_type :local_id_type ;
+    crm:P190_has_symbolic_content "ART-2026-002" .
+
+# Types
+:archaeological_site_type a crm:E55_Type ;
+    crm:P2_has_type :place_type ;
+    crm:P3_has_note "Archaeological site" .
+
+:pottery_type a crm:E55_Type ;
+    crm:P2_has_type :artifact_type ;
+    crm:P3_has_note "Pottery" .
+
+:stone_tool_type a crm:E55_Type ;
+    crm:P2_has_type :artifact_type ;
+    crm:P3_has_note "Stone tool" .
+
+:artifact_type a crm:E55_Type ;
+    crm:P2_has_type :type_type ;
+    crm:P3_has_note "Artifact type" .
+
+:place_type a crm:E55_Type ;
+    crm:P2_has_type :type_type ;
+    crm:P3_has_note "Place type" .
+
+:local_id_type a crm:E55_Type ;
+    crm:P2_has_type :identifier_type ;
+    crm:P3_has_note "Local identifier" .
+
+:isbn_type a crm:E55_Type ;
+    crm:P2_has_type :identifier_type ;
+    crm:P3_has_note "ISBN" .
+
+:identifier_type a crm:E55_Type ;
+    crm:P2_has_type :type_type ;
+    crm:P3_has_note "Identifier type" .
+
+:type_type a crm:E55_Type ;
+    crm:P3_has_note "Type" .
+
+# Additional information about the work
+
+# Publisher (if known)
+:publisher_university_press a frbroo:F11_Corporate_Body ;
+    crm:P131_is_identified_by :name_university_press .
+
+:name_university_press a crm:E82_Actor_Appellation ;
+    crm:P190_has_symbolic_content "University Archaeology Press" .
+
+# Language
+:english_language a crm:E56_Language ;
+    crm:P190_has_symbolic_content "English" .
+
+# The work has an expression in English
+:expression_english a frbroo:F2_Expression ;
+    crm:P2_has_type :english_expression_type ;
+    crm:P73_has_translation :expression_english ;
+    crm:P106_is_composed_of :language_english .
+
+:english_expression_type a crm:E55_Type ;
+    crm:P2_has_type :expression_type ;
+    crm:P3_has_note "English expression" .
+
+:expression_type a crm:E55_Type ;
+    crm:P2_has_type :type_type ;
+    crm:P3_has_note "Expression type" .
