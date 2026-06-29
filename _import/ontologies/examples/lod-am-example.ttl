@@ -1,0 +1,173 @@
+@prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix frbroo: <http://iflastandards.info/ns/fr/frbr/frbroo/> .
+@prefix afo: <http://www.allotrope.org/ontologies/result#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+# ============================================================================
+# LOD-AM Combined Ontology Example
+# ============================================================================
+# This file demonstrates how LOD-AM uses CIDOC CRM, FRBRoo, and AFO together
+# to represent archaeological objects, scientific analysis, and literature.
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# SITES AND PLACES
+# ----------------------------------------------------------------------------
+
+:site_x a crm:E53_Place ;
+    crm:P2_has_type :archaeological_site ;
+    crm:P89_falls_within :region_germany ;
+    crm:P1_is_identified_by :site_x_id .
+
+:site_x_id a crm:E42_Identifier ;
+    crm:P2_has_type :local_id ;
+    crm:P190_has_symbolic_content "SITE-X-001" .
+
+:region_germany a crm:E53_Place ;
+    crm:P2_has_type :region ;
+    crm:P1_is_identified_by :germany_id .
+
+:germany_id a crm:E42_Identifier ;
+    crm:P2_has_type :iso_country_code ;
+    crm:P190_has_symbolic_content "DE" .
+
+# ----------------------------------------------------------------------------
+# ARCHAEOLOGICAL OBJECTS (CIDOC CRM)
+# ----------------------------------------------------------------------------
+
+:artifact_1 a crm:E22_Man-Made_Object ;
+    crm:P2_has_type :pottery_sherd ;
+    crm:P46_is_composed_of :clay ;
+    crm:P53_has_former_or_current_location :site_x ;
+    crm:P43_has_dimension :dimension_1 ;
+    crm:P1_is_identified_by :artifact_1_id ;
+    # Direct link to analysis result (AFO)
+    crm:P128_carries :xrf_result_1 ;
+    # Link to literature that mentions this artifact
+    crm:P67i_is_referred_to_by :paper_1 .
+
+:artifact_1_id a crm:E42_Identifier ;
+    crm:P2_has_type :museum_inventory_number ;
+    crm:P190_has_symbolic_content "MUS-2023-045" .
+
+:dimension_1 a crm:E54_Dimension ;
+    crm:P2_has_type :diameter ;
+    crm:P90_has_value "12.5"^^xsd:decimal ;
+    crm:P91_has_unit :unit_cm .
+
+:unit_cm a crm:E58_Measurement_Unit ;
+    crm:P2_has_type :centimeter .
+
+:clay a crm:E57_Material ;
+    crm:P2_has_type :clay .
+
+:pottery_sherd a crm:E55_Type ;
+    crm:P2_has_type :pottery_sherd .
+
+# ----------------------------------------------------------------------------
+# SCIENTIFIC ANALYSIS (Allotrope Framework - AFO)
+# ----------------------------------------------------------------------------
+
+# Analysis result directly linked to artifact
+:xrf_result_1 a afo:MeasurementResult ;
+    afo:hasValue "5.2"^^xsd:decimal ;
+    afo:hasUnit afo:Percent ;
+    afo:hasTechnique :xrf_technique ;
+    crm:P2_has_type :chemical_composition .
+
+:xrf_technique a afo:MeasurementTechnique ;
+    crm:P2_has_type :xrf ;
+    crm:P1_is_identified_by :xrf_id .
+
+:xrf_id a crm:E42_Identifier ;
+    crm:P2_has_type :technique_abbreviation ;
+    crm:P190_has_symbolic_content "XRF" .
+
+# Analysis event (minimal event modeling)
+:analysis_event_1 a crm:E7_Activity ;
+    crm:P2_has_type :chemical_analysis ;
+    crm:P16_used_specific_object :artifact_1 ;
+    crm:P128_carries :xrf_result_1 ;
+    crm:P4_has_time-span :analysis_time_1 ;
+    crm:P14_carried_out_by :lab_1 .
+
+:analysis_time_1 a crm:E52_Time-Span ;
+    crm:P82_at_some_time_within "2023-05-15"^^xsd:date .
+
+:lab_1 a crm:E39_Actor ;
+    crm:P2_has_type :analytical_laboratory ;
+    crm:P1_is_identified_by :lab_1_id .
+
+:lab_1_id a crm:E42_Identifier ;
+    crm:P2_has_type :laboratory_name ;
+    crm:P190_has_symbolic_content "Max Planck Institute - Archaeometry Lab" .
+
+# ----------------------------------------------------------------------------
+# LITERATURE (FRBRoo)
+# ----------------------------------------------------------------------------
+
+# Paper about the artifact
+:paper_1 a frbroo:F1_Work ;
+    crm:P102_has_title "Chemical Analysis of Prehistoric Pottery from Site X" ;
+    crm:P94_has_created :author_1 ;
+    crm:P4_has_time-span :paper_1_date ;
+    crm:P1_is_identified_by :paper_1_doi ;
+    crm:P1_is_identified_by :paper_1_local ;
+    # This paper refers to the artifact
+    crm:P67_refers_to :artifact_1 ;
+    crm:P67_refers_to :site_x .
+
+:paper_1_doi a crm:E42_Identifier ;
+    crm:P2_has_type :doi ;
+    crm:P190_has_symbolic_content "10.1234/arch.2023.001" .
+
+:paper_1_local a crm:E42_Identifier ;
+    crm:P2_has_type :local_id ;
+    crm:P190_has_symbolic_content "ARCH-PAPER-2023-001" .
+
+:paper_1_date a crm:E52_Time-Span ;
+    crm:P82_at_some_time_within "2023"^^xsd:gYear .
+
+:author_1 a crm:E39_Actor ;
+    crm:P2_has_type :researcher ;
+    crm:P1_is_identified_by :author_1_name .
+
+:author_1_name a crm:E42_Identifier ;
+    crm:P2_has_type :full_name ;
+    crm:P190_has_symbolic_content "Jane Archaeologist" .
+
+# Legacy paper without DOI (using local identifier)
+:paper_2 a frbroo:F1_Work ;
+    crm:P102_has_title "Excavation Report: Site X, Season 1985" ;
+    crm:P94_has_created :author_2 ;
+    crm:P4_has_time-span :paper_2_date ;
+    crm:P1_is_identified_by :paper_2_local ;
+    crm:P67_refers_to :site_x .
+
+:paper_2_local a crm:E42_Identifier ;
+    crm:P2_has_type :local_id ;
+    crm:P190_has_symbolic_content "EXCAV-1985-REPORT" .
+
+:paper_2_date a crm:E52_Time-Span ;
+    crm:P82_at_some_time_within "1986"^^xsd:gYear .
+
+:author_2 a crm:E39_Actor ;
+    crm:P2_has_type :archaeologist ;
+    crm:P1_is_identified_by :author_2_name .
+
+:author_2_name a crm:E42_Identifier ;
+    crm:P2_has_type :full_name ;
+    crm:P190_has_symbolic_content "John Excavator" .
+
+# Methodology paper (cited by analysis)
+:method_paper a frbroo:F1_Work ;
+    crm:P102_has_title "XRF Analysis Methodology for Ancient Ceramics" ;
+    crm:P1_is_identified_by :method_paper_doi .
+
+:method_paper_doi a crm:E42_Identifier ;
+    crm:P2_has_type :doi ;
+    crm:P190_has_symbolic_content "10.5678/methods.2020.456" .
+
+# Link analysis to methodology
+:analysis_event_1 crm:P67_refers_to :method_paper .
