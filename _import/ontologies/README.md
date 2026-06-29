@@ -4,25 +4,16 @@
 
 ## Structure
 
-Ontologies/
-  README.md                      
-  DECISIONS.md                   
-  ontologies/
-    cidoc-crm/
-      README.md              
-      reference.txt          
-    frbroo/
-      README.md              
-      reference.txt
-    afo/
-      README.md              
-      reference.txt
-  examples/
-    lod-am-example.ttl        
-  queries/
-    find-objects-by-type.rq
-    find-analysis-by-object.rq
-    find-literature-about-site.rq
+```mermaid
+graph TD
+    A[Ontologies/] --> B[README.md]
+    A --> C[DECISIONS.md]
+    A --> D[ontologies/]
+    A --> E[examples/]
+    D --> D1[cidoc-crm/]
+    D1 --> D1a[README.md]
+    D1 --> D1b[reference.txt]
+```
 
 ## Purpose
 
