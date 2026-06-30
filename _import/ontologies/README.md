@@ -12,14 +12,24 @@ Ontologies/
 │   ├── cidoc-crm/
 │   │   ├── README.md
 │   │   └── reference.txt
-└── examples/
+│   ├── fabio/
+│   │   ├── README.md
+│   │   └── reference.txt
+│   └── afo/
+│       ├── README.md
+│       └── reference.txt
+├── examples/
     └── lod-am-example.ttl
+└── queries/
+    ├── find-objects-by-type.rq
+    ├── find-analysis-by-object.rq
+    └── find-literature-about-site.rq
 ```
 
 ## Purpose
 
 This repository stores **only ontology-related information** for LOD-AM:
-- Which ontologies we use (CIDOC CRM, FRBRoo, Allotrope Framework)
+- Which ontologies we use (CIDOC CRM, FABIO, Allotrope Framework)
 - Why we chose them
 - How we use them together
 - Example data and SPARQL queries
@@ -35,5 +45,5 @@ This repository stores **only ontology-related information** for LOD-AM:
 
 We reference external ontologies. Do not commit their full TTL files here:
 - **CIDOC CRM**: https://cidoc-crm.org/rdfs/7.1.3/
-- **FRBRoo**: http://iflastandards.info/ns/fr/frbr/frbroo/
+- **FABIO**: http://purl.org/spar/fabio/
 - **Allotrope Framework (AFO)**: http://www.allotrope.org/ontologies/result#
