@@ -1,6 +1,6 @@
 # Ontology Decisions for LOD-AM Knowledge Graph
 
-*How we chose CIDOC CRM, FRBRoo, and the Allotrope Framework for representing archaeological objects, scientific analytics, and literature in a unified RDF knowledge graph.*
+*How we chose CIDOC CRM, FABIO, and the Allotrope Framework for representing archaeological objects, scientific analytics, and literature in a unified RDF knowledge graph.*
 
 ---
 
@@ -58,31 +58,32 @@
 
 ---
 
-### 3. FRBRoo for Literature Sources
+### 3. FABIO for Literature Sources
 
-**Decision**: Use FRBRoo for bibliographic references.
+**Decision**: Use FABIO (FRBR Aligned Bibliographic Ontology) for bibliographic references.
 
 **Why**:
-- Joint initiative between CIDOC CRM and FRBR communities
-- Harmonizes library and museum worlds
-- Native CIDOC CRM extension (not separate ontology)
-- Handles legacy literature without DOIs using local identifiers, ISBNs, ISSNs, or author+title+date
-- Cultural heritage focus
-- Mature (v2.4), widely used in production
+- Lightweight, FRBR-aligned ontology designed for practical bibliographic modeling
+- Perfect for Zenodo-style literature references
+- Simple structure without the complexity of full FRBRoo
+- Handles legacy literature without DOIs using local identifiers
+- Open and free to use
 
 **How we use it**:
-- **Primary level**: `frbroo:F1_Work` for literature sources
+- **Primary level**: `fabio:Work` and its subclasses (e.g., `fabio:JournalArticle`) for literature sources
 - **Legacy support**: Use local identifiers when DOIs are unavailable
 - **Integration**: Direct links between literature and archaeological entities via `crm:P67_refers_to`
 
 **Key classes/properties**:
-- `frbroo:F1_Work` (intellectual/artistic creation)
-- `frbroo:F2_Expression` (realization in specific form)
-- `frbroo:F3_Manifestation` (physical embodiment)
+- `fabio:Work` (intellectual/artistic creation)
+- `fabio:JournalArticle` (academic papers)
+- `fabio:hasAuthor` (link to authors)
+- `fabio:hasPublicationDate` (publication date)
+- `fabio:hasDOI` (Digital Object Identifier)
 - `crm:P67_refers_to` (link from work to archaeological entities)
-- `crm:P102_has_title`, `crm:P94_has_created`, `crm:P4_has_time-span`
+- `crm:P102_has_title`
 
-**Official**: https://cidoc-crm.org/frbroo
+**Official**: http://purl.org/spar/fabio/
 
 ---
 
@@ -119,7 +120,7 @@ Core Layer (CIDOC CRM)
   Objects, Places, Minimal Events
   
 Specialized Layer
-  FRBRoo (Literature) | AFO (Analytics)
+  FABIO (Literature) | AFO (Analytics)
   
 Integration Layer
   Direct links: P128_carries, P67_refers_to
@@ -130,6 +131,6 @@ Integration Layer
 ## Resources
 
 - **CIDOC CRM**: https://cidoc-crm.org/
-- **FRBRoo**: https://cidoc-crm.org/frbroo
+- **FABIO**: http://purl.org/spar/fabio/
 - **Allotrope Framework**: https://www.allotrope.org/
 - **LOD-AM**: https://lod-am.net/
