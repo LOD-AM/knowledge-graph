@@ -1,5 +1,5 @@
 @prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
-@prefix frbroo: <http://iflastandards.info/ns/fr/frbr/frbroo/> .
+@prefix fabio: <http://purl.org/spar/fabio/> .
 @prefix afo: <http://www.allotrope.org/ontologies/result#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -7,7 +7,7 @@
 # ============================================================================
 # LOD-AM Combined Ontology Example
 # ============================================================================
-# This file demonstrates how LOD-AM uses CIDOC CRM, FRBRoo, and AFO together
+# This file demonstrates how LOD-AM uses CIDOC CRM, FABIO, and AFO together
 # to represent archaeological objects, scientific analysis, and literature.
 # ============================================================================
 
@@ -104,14 +104,14 @@
     crm:P190_has_symbolic_content "Max Planck Institute - Archaeometry Lab" .
 
 # ----------------------------------------------------------------------------
-# LITERATURE (FRBRoo)
+# LITERATURE (FABIO)
 # ----------------------------------------------------------------------------
 
 # Paper about the artifact
-:paper_1 a frbroo:F1_Work ;
+:paper_1 a fabio:JournalArticle ;
     crm:P102_has_title "Chemical Analysis of Prehistoric Pottery from Site X" ;
-    crm:P94_has_created :author_1 ;
-    crm:P4_has_time-span :paper_1_date ;
+    fabio:hasAuthor :author_1 ;
+    fabio:hasPublicationDate "2023"^^xsd:gYear ;
     crm:P1_is_identified_by :paper_1_doi ;
     crm:P1_is_identified_by :paper_1_local ;
     # This paper refers to the artifact
@@ -126,9 +126,6 @@
     crm:P2_has_type :local_id ;
     crm:P190_has_symbolic_content "ARCH-PAPER-2023-001" .
 
-:paper_1_date a crm:E52_Time-Span ;
-    crm:P82_at_some_time_within "2023"^^xsd:gYear .
-
 :author_1 a crm:E39_Actor ;
     crm:P2_has_type :researcher ;
     crm:P1_is_identified_by :author_1_name .
@@ -138,19 +135,16 @@
     crm:P190_has_symbolic_content "Jane Archaeologist" .
 
 # Legacy paper without DOI (using local identifier)
-:paper_2 a frbroo:F1_Work ;
+:paper_2 a fabio:JournalArticle ;
     crm:P102_has_title "Excavation Report: Site X, Season 1985" ;
-    crm:P94_has_created :author_2 ;
-    crm:P4_has_time-span :paper_2_date ;
+    fabio:hasAuthor :author_2 ;
+    fabio:hasPublicationDate "1986"^^xsd:gYear ;
     crm:P1_is_identified_by :paper_2_local ;
     crm:P67_refers_to :site_x .
 
 :paper_2_local a crm:E42_Identifier ;
     crm:P2_has_type :local_id ;
     crm:P190_has_symbolic_content "EXCAV-1985-REPORT" .
-
-:paper_2_date a crm:E52_Time-Span ;
-    crm:P82_at_some_time_within "1986"^^xsd:gYear .
 
 :author_2 a crm:E39_Actor ;
     crm:P2_has_type :archaeologist ;
@@ -161,7 +155,7 @@
     crm:P190_has_symbolic_content "John Excavator" .
 
 # Methodology paper (cited by analysis)
-:method_paper a frbroo:F1_Work ;
+:method_paper a fabio:JournalArticle ;
     crm:P102_has_title "XRF Analysis Methodology for Ancient Ceramics" ;
     crm:P1_is_identified_by :method_paper_doi .
 
