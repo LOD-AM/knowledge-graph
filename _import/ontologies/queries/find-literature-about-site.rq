@@ -1,17 +1,17 @@
 PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
-PREFIX frbroo: <http://iflastandards.info/ns/fr/frbr/frbroo/>
+PREFIX fabio: <http://purl.org/spar/fabio/>
 
 SELECT ?work ?title ?author ?date ?identifier WHERE {
-  ?work a frbroo:F1_Work ;
+  ?work a fabio:JournalArticle ;
     crm:P102_has_title ?title ;
-    crm:P94_has_created ?author ;
-    crm:P4_has_time-span ?dateSpan ;
+    fabio:hasAuthor ?authorNode ;
+    fabio:hasPublicationDate ?dateSpan ;
     crm:P67_refers_to <http://example.org/sites/SITE-X-001> ;
     crm:P1_is_identified_by ?id .
   
   ?id crm:P190_has_symbolic_content ?identifier .
   
-  ?author crm:P1_is_identified_by ?authorId .
+  ?authorNode crm:P1_is_identified_by ?authorId .
   ?authorId crm:P190_has_symbolic_content ?author .
   
   ?dateSpan crm:P82_at_some_time_within ?date .
