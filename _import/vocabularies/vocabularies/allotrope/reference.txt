@@ -1,0 +1,5 @@
+Official URI: http://www.allotrope.org/ontologies/result#
+Namespace: http://www.allotrope.org/ontologies/result#
+Preferred prefix: afo
+Example: afo:MeasurementResult
+License: Creative Commons
