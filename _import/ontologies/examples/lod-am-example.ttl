@@ -1,8 +1,18 @@
 @prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
 @prefix fabio: <http://purl.org/spar/fabio/> .
 @prefix afo: <http://www.allotrope.org/ontologies/result#> .
+@prefix afm: <http://purl.allotrope.org/ontologies/material#> .
+@prefix afp: <http://purl.allotrope.org/ontologies/process#> .
+@prefix afr: <http://purl.allotrope.org/ontologies/result#> .
+@prefix afx: <http://purl.allotrope.org/ontologies/property#> .
+@prefix chebi: <http://purl.obolibrary.org/obo/CHEBI_> .
+@prefix ror: <https://ror.org/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix osgeo: <http://data.ordnancesurvey.co.uk/ontology/geometry/> .
+@prefix crmarchaeo: <http://www.cidoc-crm.org/extensions/crmarchaeo/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
 
 # ============================================================================
 # LOD-AM Combined Ontology Example
@@ -12,156 +22,202 @@
 # ============================================================================
 
 # ----------------------------------------------------------------------------
-# SITES AND PLACES
+# SITES, FEATURES AND PLACES
 # ----------------------------------------------------------------------------
 
-:site_x a crm:E53_Place ;
-    crm:P2_has_type :archaeological_site ;
-    crm:P89_falls_within :region_germany ;
-    crm:P1_is_identified_by :site_x_id .
+:Arslantepe a crm:E27_Site ;
+    crm:P2_has_type <https://pleiades.stoa.org/vocabularies/settlement>;
+    crm:P1_is_identified_by <https://pleiades.stoa.org/places/25078867/arslantepe>;
+    crm:P89_falls_within <https://pleiades.stoa.org/places/osm-location-of-arslantepe-hapya1-4aa1-4>.
 
-:site_x_id a crm:E42_Identifier ;
-    crm:P2_has_type :local_id ;
-    crm:P190_has_symbolic_content "SITE-X-001" .
+<https://pleiades.stoa.org/places/osm-location-of-arslantepe-hapya1-4aa1-4> a crm:E52_Place;
+    osgeo:asWKT "POLYGON ((38.3606437999999983 38.3811190999999994, 38.3607782999999998 38.3811273999999969, 38.3609021999999982 38.3811413000000030, 38.3610826999999972 38.3811717999999971, 38.3612407000000033 38.3812148000000022, 38.3614542999999983 38.3812939000000028, 38.3615853000000016 38.3813521000000009, 38.3618895999999978 38.3815906999999967, 38.3620488999999978 38.3817377000000022, 38.3622011000000001 38.3819098000000025, 38.3622931000000023 38.3820374000000015, 38.3623710000000031 38.3821705000000009, 38.3624099000000029 38.3823176000000004, 38.3623922000000022 38.3825007000000014, 38.3623638999999983 38.3826144000000014, 38.3622931000000023 38.3827392999999972, 38.3620044999999976 38.3830029000000010, 38.3618578000000028 38.3830499999999972, 38.3617056000000005 38.3830972000000017, 38.3615746999999985 38.3831193999999982, 38.3614304999999973 38.3831205999999980, 38.3612737999999993 38.3830888000000030, 38.3610578999999987 38.3830195000000032, 38.3609057000000035 38.3829446000000019, 38.3607713000000032 38.3828640999999990, 38.3606545000000025 38.3827920000000020, 38.3605164000000016 38.3826727000000005, 38.3603854999999996 38.3825533999999990, 38.3602793000000020 38.3824258000000000, 38.3601695999999990 38.3822481999999994, 38.3601023000000012 38.3821094999999985, 38.3600634000000014 38.3819625000000002, 38.3600457000000006 38.3818515000000033, 38.3600350999999975 38.3817238999999972, 38.3601625000000013 38.3814047999999985, 38.3602368000000027 38.3813133000000022, 38.3602934999999974 38.3812521999999987, 38.3603996000000009 38.3811883999999992, 38.3605057999999985 38.3811496000000005, 38.3606437999999983 38.3811190999999994))".
 
-:region_germany a crm:E53_Place ;
-    crm:P2_has_type :region ;
-    crm:P1_is_identified_by :germany_id .
+<http://www.wikidata.org/entity/Q43> a crm:52_Place.
 
-:germany_id a crm:E42_Identifier ;
-    crm:P2_has_type :iso_country_code ;
-    crm:P190_has_symbolic_content "DE" .
+
+:Palace_Hoard a crm:E25_Human_Made_Feature;
+    crm:P41_classified :assignTypePalace_Hoard;
+    crm:P89_falls_within :Arslantepe;
+    crm:P8_took_place_on_or_within <http://n2t.net/ark:/99152/p03wskdnzgc>.
 
 # ----------------------------------------------------------------------------
-# ARCHAEOLOGICAL OBJECTS (CIDOC CRM)
+# PERIODS and TIME SPANs
 # ----------------------------------------------------------------------------
 
-:artifact_1 a crm:E22_Man-Made_Object ;
-    crm:P2_has_type :pottery_sherd ;
-    crm:P46_is_composed_of :clay ;
-    crm:P53_has_former_or_current_location :site_x ;
-    crm:P43_has_dimension :dimension_1 ;
-    crm:P1_is_identified_by :artifact_1_id ;
-    # Direct link to analysis result (AFO)
-    crm:P128_carries :xrf_result_1 ;
-    # Link to literature that mentions this artifact
-    crm:P67i_is_referred_to_by :paper_1 .
+<http://n2t.net/ark:/99152/p03wskdnzgc> a crm:E4_Period;
+    crm:P4_has_time-span :p03wskdnzgc_TIME_SPAN;
+    crm:P7_took_place_at <http://www.wikidata.org/entity/Q43>.
 
-:artifact_1_id a crm:E42_Identifier ;
-    crm:P2_has_type :museum_inventory_number ;
-    crm:P190_has_symbolic_content "MUS-2023-045" .
+:p03wskdnzgc_TIME_SPAN a crm:E52_Time-Span;
+    crm:P79_beginning_is_qualified_by "-2000";
+    crm:P80_end_is_qualified_by "-1750";
+    crm:P71_is_listed_in <http://n2t.net/ark:/99152/p03wskd>.
 
-:dimension_1 a crm:E54_Dimension ;
-    crm:P2_has_type :diameter ;
-    crm:P90_has_value "12.5"^^xsd:decimal ;
-    crm:P91_has_unit :unit_cm .
+# ----------------------------------------------------------------------------
+# ARCHAEOLOGICAL OBJECTS AND TYPES (CIDOC CRM)
+# ----------------------------------------------------------------------------
 
-:unit_cm a crm:E58_Measurement_Unit ;
-    crm:P2_has_type :centimeter .
+:spearhead_1 a crm:E22_Man-Made_Object;
+    a afm:AFM_0001099;
+    afx:AFX_0001048 :sample_ARSL31A;
+    crm:P148_has_component :spearhead_1_blade;
+    crm:P148_has_component :spearhead_1_tange;
+    crmarchaeo:A21_is_contained_in :Palace_Hoard;
+    crm:P1_is_identified_by "T1 2*, y37";
+    crm:P71_is_listed_in <https://doi.org/10.3406/paleo.2002.4745>;
+    crm:P41_classified :assign_spearhead_1_type,
+    :assign_spearhead_1_mat.
 
-:clay a crm:E57_Material ;
-    crm:P2_has_type :clay .
+:spearhead_1_blade a crm:E22_Man-Made_Object;
+    crm:P71_is_listed_in <https://doi.org/10.3406/paleo.2002.4745>;
+    crm:P41_classified :assign_spearhead_1_blade_type,
+    :assign_spearhead_1_blade_mat.
 
-:pottery_sherd a crm:E55_Type ;
-    crm:P2_has_type :pottery_sherd .
+:spearhead_1_tange a crm:E22_Man-Made_Object;
+    crm:P71_is_listed_in <https://doi.org/10.3406/paleo.2002.4745>;
+    crm:P41_classified :assign_spearhead_1_tange_type,
+    :assign_spearhead_1_tange_mat.
+
+:assign_spearhead_1_type a crm:E17_Type_Assignment;
+    crm:P2_has_type <http://vocab.getty.edu/page/aat/300037118>.
+
+:assign_spearhead_1_mat a crm:E17_Type_Assignment;
+    crm:P46_is_composed_of <http://vocab.getty.edu/page/aat/300241441>.
+
+:assign_spearhead_1_blade_type a crm:E17_Type_Assignment;
+    crm:P2_has_type :spearhead_blade.
+
+:assign_spearhead_1_blade_mat a crm:E17_Type_Assignment;
+    crm:P46_is_composed_of <http://vocab.getty.edu/page/aat/300241441>.
+
+:assign_spearhead_1_tange_type a crm:E17_Type_Assignment;
+    crm:P2_has_type :spearhead_tange.
+
+:assign_spearhead_1_tange_mat a crm:E17_Type_Assignment;
+    crm:P46_is_composed_of <http://vocab.getty.edu/page/aat/300241441>.
+
+<http://vocab.getty.edu/page/aat/300241441> a crm:E57_Material ;
+    crm:P71_is_listed_in <http://vocab.getty.edu/aat/>.
+
+<http://vocab.getty.edu/page/aat/300037118> a crm:E99_Product_Type;
+    crm:P71_is_listed_in <http://vocab.getty.edu/aat/>.
+
+:spearhead_blade a crm:E99_Product_Type;
+    crm:P71_is_listed_in <https://doi.org/10.3406/paleo.2002.4745>.
+
+:spearhead_tange a crm:E99_Product_Type;
+    crm:P71_is_listed_in <https://doi.org/10.3406/paleo.2002.4745>.
 
 # ----------------------------------------------------------------------------
 # SCIENTIFIC ANALYSIS (Allotrope Framework - AFO)
 # ----------------------------------------------------------------------------
 
-# Analysis result directly linked to artifact
-:xrf_result_1 a afo:MeasurementResult ;
-    afo:hasValue "5.2"^^xsd:decimal ;
-    afo:hasUnit afo:Percent ;
-    afo:hasTechnique :xrf_technique ;
-    crm:P2_has_type :chemical_composition .
+# ========== LABORATORY (ROR) ==========
+:sapienza_lab a afo:Organization ;
+    afo:identifier "02be6w209" ;
+    afo:label "Sapienza University of Rome" ;
+    afo:sameAs ror:02be6w209 .
 
-:xrf_technique a afo:MeasurementTechnique ;
-    crm:P2_has_type :xrf ;
-    crm:P1_is_identified_by :xrf_id .
+:sample_ARSL31A a afm:AFM_0001099 ;
+    afo:label "Sample from Spearhead 1 Blade (ARSL31A)" .
 
-:xrf_id a crm:E42_Identifier ;
-    crm:P2_has_type :technique_abbreviation ;
-    crm:P190_has_symbolic_content "XRF" .
+# ========== ANALYSIS ==========
+:ARSL31A a afp:AFP_0000527 ;  # spectrometry (closest AFO match)
+    afo:identifier "ARSL31A" ;
+    afo:label "optical emission spectrometry with inductively-coupled plasma excitation (ICP Iris-AP)" ;
+    afo:source <https://doi.org/10.3406/paleo.2002.4745>;
+    afx:AFX_0000197 :sapienza_lab ;
+    afx:AFX_0000395 :Cu_measurement, :Ag_measurement, :As_measurement, :Ni_measurement, :Sb_measurement, :Pb_measurement, :Fe_measurement, :Zn_measurement, :Co_measurement .
 
-# Analysis event (minimal event modeling)
-:analysis_event_1 a crm:E7_Activity ;
-    crm:P2_has_type :chemical_analysis ;
-    crm:P16_used_specific_object :artifact_1 ;
-    crm:P128_carries :xrf_result_1 ;
-    crm:P4_has_time-span :analysis_time_1 ;
-    crm:P14_carried_out_by :lab_1 .
+# ========== MEASUREMENTS ==========
+:Cu_measurement a afr:AFR_0002036 ;
+    afx:AFX_0002816 chebi:28694 ;  # Copper
+    afo:value "97"^^xsd:decimal ;
+    afo:unit "PERCENT" .
 
-:analysis_time_1 a crm:E52_Time-Span ;
-    crm:P82_at_some_time_within "2023-05-15"^^xsd:date .
+:Ag_measurement a afr:AFR_0002036 ;
+    afx:AFX_0002816 chebi:23855 ;  # Silver
+    afo:value "0.002"^^xsd:decimal ;
+    afo:unit "PERCENT" .
 
-:lab_1 a crm:E39_Actor ;
-    crm:P2_has_type :analytical_laboratory ;
-    crm:P1_is_identified_by :lab_1_id .
+:As_measurement a afr:AFR_0002036 ;
+    afx:AFX_0002816 chebi:27563 ;  # Arsenic
+    afo:value "3.11"^^xsd:decimal ;
+    afo:unit "PERCENT" .
 
-:lab_1_id a crm:E42_Identifier ;
-    crm:P2_has_type :laboratory_name ;
-    crm:P190_has_symbolic_content "Max Planck Institute - Archaeometry Lab" .
+:Ni_measurement a afr:AFR_0002036 ;
+    afx:AFX_0002816 chebi:28695 ;  # Nickel
+    afo:value "0.002"^^xsd:decimal ;
+    afo:unit "PERCENT" .
+
+:Sb_measurement a afr:AFR_0002036 ;
+    afx:AFX_0002816 chebi:28697 ;  # Antimony
+    afo:value "0.007"^^xsd:decimal ;
+    afo:unit "PERCENT" .
+
+:Pb_measurement a afr:AFR_0002036 ;
+    afx:AFX_0002816 chebi:28702 ;  # Lead
+    afx:AFX_0000331 "0.001"^^xsd:decimal ;  # <0.001% (max only)
+    afo:unit "PERCENT" .
+
+:Fe_measurement a afr:AFR_0002036 ;
+    afx:AFX_0002816 chebi:23377 ;  # Iron
+    afo:value "0.008"^^xsd:decimal ;
+    afo:unit "PERCENT" .
+
+:Zn_measurement a afr:AFR_0002036 ;
+    afx:AFX_0002816 chebi:27637 ;  # Zinc
+    afx:AFX_0000331 "0.001"^^xsd:decimal ;  # <0.001% (max only)
+    afo:unit "PERCENT" .
+
+:Co_measurement a afr:AFR_0002036 ;
+    afx:AFX_0002816 chebi:27659 ;  # Cobalt
+    afx:AFX_0000331 "0.001"^^xsd:decimal ;  # <0.001% (max only)
+    afo:unit "PERCENT" .
 
 # ----------------------------------------------------------------------------
 # LITERATURE (FABIO)
 # ----------------------------------------------------------------------------
 
-# Paper about the artifact
-:paper_1 a fabio:JournalArticle ;
-    crm:P102_has_title "Chemical Analysis of Prehistoric Pottery from Site X" ;
-    fabio:hasAuthor :author_1 ;
-    fabio:hasPublicationDate "2023"^^xsd:gYear ;
-    crm:P1_is_identified_by :paper_1_doi ;
-    crm:P1_is_identified_by :paper_1_local ;
-    # This paper refers to the artifact
-    crm:P67_refers_to :artifact_1 ;
-    crm:P67_refers_to :site_x .
+# ============================================================================
+# Journal
+# ============================================================================
+:journal_paleorient a fabio:Journal ;
+    dcterms:title "Paléorient" .
 
-:paper_1_doi a crm:E42_Identifier ;
-    crm:P2_has_type :doi ;
-    crm:P190_has_symbolic_content "10.1234/arch.2023.001" .
+# ============================================================================
+# Article
+# ============================================================================
+<https://doi.org/10.3406/paleo.2002.4745> a fabio:JournalArticle ;
+    dcterms:title "Chemical composition and lead isotopy of metal objects from the \"Royal\" Tomb and other related finds at Arslantepe, Eastern Anatolia" ;
+    dcterms:date "2002"^^xsd:gYear ;
+    dcterms:description "Citation Key: hauptmann2002chemical. Publisher: JSTOR" ;
+    dcterms:publisher "JSTOR" ;
+    fabio:hasPageStart "43" ;
+    fabio:hasPageEnd "69" ;
+    dcterms:isPartOf :journal_paleorient ;
+    fabio:hasAuthor :andreas_hauptmann, :sigrid_schmitt-strecker, :friedrich_begemann, :alberto_palmieri .
 
-:paper_1_local a crm:E42_Identifier ;
-    crm:P2_has_type :local_id ;
-    crm:P190_has_symbolic_content "ARCH-PAPER-2023-001" .
+# ============================================================================
+# Authors (as FABIO Persons)
+# ============================================================================
+:andreas_hauptmann a fabio:Person ;
+    foaf:givenName "Andreas" ;
+    foaf:familyName "Hauptmann" ;
+    foaf:name "Andreas Hauptmann" .
 
-:author_1 a crm:E39_Actor ;
-    crm:P2_has_type :researcher ;
-    crm:P1_is_identified_by :author_1_name .
+:sigrid_schmitt-strecker a fabio:Person ;
+    foaf:givenName "Sigrid" ;
+    foaf:familyName "Schmitt-Strecker" ;
+    foaf:name "Sigrid Schmitt-Strecker" .
 
-:author_1_name a crm:E42_Identifier ;
-    crm:P2_has_type :full_name ;
-    crm:P190_has_symbolic_content "Jane Archaeologist" .
+:friedrich_begemann a fabio:Person ;
+    foaf:givenName "Friedrich" ;
+    foaf:familyName "Begemann" ;
+    foaf:name "Friedrich Begemann" .
 
-# Legacy paper without DOI (using local identifier)
-:paper_2 a fabio:JournalArticle ;
-    crm:P102_has_title "Excavation Report: Site X, Season 1985" ;
-    fabio:hasAuthor :author_2 ;
-    fabio:hasPublicationDate "1986"^^xsd:gYear ;
-    crm:P1_is_identified_by :paper_2_local ;
-    crm:P67_refers_to :site_x .
-
-:paper_2_local a crm:E42_Identifier ;
-    crm:P2_has_type :local_id ;
-    crm:P190_has_symbolic_content "EXCAV-1985-REPORT" .
-
-:author_2 a crm:E39_Actor ;
-    crm:P2_has_type :archaeologist ;
-    crm:P1_is_identified_by :author_2_name .
-
-:author_2_name a crm:E42_Identifier ;
-    crm:P2_has_type :full_name ;
-    crm:P190_has_symbolic_content "John Excavator" .
-
-# Methodology paper (cited by analysis)
-:method_paper a fabio:JournalArticle ;
-    crm:P102_has_title "XRF Analysis Methodology for Ancient Ceramics" ;
-    crm:P1_is_identified_by :method_paper_doi .
-
-:method_paper_doi a crm:E42_Identifier ;
-    crm:P2_has_type :doi ;
-    crm:P190_has_symbolic_content "10.5678/methods.2020.456" .
-
-# Link analysis to methodology
-:analysis_event_1 crm:P67_refers_to :method_paper .
+:alberto_palmieri a fabio:Person ;
+    foaf:givenName "Alberto M" ;
+    foaf:familyName "Palmieri" ;
+    foaf:name "Alberto M Palmieri" .
