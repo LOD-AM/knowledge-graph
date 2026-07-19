@@ -173,12 +173,12 @@ async function main() {
     console.log('\nAlternative: Download the RDF dump from https://www.getty.edu/research/tools/vocabularies/obtain/download.html');
     
     // Create a fallback file with the query
+    const queryForFallback = SPARQL_QUERY_GVP.replace(/\n/g, '\n# ');
     const fallbackContent = `# Getty AAT Broader Terms Query
 # To execute manually, visit: ${SPARQL_ENDPOINT}
 # 
 # Query:
-# ${SPARQL_QUERY_GVP.replace(/
-/g, '\n# ')}
+# ${queryForFallback}
 `;
     fs.writeFileSync(OUTPUT_FILE, fallbackContent);
     console.log(`\nFallback query saved to ${OUTPUT_FILE}`);
