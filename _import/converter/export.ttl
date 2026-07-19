@@ -1,0 +1,16 @@
+# Getty AAT Broader Terms Query
+# To execute manually, visit: http://vocab.getty.edu/sparql
+# 
+# Query:
+# 
+# PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+# PREFIX gvp: <http://vocab.getty.edu/ontology#>
+# PREFIX xl: <http://www.w3.org/2008/05/skos-xl#>
+# 
+# SELECT DISTINCT ?broader ?broaderLabel WHERE {
+#   <http://vocab.getty.edu/page/aat/300037118> skos:broader* ?broader .
+#   ?broader gvp:prefLabelGVP ?labelNode .
+#   ?labelNode xl:literalForm ?broaderLabel .
+# }
+# ORDER BY ?broaderLabel
+# 
