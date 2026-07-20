@@ -7,6 +7,7 @@
  * Usage: node fetchAATBroaderYASGUI.js
  * 
  * Note: This uses the sparql.xml endpoint which works with external clients like YASGUI.
+ * The correct prefix for AAT URIs is <http://vocab.getty.edu/page/aat/>
  */
 
 const fs = require('fs');
@@ -19,10 +20,11 @@ const config = {
   // SPARQL endpoint that works (via YASGUI discovery)
   endpoint: 'https://vocab.getty.edu/sparql.xml',
   
-  // Target AAT entities (without the full URI, just the numeric ID or full URI)
+  // Target AAT entities (can use full URI or just the numeric ID)
   targetEntities: [
     'http://vocab.getty.edu/page/aat/300037118',
     // Add more entities here as needed
+    // '300037118',  // Short form also works
   ],
   
   // Output file
@@ -40,7 +42,10 @@ const config = {
   headers: {
     'Accept': 'application/sparql-results+xml',
     'User-Agent': 'YASGUI/3.0 (Mozilla/5.0; compatible; LOD-AM Converter)'
-  }
+  },
+  
+  // Correct prefix for AAT - note the /page/ in the path
+  aatPrefix: 'http://vocab.getty.edu/page/aat/'
 };
 
 // Statistics
@@ -186,19 +191,38 @@ function generateConceptTurtle(conceptUri, label, broaderUris = []) {
 }
 
 /**
+ * Normalize entity URI - ensure it has the full path
+ */
+function normalizeEntityUri(entityUri) {
+  // If it's just a number, add the full prefix
+  if (/^\d+$/.test(entityUri)) {
+    return `${config.aatPrefix}${entityUri}`;
+  }
+  
+  // If it's aat:300037118 format, expand it
+  if (entityUri.startsWith('aat:')) {
+    return `${config.aatPrefix}${entityUri.substring(4)}`;
+  }
+  
+  // If it's already a full URI, return as-is
+  return entityUri;
+}
+
+/**
  * Build SPARQL query for broader terms
+ * Uses the correct prefix: http://vocab.getty.edu/page/aat/
  */
 function buildBroaderQuery(entityUri) {
-  // Use the working query pattern from YASGUI
-  const aatPrefix = entityUri.includes('http') ? entityUri : `http://vocab.getty.edu/page/aat/${entityUri}`;
+  const fullUri = normalizeEntityUri(entityUri);
   
-  return `PREFIX aat: <http://vocab.getty.edu/aat/>
+  // Use the working query pattern from YASGUI with CORRECT prefix
+  return `PREFIX aat: <${config.aatPrefix}>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX gvp: <http://vocab.getty.edu/ontology#>
 PREFIX xl: <http://www.w3.org/2008/05/skos-xl#>
 
 SELECT DISTINCT ?broader ?broaderLabel WHERE {
-  <${aatPrefix}> gvp:broaderPreferred ?broader .
+  <${fullUri}> gvp:broaderPreferred ?broader .
   ?broader gvp:prefLabelGVP ?labelNode .
   ?labelNode xl:literalForm ?broaderLabel .
 }
@@ -213,6 +237,8 @@ async function processEntity(entityUri) {
   
   try {
     const query = buildBroaderQuery(entityUri);
+    console.log('Query:', query.substring(0, 200) + '...');
+    
     const { data } = await executeQuery(query);
     
     const results = parseSparqlXml(data);
@@ -226,10 +252,10 @@ async function processEntity(entityUri) {
       label: r.broaderLabel
     }));
     
-    return { entityUri, broaderTerms };
+    return { entityUri: normalizeEntityUri(entityUri), broaderTerms };
   } catch (error) {
     console.error(`  Error processing ${entityUri}: ${error.message}`);
-    return { entityUri, broaderTerms: [], error: error.message };
+    return { entityUri: normalizeEntityUri(entityUri), broaderTerms: [], error: error.message };
   }
 }
 
@@ -246,12 +272,13 @@ function writeResults(results) {
   output.write(`@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n`);
   output.write(`@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n`);
   output.write(`@prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .\n`);
-  output.write(`@prefix aat: <http://vocab.getty.edu/page/aat/> .\n\n`);
+  output.write(`@prefix aat: <${config.aatPrefix}> .\n\n`);
   
   // Write header
   output.write(`# Getty AAT Broader Terms with CIDOC-CRM mappings\n`);
   output.write(`# Generated: ${new Date().toISOString()}\n`);
-  output.write(`# Endpoint: ${config.endpoint}\n\n`);
+  output.write(`# Endpoint: ${config.endpoint}\n`);
+  output.write(`# AAT Prefix: ${config.aatPrefix}\n\n`);
   
   // Write each entity and its broader terms
   for (const result of results) {
@@ -284,6 +311,7 @@ async function main() {
   console.log('Getty AAT Broader Terms Fetcher');
   console.log('================================');
   console.log(`Endpoint: ${config.endpoint}`);
+  console.log(`AAT Prefix: ${config.aatPrefix}`);
   console.log(`Target entities: ${config.targetEntities.length}`);
   console.log(`Output file: ${config.outputFile}`);
   console.log('');
