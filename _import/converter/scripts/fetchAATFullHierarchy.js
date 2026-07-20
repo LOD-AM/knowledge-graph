@@ -7,6 +7,7 @@
  * Usage: node fetchAATFullHierarchy.js
  * 
  * Output: Turtle file with full hierarchy and CIDOC-CRM mappings
+ * Uses aat: prefix for compact URIs
  */
 
 const fs = require('fs');
@@ -147,6 +148,19 @@ function extractLanguage(literal) {
 }
 
 /**
+ * Convert full URI to aat: prefix format
+ */
+function toAATPrefix(uri) {
+  // Remove the prefix and return aat:ID format
+  const match = uri.match(/http:\/\/vocab\.getty\.edu\/(page\/)?aat\/([^\/]+)/);
+  if (match) {
+    return `aat:${match[2]}`;
+  }
+  // If it doesn't match, return as-is
+  return uri;
+}
+
+/**
  * Normalize entity ID
  */
 function normalizeEntityUri(entityId) {
@@ -243,41 +257,53 @@ async function fetchBroaderTerms(entityId, depth = 0) {
 }
 
 /**
- * Generate CIDOC-CRM Turtle for a concept with full hierarchy
+ * Generate flat Turtle output with aat: prefix
+ * Each entity is on its own lines with no indentation
  */
-function generateHierarchyTurtle(concept, depth = 0) {
+function generateFlatTurtle(hierarchy) {
   const lines = [];
   const cfg = config.cidoc;
-  const indent = '  '.repeat(depth);
   
-  // Concept declaration
-  lines.push(`${indent}<${concept.uri}> a ${cfg.typeClass} ;`);
-  
-  // Add label if available
-  if (concept.label) {
-    const lang = concept.language ? `@${concept.language}` : '';
-    lines.push(`${indent}    ${cfg.typeProperty} "${concept.label.replace(/"/g, '\\"')}"${lang} ;`);
-  }
-  
-  // Add broader terms
-  for (const broader of concept.broader) {
-    lines.push(`${indent}    ${cfg.broaderProperty} <${broader.uri}> ;`);
-  }
-  
-  // Remove trailing semicolon
-  if (lines.length > 0) {
-    lines[lines.length - 1] = lines[lines.length - 1].replace(/;$/, '');
-  }
-  
-  // Recursively add broader concepts
-  for (const broader of concept.broader) {
-    const broaderLines = generateHierarchyTurtle(broader, depth + 1);
-    if (broaderLines) {
-      lines.push(broaderLines);
+  // Process the hierarchy in order (root last)
+  function processEntity(entity, visited = new Set()) {
+    if (visited.has(entity.uri)) return;
+    visited.add(entity.uri);
+    
+    // First process all broader terms (so they appear before the current entity)
+    for (const broader of entity.broader) {
+      processEntity(broader, visited);
     }
+    
+    // Then add the current entity
+    const aatUri = toAATPrefix(entity.uri);
+    
+    // Start the entity
+    let entityLines = [];
+    entityLines.push(`${aatUri} a ${cfg.typeClass} ;`);
+    
+    // Add label if available
+    if (entity.label) {
+      const lang = entity.language ? `@${entity.language}` : '';
+      entityLines.push(`  ${cfg.typeProperty} "${entity.label.replace(/"/g, '\\"')}"${lang} ;`);
+    }
+    
+    // Add broader terms
+    for (const broader of entity.broader) {
+      const broaderAatUri = toAATPrefix(broader.uri);
+      entityLines.push(`  ${cfg.broaderProperty} ${broaderAatUri} .`);
+    }
+    
+    // If there are no properties, just add a period
+    if (entityLines.length === 1) {
+      entityLines[0] = entityLines[0].replace(/;$/, '.');
+    }
+    
+    lines.push(entityLines.join('\n'));
   }
   
-  return lines.join('\n');
+  processEntity(hierarchy);
+  
+  return lines.join('\n\n');
 }
 
 /**
@@ -304,8 +330,7 @@ function writeResults(hierarchies) {
   // Write each hierarchy
   for (const hierarchy of hierarchies) {
     output.write(`# ${hierarchy.uri}\n`);
-    output.write(generateHierarchyTurtle(hierarchy) + '\n');
-    output.write('.\n\n');
+    output.write(generateFlatTurtle(hierarchy) + '\n\n');
   }
   
   output.end();
