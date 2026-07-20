@@ -100,13 +100,13 @@
 <http://vocab.getty.edu/page/aat/300241441> a crm:E57_Material ;
     crm:P71_is_listed_in <http://vocab.getty.edu/aat/>.
 
-<http://vocab.getty.edu/page/aat/300037118> a crm:E99_Product_Type;
+<http://vocab.getty.edu/page/aat/300037118> a crm:E55_Type;
     crm:P71_is_listed_in <http://vocab.getty.edu/aat/>.
 
-:spearhead_blade a crm:E99_Product_Type;
+:spearhead_blade a crm:E55_Type;
     crm:P71_is_listed_in <https://doi.org/10.3406/paleo.2002.4745>.
 
-:spearhead_tange a crm:E99_Product_Type;
+:spearhead_tange a crm:E55_Type;
     crm:P71_is_listed_in <https://doi.org/10.3406/paleo.2002.4745>.
 
 # ----------------------------------------------------------------------------
