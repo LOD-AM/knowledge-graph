@@ -7,21 +7,24 @@
 @prefix aat: <http://vocab.getty.edu/aat/> .
 
 # Getty AAT Types with CIDOC-CRM mappings
-# Generated: 2026-07-20T12:07:20.855Z
+# Generated: 2026-07-20T13:07:44.848Z
 # Endpoint: https://vocab.getty.edu/sparql.xml
 # Max depth: 10
 # Target entities: 300037118
 
 # http://vocab.getty.edu/aat/300037118
 aat:300264092 a crm:E55_Type ;
-  skos:prefLabel "Objects Facet"@en .
+  skos:prefLabel "Objects Facet"@en ;
+  skos:scopeNote "Includes terms for discrete tangible or visible things that are inanimate and produced by human endeavor; that is, that are either fabricated or given form by human activity. These range, in physical form, from built works to images and written documents. They range in purpose from utilitarian to the aesthetic. Also included are landscape features that provide the context for the built environment  paintings, amphorae, facades, cathedrals, Brewster chairs, gardens."@en .
 
 aat:300241490 a crm:E55_Type ;
   skos:prefLabel "Components (hierarchy name)"@en ;
+  skos:scopeNote "The Components hierarchy contains terms for the constituent parts of objects, including structures, images, and texts. In those instances where a term refers to an element that may sometimes be a component and sometimes stand alone, it is placed with a preferred parent in the most suitable hierarchy. For example, \"chapels (rooms or structures),\" which are always rooms or spaces but may sometimes also be independent buildings, appears with a preferred parent in the <Christian religious building spaces> section of the Components hierarchy, and a non-preferred parent as Single Built Works. Relation to other hierarchies: Higher-level nodes for components are placed with a second parent under the record for the visual work, tool, etc. to which they pertain; this relationship is a partitive (whole/part) relationship, whereas all other relationships in the AAT are genus/species. For example \"aerophone components\" has a second parent as a Partitive Relationship (P) to \"aerophones.\" Terms for features that are not separable as actual components, such as ornamental patterns and physical effects (e.g., \"fluting,\" \"wrinkles\"), are in the Physical Attributes facet. Terms for items permanently installed into the fabric of the built environment (e.g. \"altars\") are Components, while movable articles used to furnish indoor or outdoor spaces are in the Furnishings hierarchy."@en ;
   crm:P127_has_broader_term aat:300264092 .
 
 aat:300241583 a crm:E55_Type ;
   skos:prefLabel "components (objects parts)"@en ;
+  skos:scopeNote "Constituent parts of a larger object. A component differs from an item in that the item can stand alone as an independent work but the component typically cannot or does not stand alone. Examples are a panel of a polyptych or a discrete architectural component such as a dome."@en ;
   crm:P127_has_broader_term aat:300241490 .
 
 aat:300241584 a crm:E55_Type ;
@@ -30,17 +33,21 @@ aat:300241584 a crm:E55_Type ;
 
 aat:300037204 a crm:E55_Type ;
   skos:prefLabel "weapon components"@en ;
+  skos:scopeNote "Parts and components of weapons."@en ;
   crm:P127_has_broader_term aat:300241584 .
 
 aat:300037110 a crm:E55_Type ;
   skos:prefLabel "edged weapon components"@en ;
+  skos:scopeNote "Parts and components of edged weapons."@en ;
   crm:P127_has_broader_term aat:300037204 .
 
 aat:300211001 a crm:E55_Type ;
   skos:prefLabel "staff weapon components"@en ;
+  skos:scopeNote "Parts or components of staff weapons."@en ;
   crm:P127_has_broader_term aat:300037110 .
 
 aat:300037118 a crm:E55_Type ;
   skos:prefLabel "spearheads"@en ;
+  skos:scopeNote "The sharp-pointed heads of spears."@en ;
   crm:P127_has_broader_term aat:300211001 .
 
