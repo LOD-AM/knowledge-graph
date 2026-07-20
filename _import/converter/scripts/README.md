@@ -11,7 +11,7 @@ Uses the working Getty SPARQL XML endpoint to fetch broader terms for AAT entiti
 **Features:**
 - Uses the `sparql.xml` endpoint which works with external clients
 - Based on the query pattern that works in YASGUI
-- Adds CIDOC-CRM mappings (E55_Type, P2_has_type, P127_has_broader_term)
+- Adds CIDOC-CRM mappings (E55_Type, skos:prefLabel, P127_has_broader_term)
 - Outputs clean Turtle format
 
 **Usage:**
@@ -87,7 +87,7 @@ The scripts map Getty AAT concepts to CIDOC-CRM as follows:
 | Getty AAT | CIDOC-CRM | Property |
 |-----------|-----------|----------|
 | Concept | E55_Type | Class |
-| prefLabel | P2_has_type | Property |
+| prefLabel | skos:prefLabel | Property |
 | broader | P127_has_broader_term | Property |
 | narrower | P128_is_type_for | Property |
 

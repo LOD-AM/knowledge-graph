@@ -30,7 +30,7 @@ const config = {
   // CIDOC-CRM properties
   cidoc: {
     typeClass: 'crm:E55_Type',
-    typeProperty: 'crm:P2_has_type',
+    typeProperty: 'skos:prefLabel',
     broaderProperty: 'crm:P127_has_broader_term',
     narrowerProperty: 'crm:P128_is_type_for'
   },
