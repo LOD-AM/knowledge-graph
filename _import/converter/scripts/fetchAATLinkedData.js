@@ -7,9 +7,9 @@
  * Usage: node fetchAATLinkedData.js
  * 
  * This approach uses the direct entity URLs like:
- *   http://vocab.getty.edu/page/aat/300037118.jsonld
+ *   https://vocab.getty.edu/page/aat/300037118.jsonld
  * 
- * Which return JSON-LD with full hierarchy information.
+ * Note: Uses HTTPS and follows redirects automatically.
  */
 
 const fs = require('fs');
@@ -19,8 +19,8 @@ const { URL } = require('url');
 
 // Configuration
 const config = {
-  // Base URL for AAT Linked Data
-  baseUrl: 'http://vocab.getty.edu/page/aat/',
+  // Base URL for AAT Linked Data - use HTTPS
+  baseUrl: 'https://vocab.getty.edu/page/aat/',
   
   // Target AAT entities (can use full URI or just the numeric ID)
   targetEntities: [
@@ -52,26 +52,25 @@ let entitiesProcessed = 0;
 let broaderTermsFound = 0;
 
 /**
- * Fetch JSON-LD for a single AAT entity
+ * Follow HTTP redirects and return the final URL and data
  */
-function fetchEntity(entityId) {
+function followRedirects(url, maxRedirects = 5, depth = 0) {
   return new Promise((resolve, reject) => {
-    requestsMade++;
+    if (depth >= maxRedirects) {
+      reject(new Error(`Too many redirects (${maxRedirects})`));
+      return;
+    }
     
-    const url = `${config.baseUrl}${entityId}.jsonld`;
     const parsedUrl = new URL(url);
-    
-    console.log(`Fetching: ${url}`);
+    const protocol = parsedUrl.protocol === 'https:' ? https : http;
     
     const options = {
       hostname: parsedUrl.hostname,
-      port: parsedUrl.port || 80,
+      port: parsedUrl.port || (parsedUrl.protocol === 'https:' ? 443 : 80),
       path: parsedUrl.pathname + parsedUrl.search,
       method: 'GET',
       headers: config.headers
     };
-    
-    const protocol = parsedUrl.protocol === 'https:' ? https : http;
     
     const req = protocol.request(options, (res) => {
       let data = '';
@@ -81,13 +80,18 @@ function fetchEntity(entityId) {
       });
       
       res.on('end', () => {
+        // Follow redirects (301, 302, 303, 307, 308)
+        if ([301, 302, 303, 307, 308].includes(res.statusCode) && res.headers.location) {
+          const redirectUrl = new URL(res.headers.location, url).toString();
+          console.log(`  Following redirect: ${url} -> ${redirectUrl}`);
+          followRedirects(redirectUrl, maxRedirects, depth + 1)
+            .then(resolve)
+            .catch(reject);
+          return;
+        }
+        
         if (res.statusCode === 200) {
-          try {
-            const json = JSON.parse(data);
-            resolve(json);
-          } catch (e) {
-            reject(new Error(`Failed to parse JSON: ${e.message}`));
-          }
+          resolve({ data, url: url, statusCode: res.statusCode });
         } else {
           reject(new Error(`Request failed with status ${res.statusCode}: ${data.substring(0, 200)}`));
         }
@@ -99,6 +103,29 @@ function fetchEntity(entityId) {
     });
     
     req.end();
+  });
+}
+
+/**
+ * Fetch JSON-LD for a single AAT entity
+ */
+function fetchEntity(entityId) {
+  return new Promise((resolve, reject) => {
+    requestsMade++;
+    
+    const url = `${config.baseUrl}${entityId}.jsonld`;
+    console.log(`Fetching: ${url}`);
+    
+    followRedirects(url)
+      .then(({ data }) => {
+        try {
+          const json = JSON.parse(data);
+          resolve(json);
+        } catch (e) {
+          reject(new Error(`Failed to parse JSON: ${e.message}\nData: ${data.substring(0, 200)}`));
+        }
+      })
+      .catch(reject);
   });
 }
 
