@@ -7,8 +7,11 @@
 @prefix aat: <http://vocab.getty.edu/page/aat/> .
 
 # Getty AAT Broader Terms with CIDOC-CRM mappings
-# Generated: 2026-07-20T09:21:54.760Z
+# Generated: 2026-07-20T09:27:15.250Z
 # Endpoint: https://vocab.getty.edu/sparql.xml
+# AAT Prefix: http://vocab.getty.edu/page/aat/
 
-# Error processing http://vocab.getty.edu/page/aat/300037118: Request failed with status 500: 
+# http://vocab.getty.edu/page/aat/300037118
+<http://vocab.getty.edu/page/aat/300037118> a crm:E55_Type 
+.
 
