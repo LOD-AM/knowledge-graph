@@ -1,30 +1,30 @@
 /**
  * Getty AAT Broader Terms Fetcher via SPARQL XML Endpoint
  * 
- * Uses the working sparql.xml endpoint with the query pattern that works in YASGUI.
+ * Uses the working sparql.xml endpoint with the exact query pattern that works with curl.
  * Fetches broader terms for specified AAT entities and saves with CIDOC-CRM mappings.
  * 
  * Usage: node fetchAATBroaderYASGUI.js
  * 
- * Note: This uses the sparql.xml endpoint which works with external clients like YASGUI.
- * The correct prefix for AAT URIs is <http://vocab.getty.edu/page/aat/>
+ * Note: Uses the same approach as the working curl command:
+ *   curl -H "Accept: application/sparql-results+xml" \
+ *        -H "User-Agent: Mozilla/5.0 (compatible; YASGUI/3.0)" \
+ *        "https://vocab.getty.edu/sparql.xml?query=..."
  */
 
 const fs = require('fs');
 const https = require('https');
-const http = require('http');
 const { URL } = require('url');
 
 // Configuration
 const config = {
-  // SPARQL endpoint that works (via YASGUI discovery)
+  // SPARQL endpoint that works
   endpoint: 'https://vocab.getty.edu/sparql.xml',
   
   // Target AAT entities (can use full URI or just the numeric ID)
   targetEntities: [
-    'http://vocab.getty.edu/page/aat/300037118',
-    // Add more entities here as needed
-    // '300037118',  // Short form also works
+    '300037118',
+    // Add more entity IDs here
   ],
   
   // Output file
@@ -38,16 +38,16 @@ const config = {
     narrowerProperty: 'crm:P128_is_type_for'
   },
   
-  // Request headers that mimic a browser/YASGUI
+  // Headers that work (from the successful curl command)
   headers: {
     'Accept': 'application/sparql-results+xml',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-    'Accept-Language': 'en-US,en;q=0.9',
-    'Connection': 'keep-alive'
+    'User-Agent': 'Mozilla/5.0 (compatible; YASGUI/3.0)'
   },
   
-  // Correct prefix for AAT - note the /page/ in the path
-  aatPrefix: 'http://vocab.getty.edu/page/aat/'
+  // AAT prefix - note: the query uses aat: <http://vocab.getty.edu/aat/>
+  // but the actual URIs returned are http://vocab.getty.edu/aat/...
+  // This works because Getty's endpoint handles both
+  aatPrefix: 'http://vocab.getty.edu/aat/'
 };
 
 // Statistics
@@ -57,157 +57,81 @@ let broaderTermsFound = 0;
 
 /**
  * Execute SPARQL query against Getty endpoint
- * Tries multiple approaches to avoid blocking
+ * Uses GET with query in URL, exactly like the working curl command
  */
-async function executeQuery(query) {
-  const approaches = [
-    // Approach 1: GET with query in URL (original)
-    { method: 'GET', path: (url) => `${url.pathname}?query=${encodeURIComponent(query)}` },
-    // Approach 2: GET with query in URL and format parameter
-    { method: 'GET', path: (url) => `${url.pathname}?query=${encodeURIComponent(query)}&format=xml` },
-    // Approach 3: POST with URL-encoded form data
-    { method: 'POST', path: (url) => url.pathname, body: `query=${encodeURIComponent(query)}&format=xml` },
-  ];
-  
-  let lastError = null;
-  
-  for (const approach of approaches) {
+function executeQuery(query) {
+  return new Promise((resolve, reject) => {
     requestsMade++;
     
-    try {
-      const parsedUrl = new URL(config.endpoint);
-      const path = approach.path(parsedUrl);
+    const parsedUrl = new URL(config.endpoint);
+    const fullUrl = `${config.endpoint}?query=${encodeURIComponent(query)}`;
+    
+    console.log(`  Executing: GET ${fullUrl.substring(0, 100)}...`);
+    
+    const options = {
+      hostname: parsedUrl.hostname,
+      port: parsedUrl.port || 443,
+      path: parsedUrl.pathname + '?query=' + encodeURIComponent(query),
+      method: 'GET',
+      headers: config.headers
+    };
+    
+    const req = https.request(options, (res) => {
+      let data = '';
       
-      const options = {
-        hostname: parsedUrl.hostname,
-        port: parsedUrl.port || (parsedUrl.protocol === 'https:' ? 443 : 80),
-        path: path,
-        method: approach.method,
-        headers: {
-          ...config.headers,
-          'Content-Type': approach.method === 'POST' ? 'application/x-www-form-urlencoded' : undefined,
-          'Content-Length': approach.body ? Buffer.byteLength(approach.body) : undefined
-        }
-      };
-      
-      console.log(`  Trying approach ${requestsMade}: ${approach.method} ${path.substring(0, 80)}...`);
-      
-      const protocol = parsedUrl.protocol === 'https:' ? https : http;
-      
-      return new Promise((resolve, reject) => {
-        const req = protocol.request(options, (res) => {
-          let data = '';
-          
-          res.on('data', (chunk) => {
-            data += chunk;
-          });
-          
-          res.on('end', () => {
-            console.log(`    Response: ${res.statusCode} (${data.length} bytes)`);
-            
-            if (res.statusCode === 200) {
-              // Check if it's actually SPARQL results
-              if (data.includes('<sparql') || data.includes('<results') || data.includes('<result')) {
-                console.log(`    Success! Got SPARQL results`);
-                resolve({ data, statusCode: res.statusCode });
-              } else {
-                console.log(`    Got data but not SPARQL results. First 200 chars: ${data.substring(0, 200)}`);
-                reject(new Error(`Non-SPARQL response: ${res.statusCode}`));
-              }
-            } else {
-              console.log(`    Failed with status ${res.statusCode}`);
-              console.log(`    Response: ${data.substring(0, 200)}`);
-              reject(new Error(`Request failed with status ${res.statusCode}`));
-            }
-          });
-        });
-        
-        req.on('error', (error) => {
-          console.log(`    Request error: ${error.message}`);
-          reject(error);
-        });
-        
-        // Write body for POST
-        if (approach.body) {
-          req.write(approach.body);
-        }
-        
-        req.end();
+      res.on('data', (chunk) => {
+        data += chunk;
       });
-    } catch (error) {
-      lastError = error;
-      console.log(`    Approach failed: ${error.message}`);
-    }
-  }
-  
-  throw lastError || new Error('All approaches failed');
+      
+      res.on('end', () => {
+        console.log(`    Response: ${res.statusCode} (${data.length} bytes)`);
+        
+        if (res.statusCode === 200) {
+          // Check if it's SPARQL XML results
+          if (data.includes('<sparql') || data.includes('<results')) {
+            resolve({ data, statusCode: res.statusCode });
+          } else {
+            console.log(`    Unexpected response: ${data.substring(0, 200)}`);
+            reject(new Error(`Unexpected response: ${res.statusCode}`));
+          }
+        } else {
+          console.log(`    Error response: ${data.substring(0, 200)}`);
+          reject(new Error(`Request failed with status ${res.statusCode}`));
+        }
+      });
+    });
+    
+    req.on('error', (error) => {
+      reject(error);
+    });
+    
+    req.end();
+  });
 }
 
 /**
- * Parse SPARQL XML results - improved version
+ * Parse SPARQL XML results
+ * Handles the format returned by Getty's SPARQL endpoint
  */
 function parseSparqlXml(xml) {
   const results = [];
   
-  // First, try to extract all bindings from the XML
-  const bindings = {};
-  
-  // Match all binding elements
-  const bindingRegex = /<binding name="([^"]+)">\s*<([^>]+)>([\s\S]*?)<\/\2>\s*<\/binding>/g;
+  // Extract all result sections
+  const resultRegex = /<result>([\s\S]*?)<\/result>/g;
   let match;
   
-  while ((match = bindingRegex.exec(xml)) !== null) {
-    const [, name, type, value] = match;
-    if (!bindings[name]) {
-      bindings[name] = [];
-    }
-    bindings[name].push({ type, value: value.trim() });
-  }
-  
-  // Now group by result
-  // Count the number of results by looking at the number of times the first binding appears
-  if (bindings.broader) {
-    for (let i = 0; i < bindings.broader.length; i++) {
-      const result = {};
-      for (const [name, values] of Object.entries(bindings)) {
-        if (values[i]) {
-          result[name] = values[i].value;
-        }
-      }
-      results.push(result);
-    }
-  }
-  
-  console.log(`    Parsed ${results.length} results from XML`);
-  if (results.length > 0) {
-    console.log(`    First result:`, results[0]);
-  } else {
-    console.log(`    XML snippet: ${xml.substring(0, 500)}`);
-  }
-  
-  return results;
-}
-
-/**
- * Alternative parser using regex to extract results more reliably
- */
-function parseSparqlXmlAlternative(xml) {
-  const results = [];
-  
-  // Split by result tags
-  const resultSections = xml.split(/<result[^>]*>/).slice(1);
-  
-  for (const section of resultSections) {
+  while ((match = resultRegex.exec(xml)) !== null) {
+    const resultSection = match[1];
     const result = {};
     
     // Extract broader URI
-    const broaderMatch = section.match(/<binding name="broader">\s*<uri>([\s\S]*?)<\/uri>\s*<\/binding>/);
+    const broaderMatch = resultSection.match(/<binding name="broader">\s*<uri>([\s\S]*?)<\/uri>\s*<\/binding>/);
     if (broaderMatch) {
       result.broader = broaderMatch[1].trim();
     }
     
     // Extract broaderLabel literal
-    const labelMatch = section.match(/<binding name="broaderLabel">\s*<literal([^>]*)>([\s\S]*?)<\/literal>\s*<\/binding>/);
+    const labelMatch = resultSection.match(/<binding name="broaderLabel">\s*<literal([^>]*)>([\s\S]*?)<\/literal>\s*<\/binding>/);
     if (labelMatch) {
       result.broaderLabel = labelMatch[2].trim();
     }
@@ -217,9 +141,9 @@ function parseSparqlXmlAlternative(xml) {
     }
   }
   
-  console.log(`    Alternative parser found ${results.length} results`);
+  console.log(`    Parsed ${results.length} results`);
   if (results.length > 0) {
-    console.log(`    First result:`, results[0]);
+    console.log(`    Sample:`, results[0]);
   }
   
   return results;
@@ -237,7 +161,6 @@ function extractLanguage(literal) {
  * Clean literal value
  */
 function cleanLiteral(literal) {
-  // Remove XML tags and unescape
   return literal
     .replace(/<[^>]*>/g, '')
     .replace(/&lt;/g, '<')
@@ -275,38 +198,35 @@ function generateConceptTurtle(conceptUri, label, broaderUris = []) {
 }
 
 /**
- * Normalize entity URI - ensure it has the full path
+ * Normalize entity ID to full URI
  */
-function normalizeEntityUri(entityUri) {
-  // If it's just a number, add the full prefix
-  if (/^\d+$/.test(entityUri)) {
-    return `${config.aatPrefix}${entityUri}`;
+function normalizeEntityUri(entityId) {
+  // If it's a full URI, return as-is
+  if (entityId.startsWith('http')) {
+    return entityId;
   }
-  
-  // If it's aat:300037118 format, expand it
-  if (entityUri.startsWith('aat:')) {
-    return `${config.aatPrefix}${entityUri.substring(4)}`;
+  // If it's aat:ID format
+  if (entityId.startsWith('aat:')) {
+    return `${config.aatPrefix}${entityId.substring(4)}`;
   }
-  
-  // If it's already a full URI, return as-is
-  return entityUri;
+  // If it's just a number, use the aat: prefix format that works in the query
+  return `${config.aatPrefix}${entityId}`;
 }
 
 /**
  * Build SPARQL query for broader terms
- * Uses the correct prefix: http://vocab.getty.edu/page/aat/
+ * Uses the exact query pattern that works with curl
  */
-function buildBroaderQuery(entityUri) {
-  const fullUri = normalizeEntityUri(entityUri);
+function buildBroaderQuery(entityId) {
+  const normalizedId = entityId.replace(/^http:\/\/vocab\.getty\.edu\/page\/aat\//, '');
   
-  // Use the working query pattern from YASGUI with CORRECT prefix
-  return `PREFIX aat: <${config.aatPrefix}>
+  return `PREFIX aat: <http://vocab.getty.edu/aat/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX gvp: <http://vocab.getty.edu/ontology#>
 PREFIX xl: <http://www.w3.org/2008/05/skos-xl#>
 
 SELECT DISTINCT ?broader ?broaderLabel WHERE {
-  <${fullUri}> gvp:broaderPreferred ?broader .
+  aat:${normalizedId} gvp:broaderPreferred ?broader .
   ?broader gvp:prefLabelGVP ?labelNode .
   ?labelNode xl:literalForm ?broaderLabel .
 }
@@ -316,21 +236,14 @@ ORDER BY ?broaderLabel`;
 /**
  * Process a single entity
  */
-async function processEntity(entityUri) {
-  console.log(`\nProcessing entity: ${entityUri}`);
+async function processEntity(entityId) {
+  console.log(`\nProcessing entity: ${entityId}`);
   
   try {
-    const query = buildBroaderQuery(entityUri);
-    console.log('  Query preview:', query.replace(/\n/g, ' ').substring(0, 150) + '...');
-    
+    const query = buildBroaderQuery(entityId);
     const { data } = await executeQuery(query);
     
-    // Try both parsers
-    let results = parseSparqlXml(data);
-    if (results.length === 0) {
-      console.log('  Primary parser found no results, trying alternative...');
-      results = parseSparqlXmlAlternative(data);
-    }
+    const results = parseSparqlXml(data);
     
     console.log(`  Found ${results.length} broader terms`);
     broaderTermsFound += results.length;
@@ -341,10 +254,12 @@ async function processEntity(entityUri) {
       label: r.broaderLabel
     }));
     
-    return { entityUri: normalizeEntityUri(entityUri), broaderTerms };
+    const fullUri = normalizeEntityUri(entityId);
+    
+    return { entityUri: fullUri, broaderTerms };
   } catch (error) {
-    console.error(`  Error processing ${entityUri}: ${error.message}`);
-    return { entityUri: normalizeEntityUri(entityUri), broaderTerms: [], error: error.message };
+    console.error(`  Error: ${error.message}`);
+    return { entityUri: normalizeEntityUri(entityId), broaderTerms: [], error: error.message };
   }
 }
 
@@ -366,8 +281,7 @@ function writeResults(results) {
   // Write header
   output.write(`# Getty AAT Broader Terms with CIDOC-CRM mappings\n`);
   output.write(`# Generated: ${new Date().toISOString()}\n`);
-  output.write(`# Endpoint: ${config.endpoint}\n`);
-  output.write(`# AAT Prefix: ${config.aatPrefix}\n\n`);
+  output.write(`# Endpoint: ${config.endpoint}\n\n`);
   
   // Write each entity and its broader terms
   for (const result of results) {
@@ -378,7 +292,11 @@ function writeResults(results) {
     
     // Write the main entity
     output.write(`# ${result.entityUri}\n`);
-    output.write(generateConceptTurtle(result.entityUri, null, result.broaderTerms.map(b => b.uri)) + '\n');
+    output.write(generateConceptTurtle(
+      result.entityUri, 
+      null, 
+      result.broaderTerms.map(b => b.uri)
+    ) + '\n');
     output.write('.\n\n');
     
     // Write each broader term as a separate entity
@@ -407,14 +325,14 @@ async function main() {
   
   const results = [];
   
-  // Process each entity sequentially (to avoid rate limiting)
-  for (const entityUri of config.targetEntities) {
-    const result = await processEntity(entityUri);
+  // Process each entity sequentially
+  for (const entityId of config.targetEntities) {
+    const result = await processEntity(entityId);
     results.push(result);
     entitiesProcessed++;
     
-    // Small delay between requests to be polite
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Small delay between requests
+    await new Promise(resolve => setTimeout(resolve, 500));
   }
   
   // Write results
