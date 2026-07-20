@@ -284,7 +284,7 @@ function normalizeEntityUri(entityId) {
 
 /**
  * Build SPARQL query for entity label, scope note, and broader terms
- * Uses UNION to try multiple scope note patterns
+ * Getty AAT structure: Entity -> skos:scopeNote -> ScopeNote resource -> rdf:value
  */
 function buildEntityQuery(entityId) {
   const normalizedId = entityId.replace(/^http:\/\/vocab\.getty\.edu\/(page\/)?aat\//, '');
@@ -306,16 +306,9 @@ SELECT DISTINCT ?broader ?broaderLabel ?entityLabel ?scopeNote WHERE {
   }
   
   OPTIONAL {
-    {
-      aat:${normalizedId} skos:scopeNote ?scopeNote .
-      FILTER(LANG(?scopeNote) = "en" || LANG(?scopeNote) = "")
-    }
-    UNION
-    {
-      aat:${normalizedId} gvp:scopeNote ?scopeNoteNode .
-      ?scopeNoteNode gvp:scopeNoteText ?scopeNote .
-      FILTER(LANG(?scopeNote) = "en" || LANG(?scopeNote) = "")
-    }
+    aat:${normalizedId} skos:scopeNote ?scopeNoteUri .
+    ?scopeNoteUri rdf:value ?scopeNote .
+    FILTER(LANG(?scopeNote) = "en")
   }
 }
 ORDER BY ?broaderLabel`;
@@ -359,7 +352,7 @@ async function fetchEntityData(entityId, depth = 0) {
       for (const r of results) {
         if (r.scopeNote) {
           const lang = extractLanguage(r.scopeNote);
-          if (lang === 'en' || lang === '') {
+          if (lang === 'en') {
             entityScopeNote = cleanLiteral(r.scopeNote);
             break;
           }
