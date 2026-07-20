@@ -2,7 +2,7 @@
  * Getty AAT Type Fetcher
  * 
  * Fetches AAT entities and their complete broader hierarchy recursively,
- * converting them to CIDOC-CRM format with SKOS labels.
+ * converting them to CIDOC-CRM format with SKOS labels and scope notes.
  * 
  * Usage:
  *   node fetchType.js [options]
@@ -122,7 +122,7 @@ Getty AAT Type Fetcher
 ======================
 
 Fetches AAT entities and their complete broader hierarchy, converting to
-CIDOC-CRM format with SKOS labels.
+CIDOC-CRM format with SKOS labels and scope notes.
 
 Usage:
   node fetchType.js [options]
@@ -147,6 +147,7 @@ Output:
 CIDOC-CRM Mappings:
   AAT Concept    -> crm:E55_Type
   prefLabel      -> skos:prefLabel
+  scopeNote      -> skos:scopeNote (English only)
   broader        -> crm:P127_has_broader_term
   narrower       -> crm:P128_is_type_for
 `);
@@ -222,6 +223,11 @@ function parseSparqlXml(xml) {
       result.entityLabel = entityLabelMatch[2].trim();
     }
     
+    const scopeNoteMatch = resultSection.match(/<binding name=['"]scopeNote['"]>\s*<literal([^>]*)>([\s\S]*?)<\/literal>\s*<\/binding>/);
+    if (scopeNoteMatch) {
+      result.scopeNote = scopeNoteMatch[2].trim();
+    }
+    
     if (Object.keys(result).length > 0) {
       results.push(result);
     }
@@ -277,7 +283,7 @@ function normalizeEntityUri(entityId) {
 }
 
 /**
- * Build SPARQL query for entity label and broader terms
+ * Build SPARQL query for entity label, scope note, and broader terms
  */
 function buildEntityQuery(entityId) {
   const normalizedId = entityId.replace(/^http:\/\/vocab\.getty\.edu\/(page\/)?aat\//, '');
@@ -286,21 +292,29 @@ function buildEntityQuery(entityId) {
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX gvp: <http://vocab.getty.edu/ontology#>
 PREFIX xl: <http://www.w3.org/2008/05/skos-xl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
-SELECT DISTINCT ?broader ?broaderLabel ?entityLabel WHERE {
+SELECT DISTINCT ?broader ?broaderLabel ?entityLabel ?scopeNote WHERE {
   aat:${normalizedId} gvp:prefLabelGVP ?entityLabelNode .
   ?entityLabelNode xl:literalForm ?entityLabel .
+  
   OPTIONAL {
     aat:${normalizedId} gvp:broaderPreferred ?broader .
     ?broader gvp:prefLabelGVP ?broaderLabelNode .
     ?broaderLabelNode xl:literalForm ?broaderLabel .
+  }
+  
+  OPTIONAL {
+    aat:${normalizedId} gvp:scopeNote ?scopeNoteNode .
+    ?scopeNoteNode gvp:scopeNoteText ?scopeNote .
+    FILTER(LANG(?scopeNote) = "en" || LANG(?scopeNote) = "")
   }
 }
 ORDER BY ?broaderLabel`;
 }
 
 /**
- * Fetch label and broader terms for a single entity
+ * Fetch label, scope note, and broader terms for a single entity
  */
 async function fetchEntityData(entityId, depth = 0) {
   // Check cache first
@@ -310,7 +324,7 @@ async function fetchEntityData(entityId, depth = 0) {
   
   if (depth > config.maxDepth) {
     console.log(`  Max depth reached for ${entityId}`);
-    return { uri: normalizeEntityUri(entityId), label: null, language: 'en', broader: [] };
+    return { uri: normalizeEntityUri(entityId), label: null, language: 'en', scopeNote: null, broader: [] };
   }
   
   const fullUri = normalizeEntityUri(entityId);
@@ -325,10 +339,24 @@ async function fetchEntityData(entityId, depth = 0) {
     // Extract entity label from first result
     let entityLabel = null;
     let entityLanguage = 'en';
+    let entityScopeNote = null;
     
-    if (results.length > 0 && results[0].entityLabel) {
-      entityLabel = cleanLiteral(results[0].entityLabel);
-      entityLanguage = extractLanguage(results[0].entityLabel);
+    if (results.length > 0) {
+      if (results[0].entityLabel) {
+        entityLabel = cleanLiteral(results[0].entityLabel);
+        entityLanguage = extractLanguage(results[0].entityLabel);
+      }
+      
+      // Find English scope note
+      for (const r of results) {
+        if (r.scopeNote) {
+          const lang = extractLanguage(r.scopeNote);
+          if (lang === 'en' || lang === '') {
+            entityScopeNote = cleanLiteral(r.scopeNote);
+            break;
+          }
+        }
+      }
     }
     
     // Extract broader URIs and labels
@@ -363,6 +391,7 @@ async function fetchEntityData(entityId, depth = 0) {
       uri: fullUri,
       label: entityLabel,
       language: entityLanguage,
+      scopeNote: entityScopeNote,
       broader: fullBroaderTerms
     };
     
@@ -372,7 +401,7 @@ async function fetchEntityData(entityId, depth = 0) {
     return result;
   } catch (error) {
     console.error(`${'  '.repeat(depth)}Error fetching ${entityId}: ${error.message}`);
-    return { uri: fullUri, label: null, language: 'en', broader: [], error: error.message };
+    return { uri: fullUri, label: null, language: 'en', scopeNote: null, broader: [], error: error.message };
   }
 }
 
@@ -405,6 +434,11 @@ function generateFlatTurtle(hierarchy) {
     if (entity.label) {
       const lang = entity.language ? `@${entity.language}` : '';
       entityLines.push(`  ${cfg.typeProperty} "${entity.label.replace(/"/g, '\\"')}"${lang} ;`);
+    }
+    
+    // Add scope note if available
+    if (entity.scopeNote) {
+      entityLines.push(`  skos:scopeNote "${entity.scopeNote.replace(/"/g, '\\"')}"@en ;`);
     }
     
     // Add broader terms

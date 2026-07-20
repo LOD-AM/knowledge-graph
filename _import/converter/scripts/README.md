@@ -1,6 +1,6 @@
 # Getty AAT Type Fetcher
 
-This script fetches Getty Art & Architecture Thesaurus (AAT) entities and their complete broader hierarchy, converting them to CIDOC-CRM format with SKOS labels.
+This script fetches Getty Art & Architecture Thesaurus (AAT) entities and their complete broader hierarchy, converting them to CIDOC-CRM format with SKOS labels and scope notes.
 
 ## Usage
 
@@ -39,6 +39,7 @@ The script maps Getty AAT concepts to CIDOC-CRM as follows:
 |-----------|----------------|----------|
 | Concept | `crm:E55_Type` | Class |
 | prefLabel | `skos:prefLabel` | Property |
+| scopeNote | `skos:scopeNote` | Property (English only) |
 | broader | `crm:P127_has_broader_term` | Property |
 | narrower | `crm:P128_is_type_for` | Property |
 
@@ -47,7 +48,7 @@ The script maps Getty AAT concepts to CIDOC-CRM as follows:
 The script generates a Turtle (`.ttl`) file with:
 - Compact `aat:` prefix for AAT URIs
 - Full CIDOC-CRM and SKOS prefixes
-- Each entity with its type class, label, and broader term relationships
+- Each entity with its type class, label, scope note, and broader term relationships
 - Complete hierarchy from target entity up to root
 
 ### Example Output
@@ -58,14 +59,17 @@ The script generates a Turtle (`.ttl`) file with:
 @prefix aat: <http://vocab.getty.edu/aat/> .
 
 aat:300264092 a crm:E55_Type ;
-  skos:prefLabel "Objects Facet"@en .
+  skos:prefLabel "Objects Facet"@en ;
+  skos:scopeNote "Use for the discipline of ..."@en .
 
 aat:300241490 a crm:E55_Type ;
   skos:prefLabel "Components (hierarchy name)"@en ;
+  skos:scopeNote "Hierarchy for components..."@en ;
   crm:P127_has_broader_term aat:300264092 .
 
 aat:300037118 a crm:E55_Type ;
   skos:prefLabel "staff weapon components"@en ;
+  skos:scopeNote "Components that are parts of staff weapons."@en ;
   crm:P127_has_broader_term aat:300211001 .
 ```
 
@@ -75,6 +79,8 @@ Getty uses a SKOS-XL model with custom extensions:
 
 - `gvp:prefLabelGVP` → Preferred label (guaranteed 1 per concept)
 - `gvp:broaderPreferred` → Broader relationship
+- `gvp:scopeNote` → Scope note with language information
+- `gvp:scopeNoteText` → Text value of scope note
 - `skos:broader` / `skos:narrower` → Standard SKOS hierarchy
 - `xl:literalForm` → Literal value of a label
 
