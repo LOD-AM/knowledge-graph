@@ -305,8 +305,7 @@ SELECT DISTINCT ?broader ?broaderLabel ?entityLabel ?scopeNote WHERE {
   }
   
   OPTIONAL {
-    aat:${normalizedId} gvp:scopeNote ?scopeNoteNode .
-    ?scopeNoteNode gvp:scopeNoteText ?scopeNote .
+    aat:${normalizedId} skos:scopeNote ?scopeNote .
     FILTER(LANG(?scopeNote) = "en" || LANG(?scopeNote) = "")
   }
 }
