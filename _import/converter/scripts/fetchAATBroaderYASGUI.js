@@ -38,10 +38,12 @@ const config = {
     narrowerProperty: 'crm:P128_is_type_for'
   },
   
-  // Request headers that mimic YASGUI
+  // Request headers that mimic a browser/YASGUI
   headers: {
     'Accept': 'application/sparql-results+xml',
-    'User-Agent': 'YASGUI/3.0 (Mozilla/5.0; compatible; LOD-AM Converter)'
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+    'Accept-Language': 'en-US,en;q=0.9',
+    'Connection': 'keep-alive'
   },
   
   // Correct prefix for AAT - note the /page/ in the path
@@ -55,49 +57,90 @@ let broaderTermsFound = 0;
 
 /**
  * Execute SPARQL query against Getty endpoint
+ * Tries multiple approaches to avoid blocking
  */
-function executeQuery(query) {
-  return new Promise((resolve, reject) => {
+async function executeQuery(query) {
+  const approaches = [
+    // Approach 1: GET with query in URL (original)
+    { method: 'GET', path: (url) => `${url.pathname}?query=${encodeURIComponent(query)}` },
+    // Approach 2: GET with query in URL and format parameter
+    { method: 'GET', path: (url) => `${url.pathname}?query=${encodeURIComponent(query)}&format=xml` },
+    // Approach 3: POST with URL-encoded form data
+    { method: 'POST', path: (url) => url.pathname, body: `query=${encodeURIComponent(query)}&format=xml` },
+  ];
+  
+  let lastError = null;
+  
+  for (const approach of approaches) {
     requestsMade++;
     
-    const parsedUrl = new URL(config.endpoint);
-    const options = {
-      hostname: parsedUrl.hostname,
-      port: parsedUrl.port || (parsedUrl.protocol === 'https:' ? 443 : 80),
-      path: parsedUrl.pathname + '?query=' + encodeURIComponent(query),
-      method: 'GET',
-      headers: config.headers
-    };
-    
-    console.log(`Executing query ${requestsMade}...`);
-    
-    const protocol = parsedUrl.protocol === 'https:' ? https : http;
-    
-    const req = protocol.request(options, (res) => {
-      let data = '';
+    try {
+      const parsedUrl = new URL(config.endpoint);
+      const path = approach.path(parsedUrl);
       
-      res.on('data', (chunk) => {
-        data += chunk;
-      });
-      
-      res.on('end', () => {
-        if (res.statusCode === 200) {
-          console.log(`  Response received (${data.length} bytes)`);
-          resolve({ data, statusCode: res.statusCode });
-        } else {
-          console.log(`  Response status: ${res.statusCode}`);
-          console.log(`  Response data: ${data.substring(0, 500)}`);
-          reject(new Error(`Request failed with status ${res.statusCode}`));
+      const options = {
+        hostname: parsedUrl.hostname,
+        port: parsedUrl.port || (parsedUrl.protocol === 'https:' ? 443 : 80),
+        path: path,
+        method: approach.method,
+        headers: {
+          ...config.headers,
+          'Content-Type': approach.method === 'POST' ? 'application/x-www-form-urlencoded' : undefined,
+          'Content-Length': approach.body ? Buffer.byteLength(approach.body) : undefined
         }
+      };
+      
+      console.log(`  Trying approach ${requestsMade}: ${approach.method} ${path.substring(0, 80)}...`);
+      
+      const protocol = parsedUrl.protocol === 'https:' ? https : http;
+      
+      return new Promise((resolve, reject) => {
+        const req = protocol.request(options, (res) => {
+          let data = '';
+          
+          res.on('data', (chunk) => {
+            data += chunk;
+          });
+          
+          res.on('end', () => {
+            console.log(`    Response: ${res.statusCode} (${data.length} bytes)`);
+            
+            if (res.statusCode === 200) {
+              // Check if it's actually SPARQL results
+              if (data.includes('<sparql') || data.includes('<results') || data.includes('<result')) {
+                console.log(`    Success! Got SPARQL results`);
+                resolve({ data, statusCode: res.statusCode });
+              } else {
+                console.log(`    Got data but not SPARQL results. First 200 chars: ${data.substring(0, 200)}`);
+                reject(new Error(`Non-SPARQL response: ${res.statusCode}`));
+              }
+            } else {
+              console.log(`    Failed with status ${res.statusCode}`);
+              console.log(`    Response: ${data.substring(0, 200)}`);
+              reject(new Error(`Request failed with status ${res.statusCode}`));
+            }
+          });
+        });
+        
+        req.on('error', (error) => {
+          console.log(`    Request error: ${error.message}`);
+          reject(error);
+        });
+        
+        // Write body for POST
+        if (approach.body) {
+          req.write(approach.body);
+        }
+        
+        req.end();
       });
-    });
-    
-    req.on('error', (error) => {
-      reject(error);
-    });
-    
-    req.end();
-  });
+    } catch (error) {
+      lastError = error;
+      console.log(`    Approach failed: ${error.message}`);
+    }
+  }
+  
+  throw lastError || new Error('All approaches failed');
 }
 
 /**
@@ -135,9 +178,11 @@ function parseSparqlXml(xml) {
     }
   }
   
-  console.log(`  Parsed ${results.length} results from XML`);
+  console.log(`    Parsed ${results.length} results from XML`);
   if (results.length > 0) {
-    console.log(`  First result:`, results[0]);
+    console.log(`    First result:`, results[0]);
+  } else {
+    console.log(`    XML snippet: ${xml.substring(0, 500)}`);
   }
   
   return results;
@@ -172,9 +217,9 @@ function parseSparqlXmlAlternative(xml) {
     }
   }
   
-  console.log(`  Alternative parser found ${results.length} results`);
+  console.log(`    Alternative parser found ${results.length} results`);
   if (results.length > 0) {
-    console.log(`  First result:`, results[0]);
+    console.log(`    First result:`, results[0]);
   }
   
   return results;
@@ -276,7 +321,7 @@ async function processEntity(entityUri) {
   
   try {
     const query = buildBroaderQuery(entityUri);
-    console.log('Query:', query.replace(/\n/g, ' ').substring(0, 200) + '...');
+    console.log('  Query preview:', query.replace(/\n/g, ' ').substring(0, 150) + '...');
     
     const { data } = await executeQuery(query);
     
