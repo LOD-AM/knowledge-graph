@@ -82,9 +82,12 @@ function executeQuery(query) {
       
       res.on('end', () => {
         if (res.statusCode === 200) {
+          console.log(`  Response received (${data.length} bytes)`);
           resolve({ data, statusCode: res.statusCode });
         } else {
-          reject(new Error(`Request failed with status ${res.statusCode}: ${data.substring(0, 200)}`));
+          console.log(`  Response status: ${res.statusCode}`);
+          console.log(`  Response data: ${data.substring(0, 500)}`);
+          reject(new Error(`Request failed with status ${res.statusCode}`));
         }
       });
     });
@@ -98,44 +101,80 @@ function executeQuery(query) {
 }
 
 /**
- * Parse SPARQL XML results
+ * Parse SPARQL XML results - improved version
  */
 function parseSparqlXml(xml) {
   const results = [];
   
-  // Simple XML parsing (no external dependencies)
-  // Look for <result> tags and extract bindings
-  const resultMatches = xml.match(/<result[^>]*>([\s\S]*?)<\/result>/g) || [];
+  // First, try to extract all bindings from the XML
+  const bindings = {};
   
-  for (const result of resultMatches) {
-    const bindingMatches = result.match(/<binding name="([^"]+)">[\s\S]*?<literal>([\s\S]*?)<\/literal>/g) || [];
-    const bindingMatchesUri = result.match(/<binding name="([^"]+)">[\s\S]*?<uri>([\s\S]*?)<\/uri>/g) || [];
-    
-    const bindings = {};
-    
-    // Parse literal bindings
-    for (const match of bindingMatches) {
-      const nameMatch = match.match(/name="([^"]+)"/);
-      const valueMatch = match.match(/<literal>([\s\S]*?)<\/literal>/);
-      
-      if (nameMatch && valueMatch) {
-        bindings[nameMatch[1]] = valueMatch[1];
+  // Match all binding elements
+  const bindingRegex = /<binding name="([^"]+)">\s*<([^>]+)>([\s\S]*?)<\/\2>\s*<\/binding>/g;
+  let match;
+  
+  while ((match = bindingRegex.exec(xml)) !== null) {
+    const [, name, type, value] = match;
+    if (!bindings[name]) {
+      bindings[name] = [];
+    }
+    bindings[name].push({ type, value: value.trim() });
+  }
+  
+  // Now group by result
+  // Count the number of results by looking at the number of times the first binding appears
+  if (bindings.broader) {
+    for (let i = 0; i < bindings.broader.length; i++) {
+      const result = {};
+      for (const [name, values] of Object.entries(bindings)) {
+        if (values[i]) {
+          result[name] = values[i].value;
+        }
       }
+      results.push(result);
+    }
+  }
+  
+  console.log(`  Parsed ${results.length} results from XML`);
+  if (results.length > 0) {
+    console.log(`  First result:`, results[0]);
+  }
+  
+  return results;
+}
+
+/**
+ * Alternative parser using regex to extract results more reliably
+ */
+function parseSparqlXmlAlternative(xml) {
+  const results = [];
+  
+  // Split by result tags
+  const resultSections = xml.split(/<result[^>]*>/).slice(1);
+  
+  for (const section of resultSections) {
+    const result = {};
+    
+    // Extract broader URI
+    const broaderMatch = section.match(/<binding name="broader">\s*<uri>([\s\S]*?)<\/uri>\s*<\/binding>/);
+    if (broaderMatch) {
+      result.broader = broaderMatch[1].trim();
     }
     
-    // Parse URI bindings
-    for (const match of bindingMatchesUri) {
-      const nameMatch = match.match(/name="([^"]+)"/);
-      const valueMatch = match.match(/<uri>([\s\S]*?)<\/uri>/);
-      
-      if (nameMatch && valueMatch) {
-        bindings[nameMatch[1]] = valueMatch[1];
-      }
+    // Extract broaderLabel literal
+    const labelMatch = section.match(/<binding name="broaderLabel">\s*<literal([^>]*)>([\s\S]*?)<\/literal>\s*<\/binding>/);
+    if (labelMatch) {
+      result.broaderLabel = labelMatch[2].trim();
     }
     
-    if (Object.keys(bindings).length > 0) {
-      results.push(bindings);
+    if (Object.keys(result).length > 0) {
+      results.push(result);
     }
+  }
+  
+  console.log(`  Alternative parser found ${results.length} results`);
+  if (results.length > 0) {
+    console.log(`  First result:`, results[0]);
   }
   
   return results;
@@ -237,11 +276,16 @@ async function processEntity(entityUri) {
   
   try {
     const query = buildBroaderQuery(entityUri);
-    console.log('Query:', query.substring(0, 200) + '...');
+    console.log('Query:', query.replace(/\n/g, ' ').substring(0, 200) + '...');
     
     const { data } = await executeQuery(query);
     
-    const results = parseSparqlXml(data);
+    // Try both parsers
+    let results = parseSparqlXml(data);
+    if (results.length === 0) {
+      console.log('  Primary parser found no results, trying alternative...');
+      results = parseSparqlXmlAlternative(data);
+    }
     
     console.log(`  Found ${results.length} broader terms`);
     broaderTermsFound += results.length;
