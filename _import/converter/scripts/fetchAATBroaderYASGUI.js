@@ -6,10 +6,7 @@
  * 
  * Usage: node fetchAATBroaderYASGUI.js
  * 
- * Note: Uses the same approach as the working curl command:
- *   curl -H "Accept: application/sparql-results+xml" \
- *        -H "User-Agent: Mozilla/5.0 (compatible; YASGUI/3.0)" \
- *        "https://vocab.getty.edu/sparql.xml?query=..."
+ * Note: Uses the same approach as the working curl command.
  */
 
 const fs = require('fs');
@@ -46,7 +43,6 @@ const config = {
   
   // AAT prefix - note: the query uses aat: <http://vocab.getty.edu/aat/>
   // but the actual URIs returned are http://vocab.getty.edu/aat/...
-  // This works because Getty's endpoint handles both
   aatPrefix: 'http://vocab.getty.edu/aat/'
 };
 
@@ -57,17 +53,12 @@ let broaderTermsFound = 0;
 
 /**
  * Execute SPARQL query against Getty endpoint
- * Uses GET with query in URL, exactly like the working curl command
  */
 function executeQuery(query) {
   return new Promise((resolve, reject) => {
     requestsMade++;
     
     const parsedUrl = new URL(config.endpoint);
-    const fullUrl = `${config.endpoint}?query=${encodeURIComponent(query)}`;
-    
-    console.log(`  Executing: GET ${fullUrl.substring(0, 100)}...`);
-    
     const options = {
       hostname: parsedUrl.hostname,
       port: parsedUrl.port || 443,
@@ -84,18 +75,9 @@ function executeQuery(query) {
       });
       
       res.on('end', () => {
-        console.log(`    Response: ${res.statusCode} (${data.length} bytes)`);
-        
         if (res.statusCode === 200) {
-          // Check if it's SPARQL XML results
-          if (data.includes('<sparql') || data.includes('<results')) {
-            resolve({ data, statusCode: res.statusCode });
-          } else {
-            console.log(`    Unexpected response: ${data.substring(0, 200)}`);
-            reject(new Error(`Unexpected response: ${res.statusCode}`));
-          }
+          resolve({ data, statusCode: res.statusCode });
         } else {
-          console.log(`    Error response: ${data.substring(0, 200)}`);
           reject(new Error(`Request failed with status ${res.statusCode}`));
         }
       });
@@ -111,12 +93,12 @@ function executeQuery(query) {
 
 /**
  * Parse SPARQL XML results
- * Handles the format returned by Getty's SPARQL endpoint
+ * Handles both single and double quotes in attribute values
  */
 function parseSparqlXml(xml) {
   const results = [];
   
-  // Extract all result sections
+  // Match result sections (handles both single and double quotes)
   const resultRegex = /<result>([\s\S]*?)<\/result>/g;
   let match;
   
@@ -124,16 +106,16 @@ function parseSparqlXml(xml) {
     const resultSection = match[1];
     const result = {};
     
-    // Extract broader URI
-    const broaderMatch = resultSection.match(/<binding name="broader">\s*<uri>([\s\S]*?)<\/uri>\s*<\/binding>/);
+    // Extract broader URI (handles both quote types)
+    const broaderMatch = resultSection.match(/<binding name=['"]([^'"]+)['"]>\s*<uri>([\s\S]*?)<\/uri>\s*<\/binding>/);
     if (broaderMatch) {
-      result.broader = broaderMatch[1].trim();
+      result.broader = broaderMatch[2].trim();
     }
     
-    // Extract broaderLabel literal
-    const labelMatch = resultSection.match(/<binding name="broaderLabel">\s*<literal([^>]*)>([\s\S]*?)<\/literal>\s*<\/binding>/);
+    // Extract broaderLabel literal (handles both quote types and xml:lang attribute)
+    const labelMatch = resultSection.match(/<binding name=['"]([^'"]+)['"]>\s*<literal([^>]*)>([\s\S]*?)<\/literal>\s*<\/binding>/);
     if (labelMatch) {
-      result.broaderLabel = labelMatch[2].trim();
+      result.broaderLabel = labelMatch[3].trim();
     }
     
     if (Object.keys(result).length > 0) {
@@ -141,20 +123,7 @@ function parseSparqlXml(xml) {
     }
   }
   
-  console.log(`    Parsed ${results.length} results`);
-  if (results.length > 0) {
-    console.log(`    Sample:`, results[0]);
-  }
-  
   return results;
-}
-
-/**
- * Extract language from literal
- */
-function extractLanguage(literal) {
-  const match = literal.match(/xml:lang="([^"]+)"/);
-  return match ? match[1] : 'en';
 }
 
 /**
@@ -215,7 +184,6 @@ function normalizeEntityUri(entityId) {
 
 /**
  * Build SPARQL query for broader terms
- * Uses the exact query pattern that works with curl
  */
 function buildBroaderQuery(entityId) {
   const normalizedId = entityId.replace(/^http:\/\/vocab\.getty\.edu\/page\/aat\//, '');
@@ -246,6 +214,9 @@ async function processEntity(entityId) {
     const results = parseSparqlXml(data);
     
     console.log(`  Found ${results.length} broader terms`);
+    if (results.length > 0) {
+      console.log(`  Sample result:`, results[0]);
+    }
     broaderTermsFound += results.length;
     
     // Extract broader URIs and labels
