@@ -1,97 +1,73 @@
-# Getty AAT Processing Scripts
+# Getty AAT Type Fetcher
 
-This directory contains scripts for processing Getty Art & Architecture Thesaurus (AAT) data and converting it to CIDOC-CRM format.
+This script fetches Getty Art & Architecture Thesaurus (AAT) entities and their complete broader hierarchy, converting them to CIDOC-CRM format with SKOS labels.
 
-## Scripts
+## Usage
 
-### 1. `fetchAATBroaderYASGUI.js` (Recommended)
-
-Uses the working Getty SPARQL XML endpoint to fetch broader terms for AAT entities.
-
-**Features:**
-- Uses the `sparql.xml` endpoint which works with external clients
-- Based on the query pattern that works in YASGUI
-- Adds CIDOC-CRM mappings (E55_Type, skos:prefLabel, P127_has_broader_term)
-- Outputs clean Turtle format
-
-**Usage:**
 ```bash
-# Edit config in the script or create a custom config
-node fetchAATBroaderYASGUI.js
+# Basic usage with default settings
+node fetchType.js
 
-# Or modify the script directly to change target entities
+# With custom entity IDs
+node fetchType.js --entity 300037118,300037110
+
+# With custom output file
+node fetchType.js --output my_types.ttl
+
+# With all options
+node fetchType.js -e 300037118,300037110 -o output.ttl -d 5 -l 1000
+
+# Show help
+node fetchType.js --help
 ```
 
-**Configuration:**
-Edit the `config` object at the top of the script to:
-- Add more target AAT URIs
-- Change the output filename
-- Customize CIDOC-CRM properties
+## Options
 
-**Example Query Used:**
-```sparql
-PREFIX aat: <http://vocab.getty.edu/aat/>
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-PREFIX gvp: <http://vocab.getty.edu/ontology#>
-PREFIX xl: <http://www.w3.org/2008/05/skos-xl#>
-
-SELECT DISTINCT ?broader ?broaderLabel WHERE {
-  aat:300037118 gvp:broaderPreferred ?broader .
-  ?broader gvp:prefLabelGVP ?labelNode .
-  ?labelNode xl:literalForm ?broaderLabel .
-}
-ORDER BY ?broaderLabel
-```
-
----
-
-### 2. `processAATStreaming.js`
-
-Memory-efficient processor for large N-Triples files (e.g., the 3.4GB AAT dump).
-
-**Features:**
-- Streams the N-Triples file line by line (constant memory usage)
-- Extracts broader hierarchical relationships
-- Adds CIDOC-CRM mappings
-- Handles Getty's SKOS-XL model
-
-**Usage:**
-```bash
-# Process a local N-Triples file
-node processAATStreaming.js /path/to/aat.nt
-
-# With custom config
-node processAATStreaming.js /path/to/aat.nt config.json
-```
-
-**Configuration:**
-See `config.json` for configuration options:
-- `targetEntities`: Array of AAT URIs to process
-- `outputFile`: Output Turtle filename
-- `includeNarrower`: Boolean to include narrower terms
-- `cidocProperties`: CIDOC-CRM property mappings
-
----
-
-### 3. `fetchAATBroaderTerms.js`
-
-Original script that attempts to use the Getty SPARQL endpoint directly.
-Note: This may be blocked by Getty's access restrictions.
-
----
+| Option | Short | Description | Default |
+|--------|-------|-------------|---------|
+| `--entity` | `-e` | Comma-separated list of AAT entity IDs | `300037118` |
+| `--output` | `-o` | Output file path | `aat_types_cidoc.ttl` |
+| `--depth` | `-d` | Maximum recursion depth | `10` |
+| `--delay` | `-l` | Delay between requests in ms | `500` |
+| `--help` | `-h` | Show help message | - |
 
 ## CIDOC-CRM Mappings
 
-The scripts map Getty AAT concepts to CIDOC-CRM as follows:
+The script maps Getty AAT concepts to CIDOC-CRM as follows:
 
-| Getty AAT | CIDOC-CRM | Property |
-|-----------|-----------|----------|
-| Concept | E55_Type | Class |
-| prefLabel | skos:prefLabel | Property |
-| broader | P127_has_broader_term | Property |
-| narrower | P128_is_type_for | Property |
+| Getty AAT | CIDOC-CRM/SKOS | Property |
+|-----------|----------------|----------|
+| Concept | `crm:E55_Type` | Class |
+| prefLabel | `skos:prefLabel` | Property |
+| broader | `crm:P127_has_broader_term` | Property |
+| narrower | `crm:P128_is_type_for` | Property |
 
----
+## Output Format
+
+The script generates a Turtle (`.ttl`) file with:
+- Compact `aat:` prefix for AAT URIs
+- Full CIDOC-CRM and SKOS prefixes
+- Each entity with its type class, label, and broader term relationships
+- Complete hierarchy from target entity up to root
+
+### Example Output
+
+```turtle
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix aat: <http://vocab.getty.edu/aat/> .
+
+aat:300264092 a crm:E55_Type ;
+  skos:prefLabel "Objects Facet"@en .
+
+aat:300241490 a crm:E55_Type ;
+  skos:prefLabel "Components (hierarchy name)"@en ;
+  crm:P127_has_broader_term aat:300264092 .
+
+aat:300037118 a crm:E55_Type ;
+  skos:prefLabel "staff weapon components"@en ;
+  crm:P127_has_broader_term aat:300211001 .
+```
 
 ## Getty AAT Data Model
 
@@ -102,8 +78,6 @@ Getty uses a SKOS-XL model with custom extensions:
 - `skos:broader` / `skos:narrower` → Standard SKOS hierarchy
 - `xl:literalForm` → Literal value of a label
 
----
-
 ## Endpoints
 
 - **SPARQL XML (working)**: `https://vocab.getty.edu/sparql.xml`
@@ -111,8 +85,6 @@ Getty uses a SKOS-XL model with custom extensions:
 - **Linked Data (RDF/XML)**: `http://vocab.getty.edu/page/aat/{ID}.rdf`
 - **Linked Data (JSON-LD)**: `http://vocab.getty.edu/page/aat/{ID}.jsonld`
 - **Linked Data (N-Triples)**: `http://vocab.getty.edu/page/aat/{ID}.nt`
-
----
 
 ## Downloads
 

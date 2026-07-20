@@ -1,10 +1,23 @@
 /**
- * Getty AAT Full Hierarchy Fetcher
+ * Getty AAT Type Fetcher
  * 
- * Fetches the complete broader hierarchy for AAT entities recursively.
- * For each entity, gets broader terms, then broader of broader, etc. up to the root.
+ * Fetches AAT entities and their complete broader hierarchy recursively,
+ * converting them to CIDOC-CRM format with SKOS labels.
  * 
- * Usage: node fetchAATFullHierarchy.js
+ * Usage:
+ *   node fetchType.js [options]
+ * 
+ * Options:
+ *   --entity, -e    Comma-separated list of AAT entity IDs (default: 300037118)
+ *   --output, -o    Output file path (default: aat_types_cidoc.ttl)
+ *   --depth, -d     Maximum recursion depth (default: 10)
+ *   --delay, -l     Delay between requests in ms (default: 500)
+ *   --help, -h      Show this help message
+ * 
+ * Examples:
+ *   node fetchType.js
+ *   node fetchType.js --entity 300037118,300037110 --output my_types.ttl
+ *   node fetchType.js -e 300037118 -o output.ttl -d 5
  * 
  * Output: Turtle file with full hierarchy and CIDOC-CRM mappings
  * Uses aat: prefix for compact URIs
@@ -14,24 +27,15 @@ const fs = require('fs');
 const https = require('https');
 const { URL } = require('url');
 
-// Configuration
-const config = {
+// Default configuration
+const defaultConfig = {
   endpoint: 'https://vocab.getty.edu/sparql.xml',
-  
-  // Target AAT entities
-  targetEntities: [
-    '300037118',
-    // Add more entity IDs here
-  ],
-  
-  outputFile: 'aat_full_hierarchy_cidoc.ttl',
-  
-  // Maximum recursion depth (prevent infinite loops)
+  targetEntities: ['300037118'],
+  outputFile: 'aat_types_cidoc.ttl',
   maxDepth: 10,
-  
-  // Delay between requests (ms)
   requestDelay: 500,
   
+  // CIDOC-CRM and SKOS properties
   cidoc: {
     typeClass: 'crm:E55_Type',
     typeProperty: 'skos:prefLabel',
@@ -41,7 +45,7 @@ const config = {
   
   headers: {
     'Accept': 'application/sparql-results+xml',
-    'User-Agent': 'Mozilla/5.0 (compatible; YASGUI/3.0)'
+    'User-Agent': 'Mozilla/5.0 (compatible; LOD-AM Converter/1.0)'
   },
   
   aatPrefix: 'http://vocab.getty.edu/aat/'
@@ -54,6 +58,102 @@ let broaderTermsFound = 0;
 
 // Cache to avoid duplicate requests
 const cache = new Map();
+
+/**
+ * Parse command line arguments
+ */
+function parseArgs() {
+  const args = process.argv.slice(2);
+  const config = { ...defaultConfig };
+  
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    
+    switch (arg) {
+      case '--help':
+      case '-h':
+        showHelp();
+        process.exit(0);
+        break;
+      
+      case '--entity':
+      case '-e':
+        if (args[i + 1]) {
+          config.targetEntities = args[i + 1].split(',').map(s => s.trim());
+          i++;
+        }
+        break;
+        
+      case '--output':
+      case '-o':
+        if (args[i + 1]) {
+          config.outputFile = args[i + 1];
+          i++;
+        }
+        break;
+        
+      case '--depth':
+      case '-d':
+        if (args[i + 1]) {
+          config.maxDepth = parseInt(args[i + 1], 10);
+          i++;
+        }
+        break;
+        
+      case '--delay':
+      case '-l':
+        if (args[i + 1]) {
+          config.requestDelay = parseInt(args[i + 1], 10);
+          i++;
+        }
+        break;
+    }
+  }
+  
+  return config;
+}
+
+/**
+ * Show help message
+ */
+function showHelp() {
+  console.log(`
+Getty AAT Type Fetcher
+======================
+
+Fetches AAT entities and their complete broader hierarchy, converting to
+CIDOC-CRM format with SKOS labels.
+
+Usage:
+  node fetchType.js [options]
+
+Options:
+  --entity, -e    Comma-separated list of AAT entity IDs
+                 (default: ${defaultConfig.targetEntities.join(',')})
+  --output, -o    Output file path (default: ${defaultConfig.outputFile})
+  --depth, -d     Maximum recursion depth (default: ${defaultConfig.maxDepth})
+  --delay, -l     Delay between requests in ms (default: ${defaultConfig.requestDelay})
+  --help, -h      Show this help message
+
+Examples:
+  node fetchType.js
+  node fetchType.js --entity 300037118,300037110 --output my_types.ttl
+  node fetchType.js -e 300037118 -o output.ttl -d 5
+
+Output:
+  Turtle file with full hierarchy and CIDOC-CRM mappings
+  Uses aat: prefix for compact URIs
+
+CIDOC-CRM Mappings:
+  AAT Concept    -> crm:E55_Type
+  prefLabel      -> skos:prefLabel
+  broader        -> crm:P127_has_broader_term
+  narrower       -> crm:P128_is_type_for
+`);
+}
+
+// Parse command line arguments
+const config = parseArgs();
 
 /**
  * Execute SPARQL query
@@ -343,10 +443,11 @@ function writeResults(hierarchies) {
   output.write(`@prefix aat: <${config.aatPrefix}> .\n\n`);
   
   // Write header
-  output.write(`# Getty AAT Full Hierarchy with CIDOC-CRM mappings\n`);
+  output.write(`# Getty AAT Types with CIDOC-CRM mappings\n`);
   output.write(`# Generated: ${new Date().toISOString()}\n`);
   output.write(`# Endpoint: ${config.endpoint}\n`);
-  output.write(`# Max depth: ${config.maxDepth}\n\n`);
+  output.write(`# Max depth: ${config.maxDepth}\n`);
+  output.write(`# Target entities: ${config.targetEntities.join(', ')}\n\n`);
   
   // Write each hierarchy
   for (const hierarchy of hierarchies) {
@@ -362,12 +463,13 @@ function writeResults(hierarchies) {
  * Main function
  */
 async function main() {
-  console.log('Getty AAT Full Hierarchy Fetcher');
-  console.log('=================================');
+  console.log('Getty AAT Type Fetcher');
+  console.log('======================');
   console.log(`Endpoint: ${config.endpoint}`);
-  console.log(`Target entities: ${config.targetEntities.length}`);
+  console.log(`Target entities: ${config.targetEntities.join(', ')}`);
   console.log(`Max depth: ${config.maxDepth}`);
   console.log(`Output file: ${config.outputFile}`);
+  console.log(`Request delay: ${config.requestDelay}ms`);
   console.log('');
   
   const hierarchies = [];
