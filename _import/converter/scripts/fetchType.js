@@ -218,6 +218,11 @@ function parseSparqlXml(xml) {
       result.broaderLabel = labelMatch[2].trim();
     }
     
+    const broaderScopeNoteMatch = resultSection.match(/<binding name=['"]broaderScopeNote['"]>\s*<literal([^>]*)>([\s\S]*?)<\/literal>\s*<\/binding>/);
+    if (broaderScopeNoteMatch) {
+      result.broaderScopeNote = broaderScopeNoteMatch[2].trim();
+    }
+    
     const entityLabelMatch = resultSection.match(/<binding name=['"]entityLabel['"]>\s*<literal([^>]*)>([\s\S]*?)<\/literal>\s*<\/binding>/);
     if (entityLabelMatch) {
       result.entityLabel = entityLabelMatch[2].trim();
@@ -283,7 +288,7 @@ function normalizeEntityUri(entityId) {
 }
 
 /**
- * Build SPARQL query for entity label, scope note, and broader terms
+ * Build SPARQL query for entity label, scope note, and broader terms with their scope notes
  * Getty AAT structure: Entity -> skos:scopeNote -> ScopeNote resource -> rdf:value
  */
 function buildEntityQuery(entityId) {
@@ -295,7 +300,7 @@ PREFIX gvp: <http://vocab.getty.edu/ontology#>
 PREFIX xl: <http://www.w3.org/2008/05/skos-xl#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
-SELECT DISTINCT ?broader ?broaderLabel ?entityLabel ?scopeNote WHERE {
+SELECT DISTINCT ?broader ?broaderLabel ?broaderScopeNote ?entityLabel ?scopeNote WHERE {
   aat:${normalizedId} gvp:prefLabelGVP ?entityLabelNode .
   ?entityLabelNode xl:literalForm ?entityLabel .
   
@@ -303,6 +308,11 @@ SELECT DISTINCT ?broader ?broaderLabel ?entityLabel ?scopeNote WHERE {
     aat:${normalizedId} gvp:broaderPreferred ?broader .
     ?broader gvp:prefLabelGVP ?broaderLabelNode .
     ?broaderLabelNode xl:literalForm ?broaderLabel .
+    OPTIONAL {
+      ?broader skos:scopeNote ?broaderScopeNoteUri .
+      ?broaderScopeNoteUri rdf:value ?broaderScopeNote .
+      FILTER(LANG(?broaderScopeNote) = "en")
+    }
   }
   
   OPTIONAL {
@@ -348,7 +358,7 @@ async function fetchEntityData(entityId, depth = 0) {
         entityLanguage = extractLanguage(results[0].entityLabel);
       }
       
-      // Find English scope note
+      // Find English scope note for the entity
       for (const r of results) {
         if (r.scopeNote) {
           const lang = extractLanguage(r.scopeNote);
@@ -360,15 +370,26 @@ async function fetchEntityData(entityId, depth = 0) {
       }
     }
     
-    // Extract broader URIs and labels
+    // Extract broader URIs, labels, and scope notes
     const broaderTerms = [];
     for (const r of results) {
       if (r.broader) {
         const language = extractLanguage(r.broaderLabel);
+        let broaderScopeNote = null;
+        
+        // Check if this result has a broaderScopeNote
+        if (r.broaderScopeNote) {
+          const lang = extractLanguage(r.broaderScopeNote);
+          if (lang === 'en') {
+            broaderScopeNote = cleanLiteral(r.broaderScopeNote);
+          }
+        }
+        
         broaderTerms.push({
           uri: r.broader,
           label: cleanLiteral(r.broaderLabel),
-          language: language
+          language: language,
+          scopeNote: broaderScopeNote
         });
       }
     }
