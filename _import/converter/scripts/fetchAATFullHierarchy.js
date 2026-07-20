@@ -54,6 +54,8 @@ let broaderTermsFound = 0;
 
 // Cache to avoid duplicate requests
 const cache = new Map();
+// Cache for labels
+const labelCache = new Map();
 
 /**
  * Execute SPARQL query
@@ -191,6 +193,51 @@ ORDER BY ?broaderLabel`;
 }
 
 /**
+ * Build SPARQL query to get label for a single entity
+ */
+function buildLabelQuery(entityId) {
+  const normalizedId = entityId.replace(/^http:\/\/vocab\.getty\.edu\/(page\/)?aat\//, '');
+  
+  return `PREFIX aat: <http://vocab.getty.edu/aat/>
+PREFIX gvp: <http://vocab.getty.edu/ontology#>
+PREFIX xl: <http://www.w3.org/2008/05/skos-xl#>
+
+SELECT DISTINCT ?label WHERE {
+  aat:${normalizedId} gvp:prefLabelGVP ?labelNode .
+  ?labelNode xl:literalForm ?label .
+}`;
+}
+
+/**
+ * Fetch label for a single entity
+ */
+async function fetchLabel(entityId) {
+  // Check cache first
+  if (labelCache.has(entityId)) {
+    return labelCache.get(entityId);
+  }
+  
+  try {
+    const query = buildLabelQuery(entityId);
+    const { data } = await executeQuery(query);
+    
+    // Parse the label from XML
+    const labelMatch = data.match(/<binding name=['"]label['"]>\s*<literal([^>]*)>([\s\S]*?)<\/literal>\s*<\/binding>/);
+    if (labelMatch) {
+      const label = cleanLiteral(labelMatch[2]);
+      const language = extractLanguage(labelMatch[1]);
+      labelCache.set(entityId, { label, language });
+      return { label, language };
+    }
+    
+    return { label: null, language: 'en' };
+  } catch (error) {
+    console.error(`  Error fetching label for ${entityId}: ${error.message}`);
+    return { label: null, language: 'en' };
+  }
+}
+
+/**
  * Fetch broader terms for a single entity
  */
 async function fetchBroaderTerms(entityId, depth = 0) {
@@ -240,7 +287,7 @@ async function fetchBroaderTerms(entityId, depth = 0) {
     
     const result = {
       uri: fullUri,
-      label: null, // Will be set by parent
+      label: null, // Will be set later
       broader: fullBroaderTerms
     };
     
@@ -354,6 +401,12 @@ async function main() {
   for (const entityId of config.targetEntities) {
     console.log(`\nProcessing: ${entityId}`);
     const hierarchy = await fetchBroaderTerms(entityId, 0);
+    
+    // Fetch label for the starting entity
+    const labelData = await fetchLabel(entityId);
+    hierarchy.label = labelData.label;
+    hierarchy.language = labelData.language;
+    
     hierarchies.push(hierarchy);
     
     // Delay between top-level requests
