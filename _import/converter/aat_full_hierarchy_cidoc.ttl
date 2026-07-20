@@ -7,10 +7,38 @@
 @prefix aat: <http://vocab.getty.edu/aat/> .
 
 # Getty AAT Full Hierarchy with CIDOC-CRM mappings
-# Generated: 2026-07-20T11:32:13.975Z
+# Generated: 2026-07-20T11:49:10.159Z
 # Endpoint: https://vocab.getty.edu/sparql.xml
 # Max depth: 10
 
 # http://vocab.getty.edu/aat/300037118
-aat:300037118 a crm:E55_Type .
+aat:300264092 a crm:E55_Type ;
+  crm:P2_has_type "Objects Facet"@en ;
+
+aat:300241490 a crm:E55_Type ;
+  crm:P2_has_type "Components (hierarchy name)"@en ;
+  crm:P127_has_broader_term aat:300264092 .
+
+aat:300241583 a crm:E55_Type ;
+  crm:P2_has_type "components (objects parts)"@en ;
+  crm:P127_has_broader_term aat:300241490 .
+
+aat:300241584 a crm:E55_Type ;
+  crm:P2_has_type "<components by specific context>"@en ;
+  crm:P127_has_broader_term aat:300241583 .
+
+aat:300037204 a crm:E55_Type ;
+  crm:P2_has_type "weapon components"@en ;
+  crm:P127_has_broader_term aat:300241584 .
+
+aat:300037110 a crm:E55_Type ;
+  crm:P2_has_type "edged weapon components"@en ;
+  crm:P127_has_broader_term aat:300037204 .
+
+aat:300211001 a crm:E55_Type ;
+  crm:P2_has_type "staff weapon components"@en ;
+  crm:P127_has_broader_term aat:300037110 .
+
+aat:300037118 a crm:E55_Type ;
+  crm:P127_has_broader_term aat:300211001 .
 

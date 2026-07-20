@@ -151,12 +151,10 @@ function extractLanguage(literal) {
  * Convert full URI to aat: prefix format
  */
 function toAATPrefix(uri) {
-  // Remove the prefix and return aat:ID format
   const match = uri.match(/http:\/\/vocab\.getty\.edu\/(page\/)?aat\/([^\/]+)/);
   if (match) {
     return `aat:${match[2]}`;
   }
-  // If it doesn't match, return as-is
   return uri;
 }
 
@@ -258,7 +256,7 @@ async function fetchBroaderTerms(entityId, depth = 0) {
 
 /**
  * Generate flat Turtle output with aat: prefix
- * Each entity is on its own lines with no indentation
+ * Each entity is on its own with proper period termination
  */
 function generateFlatTurtle(hierarchy) {
   const lines = [];
@@ -276,9 +274,9 @@ function generateFlatTurtle(hierarchy) {
     
     // Then add the current entity
     const aatUri = toAATPrefix(entity.uri);
+    const entityLines = [];
     
-    // Start the entity
-    let entityLines = [];
+    // Start with the type
     entityLines.push(`${aatUri} a ${cfg.typeClass} ;`);
     
     // Add label if available
@@ -290,12 +288,13 @@ function generateFlatTurtle(hierarchy) {
     // Add broader terms
     for (const broader of entity.broader) {
       const broaderAatUri = toAATPrefix(broader.uri);
-      entityLines.push(`  ${cfg.broaderProperty} ${broaderAatUri} .`);
+      entityLines.push(`  ${cfg.broaderProperty} ${broaderAatUri} ;`);
     }
     
-    // If there are no properties, just add a period
-    if (entityLines.length === 1) {
-      entityLines[0] = entityLines[0].replace(/;$/, '.');
+    // Always end with a period - replace the last semicolon
+    if (entityLines.length > 0) {
+      const lastLine = entityLines[entityLines.length - 1];
+      entityLines[entityLines.length - 1] = lastLine.replace(/;$/, '.');
     }
     
     lines.push(entityLines.join('\n'));
