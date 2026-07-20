@@ -54,8 +54,6 @@ let broaderTermsFound = 0;
 
 // Cache to avoid duplicate requests
 const cache = new Map();
-// Cache for labels
-const labelCache = new Map();
 
 /**
  * Execute SPARQL query
@@ -153,10 +151,12 @@ function extractLanguage(literal) {
  * Convert full URI to aat: prefix format
  */
 function toAATPrefix(uri) {
+  // Remove the prefix and return aat:ID format
   const match = uri.match(/http:\/\/vocab\.getty\.edu\/(page\/)?aat\/([^\/]+)/);
   if (match) {
     return `aat:${match[2]}`;
   }
+  // If it doesn't match, return as-is
   return uri;
 }
 
@@ -190,51 +190,6 @@ SELECT DISTINCT ?broader ?broaderLabel WHERE {
   ?labelNode xl:literalForm ?broaderLabel .
 }
 ORDER BY ?broaderLabel`;
-}
-
-/**
- * Build SPARQL query to get label for a single entity
- */
-function buildLabelQuery(entityId) {
-  const normalizedId = entityId.replace(/^http:\/\/vocab\.getty\.edu\/(page\/)?aat\//, '');
-  
-  return `PREFIX aat: <http://vocab.getty.edu/aat/>
-PREFIX gvp: <http://vocab.getty.edu/ontology#>
-PREFIX xl: <http://www.w3.org/2008/05/skos-xl#>
-
-SELECT DISTINCT ?label WHERE {
-  aat:${normalizedId} gvp:prefLabelGVP ?labelNode .
-  ?labelNode xl:literalForm ?label .
-}`;
-}
-
-/**
- * Fetch label for a single entity
- */
-async function fetchLabel(entityId) {
-  // Check cache first
-  if (labelCache.has(entityId)) {
-    return labelCache.get(entityId);
-  }
-  
-  try {
-    const query = buildLabelQuery(entityId);
-    const { data } = await executeQuery(query);
-    
-    // Parse the label from XML
-    const labelMatch = data.match(/<binding name=['"]label['"]>\s*<literal([^>]*)>([\s\S]*?)<\/literal>\s*<\/binding>/);
-    if (labelMatch) {
-      const label = cleanLiteral(labelMatch[2]);
-      const language = extractLanguage(labelMatch[1]);
-      labelCache.set(entityId, { label, language });
-      return { label, language };
-    }
-    
-    return { label: null, language: 'en' };
-  } catch (error) {
-    console.error(`  Error fetching label for ${entityId}: ${error.message}`);
-    return { label: null, language: 'en' };
-  }
 }
 
 /**
@@ -287,7 +242,7 @@ async function fetchBroaderTerms(entityId, depth = 0) {
     
     const result = {
       uri: fullUri,
-      label: null, // Will be set later
+      label: null, // Will be set by parent
       broader: fullBroaderTerms
     };
     
@@ -303,7 +258,7 @@ async function fetchBroaderTerms(entityId, depth = 0) {
 
 /**
  * Generate flat Turtle output with aat: prefix
- * Each entity is on its own with proper period termination
+ * Each entity is on its own lines with no indentation
  */
 function generateFlatTurtle(hierarchy) {
   const lines = [];
@@ -321,9 +276,9 @@ function generateFlatTurtle(hierarchy) {
     
     // Then add the current entity
     const aatUri = toAATPrefix(entity.uri);
-    const entityLines = [];
     
-    // Start with the type
+    // Start the entity
+    let entityLines = [];
     entityLines.push(`${aatUri} a ${cfg.typeClass} ;`);
     
     // Add label if available
@@ -335,13 +290,12 @@ function generateFlatTurtle(hierarchy) {
     // Add broader terms
     for (const broader of entity.broader) {
       const broaderAatUri = toAATPrefix(broader.uri);
-      entityLines.push(`  ${cfg.broaderProperty} ${broaderAatUri} ;`);
+      entityLines.push(`  ${cfg.broaderProperty} ${broaderAatUri} .`);
     }
     
-    // Always end with a period - replace the last semicolon
-    if (entityLines.length > 0) {
-      const lastLine = entityLines[entityLines.length - 1];
-      entityLines[entityLines.length - 1] = lastLine.replace(/;$/, '.');
+    // If there are no properties, just add a period
+    if (entityLines.length === 1) {
+      entityLines[0] = entityLines[0].replace(/;$/, '.');
     }
     
     lines.push(entityLines.join('\n'));
@@ -401,12 +355,6 @@ async function main() {
   for (const entityId of config.targetEntities) {
     console.log(`\nProcessing: ${entityId}`);
     const hierarchy = await fetchBroaderTerms(entityId, 0);
-    
-    // Fetch label for the starting entity
-    const labelData = await fetchLabel(entityId);
-    hierarchy.label = labelData.label;
-    hierarchy.language = labelData.language;
-    
     hierarchies.push(hierarchy);
     
     // Delay between top-level requests
