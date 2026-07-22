@@ -119,6 +119,8 @@
     afo:label "Sapienza University of Rome" ;
     afo:sameAs ror:02be6w209 .
 
+# ========== SAMPLE ==========
+
 :sample_ARSL31A a afm:AFM_0001099 ;
     afo:label "Sample from Spearhead 1 Blade (ARSL31A)" .
 
