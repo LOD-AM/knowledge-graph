@@ -1,0 +1,11 @@
+This repository is dual-licensed:
+
+- Documentation, data, examples, queries and shapes (*.md, *.ttl, *.rq, *.tsv)
+  are licensed under the Creative Commons Attribution 4.0 International
+  License (CC BY 4.0). See licenses/CC-BY-4.0.txt.
+
+- Code (converter/, tools/, Makefile, .github/) is licensed under the
+  MIT License. See licenses/MIT.txt.
+
+The external ontologies and vocabularies referenced here are maintained by
+their respective organisations and are subject to their own licenses.
