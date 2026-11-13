@@ -6,6 +6,10 @@ but nonexistent term is the most common and most damaging mistake here.
 
 ## Before you finish any change
 Run `make` (needs `make install` once, and network for `make fetch`). It must pass.
+`make fetch` downloads from cidoc-crm.org, purl.allotrope.org and
+sparontologies.github.io; the converter needs vocab.getty.edu. The cloud
+environment "LOD-AM" allows these hosts, and its setup script runs
+`make install` + `make fetch`.
 - `make check`: parse, prefixes, term existence (CRM 7.1.3 / AFO / FaBiO), CRM domain/range
 - `make validate`: SHACL (`shapes/lod-am.shacl.ttl`)
 - `make test-terms` / `make test-shapes`: fixtures in `tests/terms/invalid/` and `tests/shapes/invalid/` must be rejected
@@ -26,7 +30,9 @@ Run `make` (needs `make install` once, and network for `make fetch`). It must pa
 - A modelling change = `CONVENTIONS.md` + `shapes/` + `examples/` + expected
   query results in one PR. Rationale changes go in `docs/decisions/`.
 - When a modelling choice is a domain judgement (not a spec fact), don't
-  decide it silently: add it to `docs/open-questions.md` and mention it in the PR.
+  decide it silently: open a GitHub issue (label `modelling`), list it in
+  `docs/open-questions.md` and mention it in the PR. Once the owner decides,
+  implement it and remove it from the list.
 - Updating `tests/queries/*.tsv` with `--update` is only OK after checking the
   new rows are actually right; say so in the PR.
 - Converter must never overwrite `data/` with empty/partial output.
@@ -35,6 +41,15 @@ Run `make` (needs `make install` once, and network for `make fetch`). It must pa
 `examples/` worked example · `queries/` SPARQL · `shapes/` SHACL ·
 `data/` generated RDF · `converter/` Node (CommonJS, no deps) ·
 `tools/` Python checks · `docs/decisions/` why · `ontologies/`, `vocabularies/` usage notes
+
+## Where to resume (state 2026-11-13)
+- **Next focus: getting the data sorted.** Open modelling decisions are issues
+  #1–#9 and #12 (labels on every resource). Then import real data beyond the
+  Arslantepe example (converter, `data/`).
+- The website's phases 4–5 (entity pages, Data page, posts about the model)
+  wait for this: LOD-AM/website issues labelled `waiting-for-kg`.
+- Known gaps: CRMarchaeo terms aren't checked yet (#6); the Getty SPARQL
+  endpoint is sometimes degraded (the converter then refuses to write).
 
 ## Effects on other repos
 Blog posts in `LOD-AM/website` describe this model. A significant model change
@@ -55,3 +70,5 @@ Rules for every repo:
 - Never commit secrets (passwords, SMTP credentials, `.env`, `shiro.ini`).
 - English for code, docs and commits. Keep commits small and explain *why*.
 - Verify before you claim: run the repo's checks and report what you ran.
+- Open work lives in each repo's GitHub issues; each CLAUDE.md has a "Where to resume"
+  section. The owner merges PRs; after a merge, start new work from the updated `main`.
