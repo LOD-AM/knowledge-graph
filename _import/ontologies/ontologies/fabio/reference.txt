@@ -1,0 +1,7 @@
+Official FABIO URI: http://purl.org/spar/fabio/
+Namespace: http://purl.org/spar/fabio/
+
+Preferred prefix: fabio
+Example: fabio:JournalArticle
+
+Note: FABIO is part of the SPAR Ontologies suite.

@@ -1,0 +1,4 @@
+Official URI: https://cidoc-crm.org/rdfs/7.1.3/
+Version: ISO 21127:2023
+Namespace: http://www.cidoc-crm.org/cidoc-crm/
+Prefix: crm
