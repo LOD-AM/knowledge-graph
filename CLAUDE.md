@@ -41,6 +41,7 @@ Blog posts in `LOD-AM/website` describe this model. A significant model change
 may deserve a dated update note or a new post: suggest it, the owner writes it.
 
 ## LOD-AM project (shared block: keep identical in every repo)
+Source of truth: knowledge-graph `CLAUDE.md`. Edit it there first, then copy it unchanged; CI (`scripts/check_shared_block.sh`) fails on drift.
 LOD-AM = Linked Open Data for Ancient Metallurgy, a one-person research project (https://lod-am.net).
 - `LOD-AM/knowledge-graph`: data model, vocabularies, converters, data. **Authority for all modelling rules** (`CONVENTIONS.md`).
 - `LOD-AM/triplestore`: Apache Jena Fuseki (Docker) that serves the knowledge graph.
