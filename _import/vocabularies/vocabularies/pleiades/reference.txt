@@ -1,0 +1,5 @@
+Official URI: https://pleiades.stoa.org/places/
+Namespace: https://pleiades.stoa.org/places/
+Preferred prefix: pleiades
+Example: pleiades:12345
+License: CC-BY 3.0
