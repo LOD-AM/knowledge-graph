@@ -29,3 +29,6 @@ CONVENTIONS.md and the shapes, and remove the item here.
    `geo:asWKT` with `^^geo:wktLiteral` is the more common choice and is what
    Fuseki's spatial index understands.
 9. [#9](https://github.com/LOD-AM/knowledge-graph/issues/9) **Formal CRM ↔ AFO mapping.** Still the "later" item from the decisions.
+10. [#14](https://github.com/LOD-AM/knowledge-graph/issues/14) **Lead isotope ratios.** No pattern yet: a ratio relates two nuclides,
+    while the concentration pattern quantifies exactly one element. Candidate AFO
+    terms and open points are in the issue.

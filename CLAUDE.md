@@ -44,7 +44,7 @@ environment "LOD-AM" allows these hosts, and its setup script runs
 
 ## Where to resume (state 2026-11-13)
 - **Next focus: getting the data sorted.** Open modelling decisions are issues
-  #1–#9 and #12 (labels on every resource). Then import real data beyond the
+  #1–#9, #12 (labels on every resource) and #14 (lead isotope ratios). Then import real data beyond the
   Arslantepe example (converter, `data/`).
 - The website's phases 4–5 (entity pages, Data page, posts about the model)
   wait for this: LOD-AM/website issues labelled `waiting-for-kg`.
