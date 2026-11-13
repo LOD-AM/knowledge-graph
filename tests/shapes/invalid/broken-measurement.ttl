@@ -1,0 +1,20 @@
+# Must FAIL validation: string unit, no value or maximum, untyped local IRI,
+# object without type, article without creator.
+@prefix :      <https://lod-am.net/id/> .
+@prefix crm:   <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix afr:   <http://purl.allotrope.org/ontologies/result#> .
+@prefix afx:   <http://purl.allotrope.org/ontologies/property#> .
+@prefix qudt:  <http://qudt.org/schema/qudt#> .
+@prefix fabio: <http://purl.org/spar/fabio/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix chebi: <http://purl.obolibrary.org/obo/CHEBI_> .
+
+:bad_measurement a afr:AFR_0002036 ;
+    afx:AFX_0002816 chebi:28694 ;
+    qudt:unit "PERCENT" .
+
+:bad_object a crm:E22_Human-Made_Object ;
+    crm:P46_is_composed_of :untyped_part .
+
+:bad_article a fabio:JournalArticle ;
+    dcterms:title "No authors" .

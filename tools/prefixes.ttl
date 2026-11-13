@@ -1,0 +1,46 @@
+# Canonical prefixes for LOD-AM. Every Turtle file in this repository must
+# bind these prefixes to exactly these namespaces (tools/check_terms.py
+# enforces it). Add new prefixes here first, then use them.
+
+@prefix :          <https://lod-am.net/id/> .
+@prefix lodam:     <https://lod-am.net/id/> .
+
+# CIDOC CRM 7.1.3 and extensions
+@prefix crm:       <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix crmarchaeo: <http://www.cidoc-crm.org/extensions/crmarchaeo/> .
+
+# Allotrope Foundation Ontologies (opaque IDs, e.g. afr:AFR_0002036)
+@prefix afr:       <http://purl.allotrope.org/ontologies/result#> .
+@prefix afm:       <http://purl.allotrope.org/ontologies/material#> .
+@prefix afp:       <http://purl.allotrope.org/ontologies/process#> .
+@prefix afx:       <http://purl.allotrope.org/ontologies/property#> .
+@prefix qudt:      <http://qudt.org/schema/qudt#> .
+@prefix unit:      <http://qudt.org/vocab/unit#> .
+
+# Literature
+@prefix fabio:     <http://purl.org/spar/fabio/> .
+@prefix prism:     <http://prismstandard.org/namespaces/basic/2.0/> .
+@prefix dcterms:   <http://purl.org/dc/terms/> .
+@prefix foaf:      <http://xmlns.com/foaf/0.1/> .
+
+# Controlled vocabularies
+@prefix aat:       <http://vocab.getty.edu/aat/> .
+@prefix gvp:       <http://vocab.getty.edu/ontology#> .
+@prefix periodo:   <http://n2t.net/ark:/99152/> .
+@prefix pleiades:  <https://pleiades.stoa.org/places/> .
+@prefix chebi:     <http://purl.obolibrary.org/obo/CHEBI_> .
+@prefix ror:       <https://ror.org/> .
+@prefix wd:        <http://www.wikidata.org/entity/> .
+
+# Geometry
+@prefix osgeo:     <http://data.ordnancesurvey.co.uk/ontology/geometry/> .
+@prefix geo:       <http://www.opengis.net/ont/geosparql#> .
+
+# W3C
+@prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:      <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:       <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:       <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos:      <http://www.w3.org/2004/02/skos/core#> .
+@prefix xl:        <http://www.w3.org/2008/05/skos-xl#> .
+@prefix sh:        <http://www.w3.org/ns/shacl#> .
