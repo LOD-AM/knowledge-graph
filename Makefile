@@ -3,7 +3,7 @@ PY ?= python3
 
 .PHONY: all fetch check validate test-terms test-shapes test-queries test-converter install
 
-all: check validate test-terms test-shapes test-queries test-converter
+all: check validate test-terms test-shapes test-queries test-converter check-claude-md
 
 install:            ## install Python tools
 	$(PY) -m pip install -r requirements.txt
@@ -32,3 +32,6 @@ test-queries:       ## queries/*.rq against expected tests/queries/*.tsv
 
 test-converter:
 	cd converter && npm test
+
+check-claude-md:    ## CLAUDE.md ends with the shared LOD-AM block (source for website/triplestore)
+	$(PY) tools/check_claude_md.py
