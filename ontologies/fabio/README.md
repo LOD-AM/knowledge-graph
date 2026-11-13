@@ -1,32 +1,38 @@
-# FABIO in LOD-AM
+# FaBiO in LOD-AM
 
-## Purpose in LOD-AM
+## Purpose
+Bibliographic description of the publications our data comes from. FaBiO
+supplies the classes; properties come from Dublin Core, PRISM and FOAF, as in
+the other SPAR ontologies. `make check` rejects FaBiO terms that don't exist.
 
-FABIO (FRBR Aligned Bibliographic Ontology) provides lightweight, practical modeling of literature and bibliographic entities for Zenodo-style references.
+## Terms we use
+| Term | Use |
+|---|---|
+| `fabio:JournalArticle` (+ `crm:E31_Document`) | articles; the DOI URL is the IRI |
+| `fabio:Journal` | journals (`dcterms:isPartOf`) |
+| `fabio:hasPublicationYear` (`xsd:gYear`) | year |
+| `dcterms:title`, `dcterms:publisher` | title, publisher |
+| `dcterms:creator` → `foaf:Person` | authors (`foaf:givenName`, `foaf:familyName`, `foaf:name`) |
+| `prism:doi`, `prism:startingPage`, `prism:endingPage` | DOI, pages |
 
-## Key Classes/Properties We Use
+> `fabio:hasAuthor`, `fabio:hasPublicationDate`, `fabio:hasDOI`,
+> `fabio:hasPageStart/End` and `fabio:Person` **do not exist** in FaBiO.
 
-- `fabio:Work` - Intellectual/artistic creation (articles, papers, books)
-- `fabio:Expression` - Specific realization of a work
-- `fabio:Manifestation` - Physical/embodied form of an expression
-- `fabio:Item` - Single physical/exemplar instance
-- `fabio:JournalArticle` - Specific type of work for academic papers
-- `fabio:hasAuthor` - Link to authors
-- `fabio:hasPublicationDate` - Publication date
-- `fabio:hasDOI` - Digital Object Identifier
+Legacy literature without a DOI gets a local IRI `https://lod-am.net/id/pub/<citation-key>`.
 
-## Deviations from Standard
+## Linking to archaeological data
+Objects, types and analyses point to the publication with
+`crm:P70i_is_documented_in`. That's why each article is also a `crm:E31_Document`.
 
-- We use a flat structure, not the full FRBR hierarchy
-- We focus on simple bibliographic metadata (title, authors, date, DOI)
-- We link directly to archaeological entities via CIDOC CRM properties
-
-## Example Snippet
-
+## Example
 ```turtle
-:paper1 a fabio:JournalArticle ;
-    fabio:hasAuthor :author1 ;
-    fabio:hasPublicationDate "2024-03-15"^^xsd:date ;
-    fabio:hasDOI "10.1234/example" ;
-    crm:P67_refers_to :artifact1 .
+<https://doi.org/10.3406/paleo.2002.4745> a fabio:JournalArticle, crm:E31_Document ;
+    dcterms:title "Chemical composition and lead isotopy of metal objects ..." ;
+    fabio:hasPublicationYear "2002"^^xsd:gYear ;
+    prism:doi "10.3406/paleo.2002.4745" ;
+    prism:startingPage "43" ; prism:endingPage "69" ;
+    dcterms:isPartOf :journal_paleorient ;
+    dcterms:creator :andreas_hauptmann .
+
+:spearhead_1 crm:P70i_is_documented_in <https://doi.org/10.3406/paleo.2002.4745> .
 ```

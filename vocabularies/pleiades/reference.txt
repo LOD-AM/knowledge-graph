@@ -1,5 +1,5 @@
 Official URI: https://pleiades.stoa.org/places/
 Namespace: https://pleiades.stoa.org/places/
 Preferred prefix: pleiades
-Example: pleiades:12345
+Example: pleiades:25078867 (Arslantepe)
 License: CC-BY 3.0

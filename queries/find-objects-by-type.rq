@@ -1,15 +1,17 @@
-PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+# Objects with their type and material (shortcut properties P2 / P45).
+# Remove the VALUES line to list all objects.
+PREFIX crm:  <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX aat:  <http://vocab.getty.edu/aat/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
-SELECT ?object ?objectType ?material WHERE {
-  ?object a crm:E22_Man-Made_Object ;
-    crm:P2_has_type ?objectType ;
-    crm:P46_is_composed_of ?material .
-  
-  ?objectType rdfs:label ?typeLabel .
-  ?material rdfs:label ?materialLabel .
-  
-  FILTER(?objectType = <http://example.org/types/pottery_sherd> || 
-          ?objectType = <http://example.org/types/metal_artifact>)
+SELECT ?object ?type ?typeLabel ?material ?materialLabel WHERE {
+  VALUES ?type { aat:300037118 }   # spearheads
+  ?object a crm:E22_Human-Made_Object ;
+          crm:P2_has_type ?type .
+  OPTIONAL { ?type skos:prefLabel ?typeLabel }
+  OPTIONAL {
+    ?object crm:P45_consists_of ?material .
+    OPTIONAL { ?material skos:prefLabel ?materialLabel }
+  }
 }
-ORDER BY ?typeLabel
+ORDER BY ?object

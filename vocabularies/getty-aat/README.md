@@ -15,6 +15,22 @@ We use a minimal subset focused on our domain. We map to closest existing terms 
 
 ## Example Snippet
 ```turtle
-:artifact a crm:E22_Man-Made_Object ;
-    crm:P2_has_type <http://vocab.getty.edu/aat/300033879> .
+:spearhead_1 a crm:E22_Human-Made_Object ;
+    crm:P2_has_type aat:300037118 ;        # spearheads
+    crm:P45_consists_of aat:300241441 .    # <copper and copper alloy>
+
+aat:300037118 a crm:E55_Type ;
+    skos:prefLabel "spearheads"@en ;
+    skos:inScheme aat: .
+```
+
+Use the concept IRI `http://vocab.getty.edu/aat/<id>`, never the HTML page
+`http://vocab.getty.edu/page/aat/<id>` (`make check` rejects it). Materials are
+typed `crm:E57_Material`, other terms `crm:E55_Type`.
+
+## Converter
+`converter/fetchType.js` fetches a term plus its broader hierarchy into
+`data/aat/` (see [converter/README.md](../../converter/README.md)):
+```bash
+cd converter && npm run aat -- --entity 300037118
 ```

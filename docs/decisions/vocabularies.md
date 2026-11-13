@@ -1,6 +1,8 @@
-# Ontology Decisions for LOD-AM Knowledge Graph
+# Vocabulary Decisions for LOD-AM Knowledge Graph
 
 *How we chose Pleiades, PeriodO, Getty AAT, Allotrope Framework, and FABIO for representing archaeological data in a unified RDF knowledge graph.*
+
+> **Revision 2026-11-13:** The "How" lines were corrected to match CIDOC CRM 7.1.3 (see [CONVENTIONS.md](../../CONVENTIONS.md)). Allotrope and FaBiO are ontologies; their usage notes live in [ontologies/](../../ontologies/).
 
 ## Summary
 
@@ -20,7 +22,7 @@ Use Pleiades as the controlled vocabulary for archaeological sites and site type
 
 **Why**: Global scope with Classical foundation, actively expanding. Community-driven model allows researchers to add new sites directly. Critical for research outside Mediterranean/Orient.
 
-**How**: Direct references to Pleiades places from CIDOC CRM entities via crm:P67_refers_to.
+**How**: A `crm:E27_Site` is `owl:sameAs` its Pleiades place, uses a Pleiades place type via `crm:P2_has_type`, and points to Pleiades locations via `crm:P53_has_former_or_current_location`.
 
 **Official**: https://pleiades.stoa.org/
 
@@ -30,7 +32,7 @@ Use PeriodO as the controlled vocabulary for archaeological cultures and chronol
 
 **Why**: Linked Data period gazetteer supporting scholarly assertions. Extensible for custom periods. Global scope.
 
-**How**: Period definitions with start/end dates, geographic scope, cultural associations.
+**How**: The PeriodO IRI is used as a `crm:E4_Period`, with a local `crm:E52_Time-Span` holding the start/end dates and `crm:P7_took_place_at` for geographic scope.
 
 **Official**: https://perio.do/en/
 
@@ -40,7 +42,7 @@ Use Getty Art and Architecture Thesaurus as the controlled vocabulary for featur
 
 **Why**: International standard with 30,000+ terms. Multilingual. Comprehensive coverage of material culture.
 
-**How**: Minimal event modeling. Direct attributes for object types, materials, dimensions.
+**How**: AAT concept IRIs (`aat:<id>`) via `crm:P2_has_type` (types, `crm:E55_Type`) and `crm:P45_consists_of` (materials, `crm:E57_Material`). Hierarchies are fetched with `converter/fetchType.js`.
 
 **Official**: https://www.getty.edu/research/tools/vocabularies/aat/
 
@@ -50,7 +52,7 @@ Use Allotrope Framework Ontology for natural scientific analytics.
 
 **Why**: Purpose-built for laboratory analytical processes. Industry standard. Comprehensive coverage.
 
-**How**: Direct linking from CIDOC CRM objects to AFO results via crm:P128_carries.
+**How**: object → sample → analysis → measurement, see [ontologies/afo](../../ontologies/afo/README.md).
 
 **Official**: https://www.allotrope.org/ontologies/result/
 
@@ -60,16 +62,14 @@ Use FABIO (FRBR Aligned Bibliographic Ontology) for literature.
 
 **Why**: Lightweight, FRBR-aligned ontology. Perfect for Zenodo-style references. Simple structure.
 
-**How**: fabio:JournalArticle and related classes for publication tracking.
+**How**: `fabio:JournalArticle` with Dublin Core / PRISM properties, see [ontologies/fabio](../../ontologies/fabio/README.md).
 
 **Official**: http://purl.org/spar/fabio/
 
 ## Integration Approach
 
 Direct links between ontologies:
-- Objects to Analytics: crm:P128_carries
-- Objects to Literature: crm:P67_refers_to
-- Literature to Sites: crm:P67_refers_to
+See [CONVENTIONS.md](../../CONVENTIONS.md#linking-the-parts).
 
 ## Resources
 

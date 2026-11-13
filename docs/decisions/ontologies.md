@@ -2,6 +2,8 @@
 
 *How we chose CIDOC CRM, FABIO, and the Allotrope Framework for representing archaeological objects, scientific analytics, and literature in a unified RDF knowledge graph.*
 
+> **Revision 2026-11-13:** The "key classes/properties" and integration links below were corrected after checking them against CIDOC CRM 7.1.3, AFO 2025/12 and FaBiO. Several of the original terms don't exist or were used outside their domain/range. The choices and the rationale are unchanged. The authoritative patterns are in [CONVENTIONS.md](../../CONVENTIONS.md).
+
 ---
 
 ## Core Decisions
@@ -23,12 +25,12 @@
 - **Direct attributes**: Object types, materials, dimensions, discovery locations, current locations
 - **Focus**: Objects and their scientific analysis context
 
-**Key classes/properties**:
-- `crm:E22_Man-Made_Object` (artifacts, features)
-- `crm:E53_Place` (sites, findspots)
+**Key classes/properties** (details: [ontologies/cidoc-crm](../../ontologies/cidoc-crm/README.md)):
+- `crm:E22_Human-Made_Object` (artefacts), `crm:E25_Human-Made_Feature` (features), `crm:E27_Site`
+- `crm:E53_Place` (locations), `crm:E4_Period` / `crm:E52_Time-Span`
 - `crm:E7_Activity` (analysis, sampling only)
-- `crm:P2_has_type`, `crm:P46_is_composed_of`, `crm:P53_has_former_or_current_location`
-- `crm:P128_carries` (link to analysis results)
+- `crm:P2_has_type`, `crm:P45_consists_of` (material), `crm:P46_is_composed_of` (parts), `crm:P53_has_former_or_current_location`
+- `crm:P70i_is_documented_in` (link to literature)
 
 **Official**: https://cidoc-crm.org/
 
@@ -46,15 +48,16 @@
 - Used by major pharmaceutical and materials science organizations
 
 **How we use it**:
-- **Direct linking**: Connect AFO results to CIDOC CRM objects via `crm:P128_carries`
+- **Direct linking**: object → sample (`afx:AFX_0001048` contains) ← analysis (`afx:AFX_0000399` has input) → measurements (`afx:AFX_0000395` has output). The analysis is also a `crm:E7_Activity`, which connects the two models.
 - **No formal mapping yet**: For prototype, we use direct links; formal OWL mappings can be added later
 - **Focus**: Chemical composition, dating, material analysis results
 
-**Key classes/properties**:
-- `afo:MeasurementResult`
-- `afo:hasValue`, `afo:hasUnit`, `afo:hasTechnique`
+**Key classes/properties** (details: [ontologies/afo](../../ontologies/afo/README.md)):
+- `afr:AFR_0002036` (concentration), `afp:AFP_0000527` (spectrometry), `afm:AFM_0001099` (chemical mixture)
+- `afx:AFX_0002816` (quantifies), `afx:AFX_0000331` (maximum)
+- values and units via QUDT: `qudt:numericValue`, `qudt:unit unit:PERCENT`
 
-**Official**: https://www.allotrope.org/ontologies/result/
+**Official**: https://www.allotrope.org/ (namespaces `http://purl.allotrope.org/ontologies/...`)
 
 ---
 
@@ -72,16 +75,12 @@
 **How we use it**:
 - **Primary level**: `fabio:Work` and its subclasses (e.g., `fabio:JournalArticle`) for literature sources
 - **Legacy support**: Use local identifiers when DOIs are unavailable
-- **Integration**: Direct links between literature and archaeological entities via `crm:P67_refers_to`
+- **Integration**: archaeological entities point to the literature via `crm:P70i_is_documented_in` (articles are also `crm:E31_Document`)
 
-**Key classes/properties**:
-- `fabio:Work` (intellectual/artistic creation)
-- `fabio:JournalArticle` (academic papers)
-- `fabio:hasAuthor` (link to authors)
-- `fabio:hasPublicationDate` (publication date)
-- `fabio:hasDOI` (Digital Object Identifier)
-- `crm:P67_refers_to` (link from work to archaeological entities)
-- `crm:P102_has_title`
+**Key classes/properties** (details: [ontologies/fabio](../../ontologies/fabio/README.md)):
+- `fabio:JournalArticle`, `fabio:Journal`, `fabio:hasPublicationYear`
+- `dcterms:title`, `dcterms:creator` → `foaf:Person`
+- `prism:doi`, `prism:startingPage`, `prism:endingPage`
 
 **Official**: http://purl.org/spar/fabio/
 
@@ -93,14 +92,14 @@
 
 We use **direct property links** to minimize complexity for the prototype:
 
-1. **Objects to Analytics**: `crm:P128_carries` (object → AFO result)
-2. **Objects to Literature**: `crm:P67_refers_to` (literature → object/site)
-3. **Analytics to Literature**: `crm:P67_refers_to` (methodology citation)
+1. **Objects to Analytics**: object `afx:AFX_0001048` (contains) sample; analysis `afx:AFX_0000399` (has input) sample
+2. **Objects to Literature**: `crm:P70i_is_documented_in` (object/type → publication)
+3. **Analytics to Literature**: `crm:P70i_is_documented_in` (analysis → publication)
 
 ### Minimal Event Modeling
 
 Only model events that are **essential to scientific analysis**:
-- Analysis events (`crm:E7_Activity` with type `chemical_analysis`, `dating`, etc.)
+- Analysis events (`crm:E7_Activity`, additionally typed with an AFO process class such as `afp:AFP_0000527` spectrometry)
 - Sampling events
 
 Skip events that don't add value to our use cases (excavation, conservation, movement, etc.)
@@ -123,7 +122,7 @@ Specialized Layer
   FABIO (Literature) | AFO (Analytics)
   
 Integration Layer
-  Direct links: P128_carries, P67_refers_to
+  Direct links: afx contains / has input / has output, P70i_is_documented_in
 ```
 
 ---

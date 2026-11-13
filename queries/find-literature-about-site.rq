@@ -1,19 +1,24 @@
-PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
-PREFIX fabio: <http://purl.org/spar/fabio/>
+# Publications documenting objects found in features of a site.
+PREFIX :          <https://lod-am.net/id/>
+PREFIX crm:       <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX crmarchaeo: <http://www.cidoc-crm.org/extensions/crmarchaeo/>
+PREFIX dcterms:   <http://purl.org/dc/terms/>
+PREFIX fabio:     <http://purl.org/spar/fabio/>
+PREFIX prism:     <http://prismstandard.org/namespaces/basic/2.0/>
+PREFIX foaf:      <http://xmlns.com/foaf/0.1/>
 
-SELECT ?work ?title ?author ?date ?identifier WHERE {
+SELECT ?site ?work ?doi ?year ?title
+       (GROUP_CONCAT(DISTINCT ?authorName; separator="; ") AS ?authors)
+WHERE {
+  VALUES ?site { :Arslantepe }
+  ?feature crm:P46i_forms_part_of ?site .
+  ?object  crmarchaeo:A21_is_contained_in ?feature ;
+           crm:P70i_is_documented_in ?work .
   ?work a fabio:JournalArticle ;
-    crm:P102_has_title ?title ;
-    fabio:hasAuthor ?authorNode ;
-    fabio:hasPublicationDate ?dateSpan ;
-    crm:P67_refers_to <http://example.org/sites/SITE-X-001> ;
-    crm:P1_is_identified_by ?id .
-  
-  ?id crm:P190_has_symbolic_content ?identifier .
-  
-  ?authorNode crm:P1_is_identified_by ?authorId .
-  ?authorId crm:P190_has_symbolic_content ?author .
-  
-  ?dateSpan crm:P82_at_some_time_within ?date .
+        dcterms:title ?title .
+  OPTIONAL { ?work prism:doi ?doi }
+  OPTIONAL { ?work fabio:hasPublicationYear ?year }
+  OPTIONAL { ?work dcterms:creator/foaf:name ?authorName }
 }
-ORDER BY ?title
+GROUP BY ?site ?work ?doi ?year ?title
+ORDER BY ?year ?title

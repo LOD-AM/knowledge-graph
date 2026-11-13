@@ -1,3 +1,9 @@
-Official URI: http://www.allotrope.org/ontologies/result#
-Namespace: http://www.allotrope.org/ontologies/result#
-Prefix: afo
+Name: Allotrope Foundation Ontologies (AFO), release REC/2025/12
+Download (merged, used by make fetch): https://purl.allotrope.org/voc/afo/merged/REC/2025/12/merged-without-qudt
+Namespaces:
+  afr: http://purl.allotrope.org/ontologies/result#
+  afm: http://purl.allotrope.org/ontologies/material#
+  afp: http://purl.allotrope.org/ontologies/process#
+  afx: http://purl.allotrope.org/ontologies/property#
+Units: QUDT 1.1 (qudt: http://qudt.org/schema/qudt#, unit: http://qudt.org/vocab/unit#)
+License: CC BY 4.0
