@@ -36,6 +36,21 @@ Run `make` (needs `make install` once, and network for `make fetch`). It must pa
 `data/` generated RDF · `converter/` Node (CommonJS, no deps) ·
 `tools/` Python checks · `docs/decisions/` why · `ontologies/`, `vocabularies/` usage notes
 
-## Related repos (separate)
-`LOD-AM/triplestore` (Fuseki, docker-compose), `LOD-AM/website` (Eleventy blog;
-blog posts describe this model, so model changes may need a post or update).
+## Effects on other repos
+Blog posts in `LOD-AM/website` describe this model. A significant model change
+may deserve a dated update note or a new post: suggest it, the owner writes it.
+
+## LOD-AM project (shared block: keep identical in every repo)
+LOD-AM = Linked Open Data for Ancient Metallurgy, a one-person research project (https://lod-am.net).
+- `LOD-AM/knowledge-graph`: data model, vocabularies, converters, data. **Authority for all modelling rules** (`CONVENTIONS.md`).
+- `LOD-AM/triplestore`: Apache Jena Fuseki (Docker) that serves the knowledge graph.
+- `LOD-AM/website`: Eleventy site and blog, self-hosted.
+- `LOD-AM/ontologies`, `vocabularies`, `converter`: **superseded** by knowledge-graph; don't edit.
+
+Rules for every repo:
+- Base IRI `https://lod-am.net/id/`; CIDOC CRM **7.1.3**. Don't restate modelling rules elsewhere; link to knowledge-graph `CONVENTIONS.md`.
+- Work on a branch and open a PR to `main`; never push to `main`. Create issues, PRs or comments only when asked.
+- Domain/modelling decisions belong to the owner: raise them as knowledge-graph issues (label `modelling`) instead of deciding silently.
+- Never commit secrets (passwords, SMTP credentials, `.env`, `shiro.ini`).
+- English for code, docs and commits. Keep commits small and explain *why*.
+- Verify before you claim: run the repo's checks and report what you ran.
