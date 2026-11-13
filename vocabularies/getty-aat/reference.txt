@@ -1,0 +1,5 @@
+Official URI: http://vocab.getty.edu/aat/
+Namespace: http://vocab.getty.edu/aat/
+Preferred prefix: aat
+Example: aat:300033879 (amphora)
+License: ODC-By 1.0

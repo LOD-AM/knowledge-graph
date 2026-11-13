@@ -1,0 +1,5 @@
+Name: FaBiO, the FRBR-aligned Bibliographic Ontology (SPAR Ontologies)
+Namespace: http://purl.org/spar/fabio/
+Preferred prefix: fabio
+Download (used by make fetch): https://sparontologies.github.io/fabio/current/fabio.ttl
+Companion vocabularies: dcterms: http://purl.org/dc/terms/, prism: http://prismstandard.org/namespaces/basic/2.0/, foaf: http://xmlns.com/foaf/0.1/

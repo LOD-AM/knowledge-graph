@@ -1,0 +1,5 @@
+Official URI: https://perio.do/
+Namespace: http://n2t.net/ark:/99152/
+Preferred prefix: periodo
+Example: periodo:p03wskdnzgc (period), periodo:p03wskd (authority)
+License: CC0

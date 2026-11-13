@@ -1,0 +1,10 @@
+object	sample	analysis	lab	element	value	max	unit
+https://lod-am.net/id/spearhead_1	https://lod-am.net/id/sample_ARSL31A	https://lod-am.net/id/ARSL31A	Sapienza University of Rome	http://purl.obolibrary.org/obo/CHEBI_23377	0.008		http://qudt.org/vocab/unit#PERCENT
+https://lod-am.net/id/spearhead_1	https://lod-am.net/id/sample_ARSL31A	https://lod-am.net/id/ARSL31A	Sapienza University of Rome	http://purl.obolibrary.org/obo/CHEBI_23855	0.002		http://qudt.org/vocab/unit#PERCENT
+https://lod-am.net/id/spearhead_1	https://lod-am.net/id/sample_ARSL31A	https://lod-am.net/id/ARSL31A	Sapienza University of Rome	http://purl.obolibrary.org/obo/CHEBI_27563	3.11		http://qudt.org/vocab/unit#PERCENT
+https://lod-am.net/id/spearhead_1	https://lod-am.net/id/sample_ARSL31A	https://lod-am.net/id/ARSL31A	Sapienza University of Rome	http://purl.obolibrary.org/obo/CHEBI_27637		0.001	http://qudt.org/vocab/unit#PERCENT
+https://lod-am.net/id/spearhead_1	https://lod-am.net/id/sample_ARSL31A	https://lod-am.net/id/ARSL31A	Sapienza University of Rome	http://purl.obolibrary.org/obo/CHEBI_27659		0.001	http://qudt.org/vocab/unit#PERCENT
+https://lod-am.net/id/spearhead_1	https://lod-am.net/id/sample_ARSL31A	https://lod-am.net/id/ARSL31A	Sapienza University of Rome	http://purl.obolibrary.org/obo/CHEBI_28694	97		http://qudt.org/vocab/unit#PERCENT
+https://lod-am.net/id/spearhead_1	https://lod-am.net/id/sample_ARSL31A	https://lod-am.net/id/ARSL31A	Sapienza University of Rome	http://purl.obolibrary.org/obo/CHEBI_28695	0.002		http://qudt.org/vocab/unit#PERCENT
+https://lod-am.net/id/spearhead_1	https://lod-am.net/id/sample_ARSL31A	https://lod-am.net/id/ARSL31A	Sapienza University of Rome	http://purl.obolibrary.org/obo/CHEBI_28697	0.007		http://qudt.org/vocab/unit#PERCENT
+https://lod-am.net/id/spearhead_1	https://lod-am.net/id/sample_ARSL31A	https://lod-am.net/id/ARSL31A	Sapienza University of Rome	http://purl.obolibrary.org/obo/CHEBI_28702		0.001	http://qudt.org/vocab/unit#PERCENT

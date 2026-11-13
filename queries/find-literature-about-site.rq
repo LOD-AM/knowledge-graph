@@ -1,0 +1,24 @@
+# Publications documenting objects found in features of a site.
+PREFIX :          <https://lod-am.net/id/>
+PREFIX crm:       <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX crmarchaeo: <http://www.cidoc-crm.org/extensions/crmarchaeo/>
+PREFIX dcterms:   <http://purl.org/dc/terms/>
+PREFIX fabio:     <http://purl.org/spar/fabio/>
+PREFIX prism:     <http://prismstandard.org/namespaces/basic/2.0/>
+PREFIX foaf:      <http://xmlns.com/foaf/0.1/>
+
+SELECT ?site ?work ?doi ?year ?title
+       (GROUP_CONCAT(DISTINCT ?authorName; separator="; ") AS ?authors)
+WHERE {
+  VALUES ?site { :Arslantepe }
+  ?feature crm:P46i_forms_part_of ?site .
+  ?object  crmarchaeo:A21_is_contained_in ?feature ;
+           crm:P70i_is_documented_in ?work .
+  ?work a fabio:JournalArticle ;
+        dcterms:title ?title .
+  OPTIONAL { ?work prism:doi ?doi }
+  OPTIONAL { ?work fabio:hasPublicationYear ?year }
+  OPTIONAL { ?work dcterms:creator/foaf:name ?authorName }
+}
+GROUP BY ?site ?work ?doi ?year ?title
+ORDER BY ?year ?title

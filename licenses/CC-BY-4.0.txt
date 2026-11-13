@@ -1,0 +1,9 @@
+Creative Commons Attribution 4.0 International License
+
+This repository contains documentation for the LOD-AM vocabulary stack.
+
+The external vocabularies referenced are maintained by their respective organizations and are subject to their own licenses.
+
+Local documentation is licensed under CC-BY-4.0.
+
+See https://creativecommons.org/licenses/by/4.0/ for the full license text.

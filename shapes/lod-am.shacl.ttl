@@ -1,0 +1,86 @@
+# LOD-AM modelling conventions as SHACL shapes.
+# These encode CONVENTIONS.md. Change both together.
+# Validate with: make validate   (tools/validate.py)
+
+@prefix sh:      <http://www.w3.org/ns/shacl#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix crm:     <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix afr:     <http://purl.allotrope.org/ontologies/result#> .
+@prefix afx:     <http://purl.allotrope.org/ontologies/property#> .
+@prefix qudt:    <http://qudt.org/schema/qudt#> .
+@prefix fabio:   <http://purl.org/spar/fabio/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf:    <http://xmlns.com/foaf/0.1/> .
+@prefix lodsh:   <https://lod-am.net/shapes/> .
+
+# --- Every local resource is typed -----------------------------------------
+lodsh:LocalResourceShape a sh:NodeShape ;
+    sh:target [ a sh:SPARQLTarget ;
+        sh:select """
+            SELECT DISTINCT ?this WHERE {
+              { ?this ?p ?o } UNION { ?s ?p ?this }
+              FILTER(isIRI(?this) && STRSTARTS(STR(?this), "https://lod-am.net/id/"))
+            }""" ] ;
+    sh:property [ sh:path rdf:type ; sh:minCount 1 ;
+        sh:message "Every https://lod-am.net/id/ resource needs at least one rdf:type." ] .
+
+# --- Objects ----------------------------------------------------------------
+lodsh:ObjectShape a sh:NodeShape ;
+    sh:targetClass crm:E22_Human-Made_Object ;
+    sh:property [ sh:path crm:P2_has_type ; sh:minCount 1 ; sh:nodeKind sh:IRI ;
+        sh:message "Objects need a type shortcut (crm:P2_has_type), even if a full E17 assignment exists." ] ;
+    sh:property [ sh:path crm:P45_consists_of ; sh:nodeKind sh:IRI ; sh:severity sh:Warning ;
+        sh:minCount 1 ; sh:message "Objects should state their material (crm:P45_consists_of)." ] ;
+    sh:property [ sh:path crm:P70i_is_documented_in ; sh:minCount 1 ; sh:severity sh:Warning ;
+        sh:message "Objects should cite the publication they come from (crm:P70i_is_documented_in)." ] .
+
+lodsh:TypeAssignmentShape a sh:NodeShape ;
+    sh:targetClass crm:E17_Type_Assignment ;
+    sh:property [ sh:path crm:P41_classified ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path crm:P42_assigned ; sh:minCount 1 ; sh:nodeKind sh:IRI ] .
+
+lodsh:TypeShape a sh:NodeShape ;
+    sh:targetClass crm:E55_Type, crm:E57_Material ;
+    sh:property [ sh:path skos:prefLabel ; sh:minCount 1 ;
+        sh:message "Types and materials need a skos:prefLabel." ] .
+
+lodsh:IdentifierShape a sh:NodeShape ;
+    sh:targetClass crm:E42_Identifier ;
+    sh:property [ sh:path crm:P190_has_symbolic_content ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] .
+
+# --- Time ------------------------------------------------------------------
+lodsh:TimeSpanShape a sh:NodeShape ;
+    sh:targetClass crm:E52_Time-Span ;
+    sh:or ( [ sh:path crm:P79_beginning_is_qualified_by ; sh:minCount 1 ]
+            [ sh:path crm:P80_end_is_qualified_by ; sh:minCount 1 ]
+            [ sh:path crm:P82_at_some_time_within ; sh:minCount 1 ] ) .
+
+# --- Analytics -------------------------------------------------------------
+lodsh:AnalysisShape a sh:NodeShape ;
+    sh:targetClass crm:E7_Activity ;
+    sh:property [ sh:path afx:AFX_0000399 ; sh:minCount 1 ;
+        sh:message "An analysis needs its input sample (afx:AFX_0000399 has input)." ] ;
+    sh:property [ sh:path afx:AFX_0000395 ; sh:minCount 1 ;
+        sh:message "An analysis needs its measurements (afx:AFX_0000395 has output)." ] ;
+    sh:property [ sh:path crm:P14_carried_out_by ; sh:minCount 1 ; sh:severity sh:Warning ] .
+
+lodsh:MeasurementShape a sh:NodeShape ;
+    sh:targetClass afr:AFR_0002036 , afr:AFR_0002099 ;   # concentration, mass fraction
+    sh:property [ sh:path afx:AFX_0002816 ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ;
+        sh:message "A measurement quantifies exactly one element/compound (afx:AFX_0002816)." ] ;
+    sh:property [ sh:path qudt:unit ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ;
+        sh:message "Units are QUDT unit IRIs (e.g. unit:PERCENT), not strings." ] ;
+    sh:property [ sh:path qudt:numericValue ; sh:maxCount 1 ; sh:datatype xsd:decimal ] ;
+    sh:xone ( [ sh:path qudt:numericValue ; sh:minCount 1 ]
+              [ sh:path afx:AFX_0000331 ; sh:minCount 1 ] ) ;
+    sh:message "A measurement has either a value (qudt:numericValue) or only an upper limit (afx:AFX_0000331 maximum)." .
+
+# --- Literature ------------------------------------------------------------
+lodsh:ArticleShape a sh:NodeShape ;
+    sh:targetClass fabio:JournalArticle ;
+    sh:property [ sh:path dcterms:title ; sh:minCount 1 ] ;
+    sh:property [ sh:path dcterms:creator ; sh:minCount 1 ; sh:class foaf:Person ] ;
+    sh:property [ sh:path fabio:hasPublicationYear ; sh:maxCount 1 ; sh:datatype xsd:gYear ] .

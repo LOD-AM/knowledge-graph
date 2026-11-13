@@ -1,0 +1,22 @@
+# All element measurements for one object, via sample -> analysis -> measurement.
+# Pattern: object afx:contains sample; analysis afx:has-input sample and
+# afx:has-output measurement; measurement afx:quantifies element.
+# Upper limits ("< 0.001 %") are returned in ?max with an empty ?value.
+PREFIX :      <https://lod-am.net/id/>
+PREFIX crm:   <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX afx:   <http://purl.allotrope.org/ontologies/property#>
+PREFIX qudt:  <http://qudt.org/schema/qudt#>
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?object ?sample ?analysis ?lab ?element ?value ?max ?unit WHERE {
+  VALUES ?object { :spearhead_1 }
+  ?object   afx:AFX_0001048 ?sample .          # contains
+  ?analysis afx:AFX_0000399 ?sample ;          # has input
+            afx:AFX_0000395 ?m .               # has output
+  OPTIONAL { ?analysis crm:P14_carried_out_by/rdfs:label ?lab }
+  ?m afx:AFX_0002816 ?element ;                # quantifies
+     qudt:unit ?unit .
+  OPTIONAL { ?m qudt:numericValue ?value }
+  OPTIONAL { ?m afx:AFX_0000331/qudt:numericValue ?max }   # maximum
+}
+ORDER BY ?object ?element
