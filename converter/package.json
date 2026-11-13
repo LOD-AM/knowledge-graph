@@ -1,0 +1,13 @@
+{
+  "name": "lod-am-converter",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Converters that turn external sources (Getty AAT, ...) into LOD-AM RDF under ../data/",
+  "license": "MIT",
+  "type": "commonjs",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "aat": "node fetchType.js",
+    "test": "node --test"
+  }
+}

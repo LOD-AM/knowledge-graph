@@ -9,7 +9,7 @@
  * 
  * Options:
  *   --entity, -e    Comma-separated list of AAT entity IDs (default: 300037118)
- *   --output, -o    Output file path (default: aat_types_cidoc.ttl)
+ *   --output, -o    Output file path (default: data/aat/aat_types_cidoc.ttl)
  *   --depth, -d     Maximum recursion depth (default: 10)
  *   --delay, -l     Delay between requests in ms (default: 500)
  *   --help, -h      Show this help message
@@ -24,6 +24,7 @@
  */
 
 const fs = require('fs');
+const path = require('path');
 const https = require('https');
 const { URL } = require('url');
 
@@ -31,7 +32,7 @@ const { URL } = require('url');
 const defaultConfig = {
   endpoint: 'https://vocab.getty.edu/sparql.xml',
   targetEntities: ['300037118'],
-  outputFile: 'aat_types_cidoc.ttl',
+  outputFile: path.join(__dirname, '..', 'data', 'aat', 'aat_types_cidoc.ttl'),
   maxDepth: 10,
   requestDelay: 500,
   
@@ -40,7 +41,7 @@ const defaultConfig = {
     typeClass: 'crm:E55_Type',
     typeProperty: 'skos:prefLabel',
     broaderProperty: 'crm:P127_has_broader_term',
-    narrowerProperty: 'crm:P128_is_type_for'
+    narrowerProperty: 'crm:P127i_has_narrower_term'  // not emitted yet
   },
   
   headers: {
@@ -149,12 +150,12 @@ CIDOC-CRM Mappings:
   prefLabel      -> skos:prefLabel
   scopeNote      -> skos:scopeNote (English only)
   broader        -> crm:P127_has_broader_term
-  narrower       -> crm:P128_is_type_for
+  narrower       -> crm:P127i_has_narrower_term (not emitted yet)
 `);
 }
 
-// Parse command line arguments
-const config = parseArgs();
+// Parse command line arguments (ignored when required as a module)
+const config = require.main === module ? parseArgs() : { ...defaultConfig };
 
 /**
  * Execute SPARQL query
@@ -431,6 +432,18 @@ async function fetchEntityData(entityId, depth = 0) {
  * Generate flat Turtle output with aat: prefix
  * Each entity is on its own with proper period termination
  */
+/**
+ * Escape a string for use inside a "..." Turtle literal.
+ */
+function turtleEscape(str) {
+  return String(str)
+    .replace(/\\/g, '\\\\')
+    .replace(/"/g, '\\"')
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '\\r')
+    .replace(/\t/g, '\\t');
+}
+
 function generateFlatTurtle(hierarchy) {
   const lines = [];
   const cfg = config.cidoc;
@@ -455,12 +468,12 @@ function generateFlatTurtle(hierarchy) {
     // Add label if available
     if (entity.label) {
       const lang = entity.language ? `@${entity.language}` : '';
-      entityLines.push(`  ${cfg.typeProperty} "${entity.label.replace(/"/g, '\\"')}"${lang} ;`);
+      entityLines.push(`  ${cfg.typeProperty} "${turtleEscape(entity.label)}"${lang} ;`);
     }
     
     // Add scope note if available
     if (entity.scopeNote) {
-      entityLines.push(`  skos:scopeNote "${entity.scopeNote.replace(/"/g, '\\"')}"@en ;`);
+      entityLines.push(`  skos:scopeNote "${turtleEscape(entity.scopeNote)}"@en ;`);
     }
     
     // Add broader terms
@@ -540,6 +553,11 @@ async function main() {
     await new Promise(resolve => setTimeout(resolve, config.requestDelay));
   }
   
+  // Never overwrite existing data with an empty result (e.g. Getty endpoint down)
+  if (entitiesProcessed === 0) {
+    throw new Error('No entities fetched (is the Getty SPARQL endpoint up?). Output file left unchanged.');
+  }
+
   // Write results
   writeResults(hierarchies);
   
@@ -551,8 +569,12 @@ async function main() {
   console.log(`  Output file: ${config.outputFile}`);
 }
 
-// Run
-main().catch(err => {
-  console.error('Fatal error:', err);
-  process.exit(1);
-});
+module.exports = { turtleEscape, generateFlatTurtle };
+
+// Run only when called directly (not when required by tests)
+if (require.main === module) {
+  main().catch(err => {
+    console.error('Fatal error:', err);
+    process.exit(1);
+  });
+}

@@ -5,8 +5,9 @@ This script fetches Getty Art & Architecture Thesaurus (AAT) entities and their 
 ## Usage
 
 ```bash
-# Basic usage with default settings
-node fetchType.js
+# Basic usage with default settings (writes ../data/aat/aat_types_cidoc.ttl)
+npm run aat
+# or: node fetchType.js
 
 # With custom entity IDs
 node fetchType.js --entity 300037118,300037110
@@ -26,10 +27,14 @@ node fetchType.js --help
 | Option | Short | Description | Default |
 |--------|-------|-------------|---------|
 | `--entity` | `-e` | Comma-separated list of AAT entity IDs | `300037118` |
-| `--output` | `-o` | Output file path | `aat_types_cidoc.ttl` |
+| `--output` | `-o` | Output file path | `../data/aat/aat_types_cidoc.ttl` |
 | `--depth` | `-d` | Maximum recursion depth | `10` |
 | `--delay` | `-l` | Delay between requests in ms | `500` |
 | `--help` | `-h` | Show help message | - |
+
+## Behaviour
+- If no entity could be fetched (e.g. the Getty endpoint is down), the script exits with an error and **does not touch the output file**.
+- Run `npm test` for the unit tests and `make check validate` in the repo root to check the generated Turtle.
 
 ## CIDOC-CRM Mappings
 
@@ -41,7 +46,7 @@ The script maps Getty AAT concepts to CIDOC-CRM as follows:
 | prefLabel | `skos:prefLabel` | Property |
 | scopeNote | `skos:scopeNote` | Property (English only) |
 | broader | `crm:P127_has_broader_term` | Property |
-| narrower | `crm:P128_is_type_for` | Property |
+| narrower | `crm:P127i_has_narrower_term` | Property (not emitted yet) |
 
 ## Output Format
 
