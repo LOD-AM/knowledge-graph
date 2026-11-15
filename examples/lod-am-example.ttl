@@ -1,6 +1,7 @@
 @prefix :          <https://lod-am.net/id/> .
 @prefix crm:       <http://www.cidoc-crm.org/cidoc-crm/> .
 @prefix crmarchaeo: <http://www.cidoc-crm.org/extensions/crmarchaeo/> .
+@prefix crmsci:    <http://www.cidoc-crm.org/extensions/crmsci/> .
 @prefix afm:       <http://purl.allotrope.org/ontologies/material#> .
 @prefix afp:       <http://purl.allotrope.org/ontologies/process#> .
 @prefix afr:       <http://purl.allotrope.org/ontologies/result#> .
@@ -14,7 +15,7 @@
 @prefix aat:       <http://vocab.getty.edu/aat/> .
 @prefix chebi:     <http://purl.obolibrary.org/obo/CHEBI_> .
 @prefix ror:       <https://ror.org/> .
-@prefix osgeo:     <http://data.ordnancesurvey.co.uk/ontology/geometry/> .
+@prefix geo:       <http://www.opengis.net/ont/geosparql#> .
 @prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:      <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix owl:       <http://www.w3.org/2002/07/owl#> .
@@ -35,23 +36,35 @@
 :Arslantepe a crm:E27_Site ;
     rdfs:label "Arslantepe"@en ;
     crm:P2_has_type <https://pleiades.stoa.org/vocabularies/settlement> ;
-    owl:sameAs <https://pleiades.stoa.org/places/25078867> ;
-    crm:P53_has_former_or_current_location <https://pleiades.stoa.org/places/osm-location-of-arslantepe-hapya1-4aa1-4> .
+    crm:P1_is_identified_by :Arslantepe_pleiades_id ;     # the Pleiades place, as an identifier (no owl:sameAs)
+    crm:P53_has_former_or_current_location :Arslantepe_location .
+
+:Arslantepe_pleiades_id a crm:E42_Identifier ;
+    crm:P2_has_type :pleiades_place_uri ;
+    crm:P190_has_symbolic_content "https://pleiades.stoa.org/places/25078867" .
+
+:pleiades_place_uri a crm:E55_Type ;
+    skos:prefLabel "Pleiades place URI"@en .
 
 <https://pleiades.stoa.org/vocabularies/settlement> a crm:E55_Type ;
     skos:prefLabel "settlement"@en .
 
-<https://pleiades.stoa.org/places/osm-location-of-arslantepe-hapya1-4aa1-4> a crm:E53_Place ;
-    osgeo:asWKT "POLYGON ((38.3606437999999983 38.3811190999999994, 38.3607782999999998 38.3811273999999969, 38.3609021999999982 38.3811413000000030, 38.3610826999999972 38.3811717999999971, 38.3612407000000033 38.3812148000000022, 38.3614542999999983 38.3812939000000028, 38.3615853000000016 38.3813521000000009, 38.3618895999999978 38.3815906999999967, 38.3620488999999978 38.3817377000000022, 38.3622011000000001 38.3819098000000025, 38.3622931000000023 38.3820374000000015, 38.3623710000000031 38.3821705000000009, 38.3624099000000029 38.3823176000000004, 38.3623922000000022 38.3825007000000014, 38.3623638999999983 38.3826144000000014, 38.3622931000000023 38.3827392999999972, 38.3620044999999976 38.3830029000000010, 38.3618578000000028 38.3830499999999972, 38.3617056000000005 38.3830972000000017, 38.3615746999999985 38.3831193999999982, 38.3614304999999973 38.3831205999999980, 38.3612737999999993 38.3830888000000030, 38.3610578999999987 38.3830195000000032, 38.3609057000000035 38.3829446000000019, 38.3607713000000032 38.3828640999999990, 38.3606545000000025 38.3827920000000020, 38.3605164000000016 38.3826727000000005, 38.3603854999999996 38.3825533999999990, 38.3602793000000020 38.3824258000000000, 38.3601695999999990 38.3822481999999994, 38.3601023000000012 38.3821094999999985, 38.3600634000000014 38.3819625000000002, 38.3600457000000006 38.3818515000000033, 38.3600350999999975 38.3817238999999972, 38.3601625000000013 38.3814047999999985, 38.3602368000000027 38.3813133000000022, 38.3602934999999974 38.3812521999999987, 38.3603996000000009 38.3811883999999992, 38.3605057999999985 38.3811496000000005, 38.3606437999999983 38.3811190999999994))".
+# Outline of the site, taken from the Pleiades location "OSM location of Arslantepe"
+:Arslantepe_location a crm:E53_Place, geo:Feature ;
+    geo:hasGeometry :Arslantepe_location_geometry .
+
+:Arslantepe_location_geometry a geo:Geometry ;
+    geo:asWKT "POLYGON ((38.3606437999999983 38.3811190999999994, 38.3607782999999998 38.3811273999999969, 38.3609021999999982 38.3811413000000030, 38.3610826999999972 38.3811717999999971, 38.3612407000000033 38.3812148000000022, 38.3614542999999983 38.3812939000000028, 38.3615853000000016 38.3813521000000009, 38.3618895999999978 38.3815906999999967, 38.3620488999999978 38.3817377000000022, 38.3622011000000001 38.3819098000000025, 38.3622931000000023 38.3820374000000015, 38.3623710000000031 38.3821705000000009, 38.3624099000000029 38.3823176000000004, 38.3623922000000022 38.3825007000000014, 38.3623638999999983 38.3826144000000014, 38.3622931000000023 38.3827392999999972, 38.3620044999999976 38.3830029000000010, 38.3618578000000028 38.3830499999999972, 38.3617056000000005 38.3830972000000017, 38.3615746999999985 38.3831193999999982, 38.3614304999999973 38.3831205999999980, 38.3612737999999993 38.3830888000000030, 38.3610578999999987 38.3830195000000032, 38.3609057000000035 38.3829446000000019, 38.3607713000000032 38.3828640999999990, 38.3606545000000025 38.3827920000000020, 38.3605164000000016 38.3826727000000005, 38.3603854999999996 38.3825533999999990, 38.3602793000000020 38.3824258000000000, 38.3601695999999990 38.3822481999999994, 38.3601023000000012 38.3821094999999985, 38.3600634000000014 38.3819625000000002, 38.3600457000000006 38.3818515000000033, 38.3600350999999975 38.3817238999999972, 38.3601625000000013 38.3814047999999985, 38.3602368000000027 38.3813133000000022, 38.3602934999999974 38.3812521999999987, 38.3603996000000009 38.3811883999999992, 38.3605057999999985 38.3811496000000005, 38.3606437999999983 38.3811190999999994))"^^geo:wktLiteral .
 
 <http://www.wikidata.org/entity/Q43> a crm:E53_Place ;
     rdfs:label "Turkey"@en .
 
 
 :Palace_Hoard a crm:E25_Human-Made_Feature ;
+    rdfs:label "Palace Hoard"@en ;
     crm:P41i_was_classified_by :assignTypePalace_Hoard ;
     crm:P46i_forms_part_of :Arslantepe ;
-    crm:P8i_witnessed <http://n2t.net/ark:/99152/p03wskdnzgc> .
+    crm:P8i_witnessed <http://n2t.net/ark:/99152/p03wskdnzgc> .   # dating shortcut (#5)
 
 # TODO(open question): map "hoard" to an AAT concept and use it here.
 :assignTypePalace_Hoard a crm:E17_Type_Assignment ;
@@ -79,7 +92,7 @@
 # ARCHAEOLOGICAL OBJECTS AND TYPES (CIDOC CRM)
 # ----------------------------------------------------------------------------
 
-:spearhead_1 a crm:E22_Human-Made_Object, afm:AFM_0001099 ;   # afm: chemical mixture
+:spearhead_1 a crm:E22_Human-Made_Object ;
     rdfs:label "Spearhead 1"@en ;
     crm:P1_is_identified_by :spearhead_1_id ;
     # Shortcuts (always present, used by queries) ...
@@ -88,8 +101,7 @@
     # ... and the full type assignments (who/where the classification comes from)
     crm:P41i_was_classified_by :assign_spearhead_1_type, :assign_spearhead_1_mat ;
     crm:P46_is_composed_of :spearhead_1_blade, :spearhead_1_tange ;
-    crmarchaeo:A21_is_contained_in :Palace_Hoard ;
-    afx:AFX_0001048 :sample_ARSL31A ;          # afx: contains
+    crmarchaeo:A21_is_contained_in :Palace_Hoard ;   # TODO(#6): CRMarchaeo 2.1.1 has AP21i_is_contained_in (range A2)
     crm:P70i_is_documented_in <https://doi.org/10.3406/paleo.2002.4745> .
 
 :spearhead_1_id a crm:E42_Identifier ;
@@ -159,9 +171,13 @@ aat:300037118 a crm:E55_Type ;
     dcterms:identifier "02be6w209" ;
     owl:sameAs ror:02be6w209 .
 
-# ========== SAMPLE ==========
+# ========== SAMPLING AND SAMPLE ==========
+# The sample is taken from the blade (CRMsci 3.2). The AFO material class is on the sample only.
+:sampling_ARSL31A a crmsci:S2_Sample_Taking ;
+    crmsci:O3_sampled_from :spearhead_1_blade ;
+    crmsci:O5_removed :sample_ARSL31A .
 
-:sample_ARSL31A a afm:AFM_0001099 ;
+:sample_ARSL31A a crmsci:S13_Sample, afm:AFM_0001099 ;   # afm: chemical mixture
     rdfs:label "Sample from Spearhead 1 Blade (ARSL31A)"@en .
 
 # ========== ANALYSIS ==========
@@ -174,48 +190,48 @@ aat:300037118 a crm:E55_Type ;
     afx:AFX_0000395 :Cu_measurement, :Ag_measurement, :As_measurement, :Ni_measurement, :Sb_measurement, :Pb_measurement, :Fe_measurement, :Zn_measurement, :Co_measurement .
 
 # ========== MEASUREMENTS ==========
-:Cu_measurement a afr:AFR_0002036 ;
-    afx:AFX_0002816 chebi:28694 ;  # Copper
+:Cu_measurement a afr:AFR_0002099 ;   # mass fraction (wt %)
+    afx:AFX_0002816 chebi:28694 ;  # copper atom
     qudt:numericValue "97"^^xsd:decimal ;
     qudt:unit unit:PERCENT .
 
-:Ag_measurement a afr:AFR_0002036 ;
-    afx:AFX_0002816 chebi:23855 ;  # Silver
+:Ag_measurement a afr:AFR_0002099 ;   # mass fraction (wt %)
+    afx:AFX_0002816 chebi:30512 ;  # silver atom
     qudt:numericValue "0.002"^^xsd:decimal ;
     qudt:unit unit:PERCENT .
 
-:As_measurement a afr:AFR_0002036 ;
-    afx:AFX_0002816 chebi:27563 ;  # Arsenic
+:As_measurement a afr:AFR_0002099 ;   # mass fraction (wt %)
+    afx:AFX_0002816 chebi:27563 ;  # arsenic atom
     qudt:numericValue "3.11"^^xsd:decimal ;
     qudt:unit unit:PERCENT .
 
-:Ni_measurement a afr:AFR_0002036 ;
-    afx:AFX_0002816 chebi:28695 ;  # Nickel
+:Ni_measurement a afr:AFR_0002099 ;   # mass fraction (wt %)
+    afx:AFX_0002816 chebi:28112 ;  # nickel atom
     qudt:numericValue "0.002"^^xsd:decimal ;
     qudt:unit unit:PERCENT .
 
-:Sb_measurement a afr:AFR_0002036 ;
-    afx:AFX_0002816 chebi:28697 ;  # Antimony
+:Sb_measurement a afr:AFR_0002099 ;   # mass fraction (wt %)
+    afx:AFX_0002816 chebi:30513 ;  # antimony atom
     qudt:numericValue "0.007"^^xsd:decimal ;
     qudt:unit unit:PERCENT .
 
-:Pb_measurement a afr:AFR_0002036 ;
-    afx:AFX_0002816 chebi:28702 ;  # Lead
+:Pb_measurement a afr:AFR_0002099 ;   # mass fraction (wt %)
+    afx:AFX_0002816 chebi:25016 ;  # lead atom
     afx:AFX_0000331 [ qudt:numericValue "0.001"^^xsd:decimal ] ;  # afx: maximum -> reported as "<0.001 %"
     qudt:unit unit:PERCENT .
 
-:Fe_measurement a afr:AFR_0002036 ;
-    afx:AFX_0002816 chebi:23377 ;  # Iron
+:Fe_measurement a afr:AFR_0002099 ;   # mass fraction (wt %)
+    afx:AFX_0002816 chebi:18248 ;  # iron atom
     qudt:numericValue "0.008"^^xsd:decimal ;
     qudt:unit unit:PERCENT .
 
-:Zn_measurement a afr:AFR_0002036 ;
-    afx:AFX_0002816 chebi:27637 ;  # Zinc
+:Zn_measurement a afr:AFR_0002099 ;   # mass fraction (wt %)
+    afx:AFX_0002816 chebi:27363 ;  # zinc atom
     afx:AFX_0000331 [ qudt:numericValue "0.001"^^xsd:decimal ] ;  # afx: maximum -> reported as "<0.001 %"
     qudt:unit unit:PERCENT .
 
-:Co_measurement a afr:AFR_0002036 ;
-    afx:AFX_0002816 chebi:27659 ;  # Cobalt
+:Co_measurement a afr:AFR_0002099 ;   # mass fraction (wt %)
+    afx:AFX_0002816 chebi:27638 ;  # cobalt atom
     afx:AFX_0000331 [ qudt:numericValue "0.001"^^xsd:decimal ] ;  # afx: maximum -> reported as "<0.001 %"
     qudt:unit unit:PERCENT .
 

@@ -34,6 +34,10 @@ domain/range.
 | `P14_carried_out_by` | analysis → lab |
 | `P70i_is_documented_in` | anything → publication |
 
+CRMsci 3.2 (the release for CRM 7.1.3) adds the sampling event:
+`crmsci:S2_Sample_Taking` with `crmsci:O3_sampled_from` (object or part) and
+`crmsci:O5_removed` (`crmsci:S13_Sample`). `make check` verifies these terms.
+
 ## Common mistakes (all caught by `make check`)
 - `P71_is_listed_in` does not exist in 7.1.3 → use `P70i_is_documented_in` (publication) or `skos:inScheme` (vocabulary).
 - `P148_has_component` is for propositional objects (texts), not physical parts → `P46_is_composed_of`.

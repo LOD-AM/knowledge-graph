@@ -48,12 +48,13 @@
 - Used by major pharmaceutical and materials science organizations
 
 **How we use it**:
-- **Direct linking**: object → sample (`afx:AFX_0001048` contains) ← analysis (`afx:AFX_0000399` has input) → measurements (`afx:AFX_0000395` has output). The analysis is also a `crm:E7_Activity`, which connects the two models.
+- **Direct linking**: sampling (CRMsci `S2_Sample_Taking`, `O3_sampled_from` object or part, `O5_removed` sample) → sample ← analysis (`afx:AFX_0000399` has input) → measurements (`afx:AFX_0000395` has output). The analysis is also a `crm:E7_Activity`, which connects the two models.
+  *Update 2026-11-15 (knowledge-graph#2, #3):* the earlier object → sample link `afx:AFX_0001048` (contains) is defined for containers and their content, so a sampling event replaced it. CRMsci 3.2 is the CRMsci release for CRM 7.1.3; we use only its sampling terms. The AFO material class is on the sample only.
 - **No formal mapping yet**: For prototype, we use direct links; formal OWL mappings can be added later
 - **Focus**: Chemical composition, dating, material analysis results
 
 **Key classes/properties** (details: [ontologies/afo](../../ontologies/afo/README.md)):
-- `afr:AFR_0002036` (concentration), `afp:AFP_0000527` (spectrometry), `afm:AFM_0001099` (chemical mixture)
+- `afr:AFR_0002099` (mass fraction, for wt %; *2026-11-15, #1*), `afr:AFR_0002036` (concentration, real concentrations only), `afp:AFP_0000527` (spectrometry), `afm:AFM_0001099` (chemical mixture, samples only)
 - `afx:AFX_0002816` (quantifies), `afx:AFX_0000331` (maximum)
 - values and units via QUDT: `qudt:numericValue`, `qudt:unit unit:PERCENT`
 
@@ -92,7 +93,7 @@
 
 We use **direct property links** to minimize complexity for the prototype:
 
-1. **Objects to Analytics**: object `afx:AFX_0001048` (contains) sample; analysis `afx:AFX_0000399` (has input) sample
+1. **Objects to Analytics**: sampling `crmsci:O3_sampled_from` object (or part) and `crmsci:O5_removed` sample; analysis `afx:AFX_0000399` (has input) sample
 2. **Objects to Literature**: `crm:P70i_is_documented_in` (object/type → publication)
 3. **Analytics to Literature**: `crm:P70i_is_documented_in` (analysis → publication)
 

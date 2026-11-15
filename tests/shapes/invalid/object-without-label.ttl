@@ -1,0 +1,15 @@
+@prefix :       <https://lod-am.net/id/> .
+@prefix crm:    <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix crmsci: <http://www.cidoc-crm.org/extensions/crmsci/> .
+@prefix afm:    <http://purl.allotrope.org/ontologies/material#> .
+@prefix afr:    <http://purl.allotrope.org/ontologies/result#> .
+@prefix afx:    <http://purl.allotrope.org/ontologies/property#> .
+@prefix aat:    <http://vocab.getty.edu/aat/> .
+@prefix chebi:  <http://purl.obolibrary.org/obo/CHEBI_> .
+@prefix geo:    <http://www.opengis.net/ont/geosparql#> .
+@prefix owl:    <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:   <http://www.w3.org/2004/02/skos/core#> .
+
+# Main resources need a language-tagged rdfs:label (#12).
+:obj a crm:E22_Human-Made_Object ; crm:P2_has_type aat:300037118 .

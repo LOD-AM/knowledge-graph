@@ -5,30 +5,18 @@ They need a domain decision from the project. Each one is tracked as a GitHub
 issue (label `modelling`). Discuss there. Once decided, record the decision in
 CONVENTIONS.md and the shapes, and remove the item here.
 
-1. [#1](https://github.com/LOD-AM/knowledge-graph/issues/1) **Concentration vs. mass fraction.** Measurements use `afr:AFR_0002036`
-   (concentration). For alloy composition in wt% `afr:AFR_0002099`
-   (mass fraction) is arguably more precise. The shapes accept both.
-2. [#2](https://github.com/LOD-AM/knowledge-graph/issues/2) **Object → sample link.** `afx:AFX_0001048` (contains) is defined for
-   containers. A sample taken *from* an object might be better modelled as a
-   sampling event (`crm:E7_Activity` / CRMsci `S2_Sample_Taking`) or as a part.
-   The current example also attaches the blade sample to the whole spearhead.
-3. [#3](https://github.com/LOD-AM/knowledge-graph/issues/3) **Objects typed as `afm:AFM_0001099` (chemical mixture).** Is the double
-   typing of `:spearhead_1` wanted, or should only the sample carry the AFO
-   material class?
-4. [#4](https://github.com/LOD-AM/knowledge-graph/issues/4) **Site ↔ Pleiades identity.** `owl:sameAs` merges both resources under
-   reasoning. Alternatives: `skos:exactMatch`/`closeMatch`, or an `E42_Identifier`.
-5. [#5](https://github.com/LOD-AM/knowledge-graph/issues/5) **Feature dating.** `P8i_witnessed` (feature → period) is the closest
-   valid shortcut. Strictly, the deposition event of the hoard falls within
-   the period (`P10_falls_within`), which needs an event we don't model yet.
-6. [#6](https://github.com/LOD-AM/knowledge-graph/issues/6) **CRMarchaeo.** `crmarchaeo:A21_is_contained_in` is not checked yet, because
-   the CRMarchaeo RDFS was not reachable. Confirm the version and term name and
-   add it to `make fetch`.
-7. [#7](https://github.com/LOD-AM/knowledge-graph/issues/7) **Hoard type.** `:Palace_Hoard` uses a local `:hoard` type. Map it to the AAT
-   term for hoards.
-8. [#8](https://github.com/LOD-AM/knowledge-graph/issues/8) **Geometry.** `osgeo:asWKT` (Ordnance Survey) is used for WKT. GeoSPARQL's
-   `geo:asWKT` with `^^geo:wktLiteral` is the more common choice and is what
-   Fuseki's spatial index understands.
-9. [#9](https://github.com/LOD-AM/knowledge-graph/issues/9) **Formal CRM ↔ AFO mapping.** Still the "later" item from the decisions.
-10. [#14](https://github.com/LOD-AM/knowledge-graph/issues/14) **Lead isotope ratios.** No pattern yet: a ratio relates two nuclides,
-    while the concentration pattern quantifies exactly one element. Candidate AFO
-    terms and open points are in the issue.
+Decided on 2026-11-15 and now in CONVENTIONS.md: #1 mass fraction, #2 sampling
+event (CRMsci), #3 AFO material class on samples only, #4 Pleiades as identifier,
+#5 `P8i_witnessed` shortcut, #8 GeoSPARQL, #12 labels on main resources.
+
+1. [#6](https://github.com/LOD-AM/knowledge-graph/issues/6) **CRMarchaeo.** CRMarchaeo 2.1.1 (for CRM 7.1.2; all CRM terms it uses
+   exist in 7.1.3) has no `A21_is_contained_in`. Its `AP21i_is_contained_in` points
+   to an `A2_Stratigraphic_Volume_Unit`, not to an `E25_Human-Made_Feature`.
+   How should objects be linked to their feature?
+2. [#7](https://github.com/LOD-AM/knowledge-graph/issues/7) **Feature types.** Which controlled vocabulary for types of
+   archaeological features (`:Palace_Hoard` still uses a local `:hoard` type)?
+3. [#9](https://github.com/LOD-AM/knowledge-graph/issues/9) **Formal CRM ↔ AFO mapping.** Needed when other projects consume the data.
+4. [#14](https://github.com/LOD-AM/knowledge-graph/issues/14) **Lead isotope ratios.** Pattern agreed (`afr:AFR_0002368` analyte
+   molar ratio, `afx:AFX_0001550` has reference, reported ratios only, any non-empty
+   set, mass spectrometry `afp:AFP_0001427`). Open: ChEBI has lead-207 but no
+   lead-204, -206 or -208, so the nuclides need another identifier.

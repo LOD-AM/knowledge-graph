@@ -1,0 +1,20 @@
+# ChEBI entities LOD-AM may use, verified against the EBI Ontology Lookup Service
+# (tools/verify_chebi.py, `make verify-chebi`). make check rejects any other chebi: IRI.
+# id	label (as in ChEBI)	symbol
+CHEBI_28694	copper atom	Cu
+CHEBI_27007	tin atom	Sn
+CHEBI_25016	lead atom	Pb
+CHEBI_27363	zinc atom	Zn
+CHEBI_33301	bismuth atom	Bi
+CHEBI_30512	silver atom	Ag
+CHEBI_30513	antimony atom	Sb
+CHEBI_27563	arsenic atom	As
+CHEBI_18248	iron atom	Fe
+CHEBI_28112	nickel atom	Ni
+CHEBI_27638	cobalt atom	Co
+CHEBI_18291	manganese atom	Mn
+CHEBI_29287	gold atom	Au
+CHEBI_28659	phosphorus atom	P
+CHEBI_30452	tellurium atom	Te
+CHEBI_27568	selenium atom	Se
+CHEBI_26833	sulfur atom	S

@@ -1,7 +1,7 @@
 # LOD-AM knowledge graph: checks. Run `make` before every commit.
 PY ?= python3
 
-.PHONY: all fetch check validate test-terms test-shapes test-queries test-converter install
+.PHONY: all fetch check validate test-terms test-shapes test-queries test-converter install verify-chebi
 
 all: check validate test-terms test-shapes test-queries test-converter check-claude-md
 
@@ -13,6 +13,9 @@ fetch:              ## download CRM / AFO / FaBiO into .cache/ (not committed)
 
 check: fetch        ## parse, prefixes, term existence, CRM domain/range
 	$(PY) tools/check_terms.py
+
+verify-chebi:       ## tools/chebi.tsv against ChEBI (needs www.ebi.ac.uk); run when you add an id
+	$(PY) tools/verify_chebi.py
 
 validate:           ## SHACL: LOD-AM conventions
 	$(PY) tools/validate.py

@@ -9,6 +9,8 @@ mkdir -p "$CACHE"
 CRM_URL="https://cidoc-crm.org/rdfs/7.1.3/CIDOC_CRM_v7.1.3.rdf"
 FABIO_URL="https://sparontologies.github.io/fabio/current/fabio.ttl"
 AFO_URL="https://purl.allotrope.org/voc/afo/merged/REC/2025/12/merged-without-qudt"
+# CRMsci 3.2 is the release for CRM 7.1.3 (sampling: S2_Sample_Taking, S13_Sample)
+CRMSCI_URL="https://cidoc-crm.org/extensions/crmsci/rdfs/3.2/CRMsci_v3.2.rdf"
 
 fetch() { # url file accept
   if [ -s "$CACHE/$2" ]; then echo "cached: $2"; return; fi
@@ -20,3 +22,4 @@ fetch() { # url file accept
 fetch "$CRM_URL" cidoc-crm-7.1.3.rdf "application/rdf+xml"
 fetch "$AFO_URL" afo-2025-12.ttl "text/turtle"
 fetch "$FABIO_URL" fabio.ttl "text/turtle"
+fetch "$CRMSCI_URL" crmsci-3.2.rdf "application/rdf+xml"

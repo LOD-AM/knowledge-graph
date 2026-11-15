@@ -26,29 +26,35 @@ Values and units use **QUDT 1.1** (which AFO builds on): `qudt:numericValue`,
 
 | Term | Label | Used for |
 |---|---|---|
-| `afx:AFX_0001048` | contains | object → sample |
 | `afx:AFX_0000399` | has input | analysis → sample |
 | `afx:AFX_0000395` | has output | analysis → measurement |
 | `afx:AFX_0002816` | quantifies | measurement → element (ChEBI IRI) |
 | `afx:AFX_0000331` | maximum | measurement → upper limit, for "< x" values |
 
+The object → sample link is a CRMsci sampling event (`crmsci:S2_Sample_Taking`,
+see CONVENTIONS.md), not `afx:AFX_0001048` (contains), which AFO defines for
+containers and their content.
+
 ## Pattern
 
 ```turtle
-:object afx:AFX_0001048 :sample .                       # contains
+:sampling a crmsci:S2_Sample_Taking ;
+    crmsci:O3_sampled_from :object ;
+    crmsci:O5_removed :sample .
+:sample a crmsci:S13_Sample, afm:AFM_0001099 .           # chemical mixture: samples only
 
 :analysis a afp:AFP_0000527, crm:E7_Activity ;          # spectrometry
     crm:P14_carried_out_by :lab ;
     afx:AFX_0000399 :sample ;                           # has input
     afx:AFX_0000395 :cu, :pb .                          # has output
 
-:cu a afr:AFR_0002036 ;                                 # concentration
+:cu a afr:AFR_0002099 ;                                 # mass fraction (wt %)
     afx:AFX_0002816 chebi:28694 ;                       # quantifies copper
     qudt:numericValue "97"^^xsd:decimal ;
     qudt:unit unit:PERCENT .
 
-:pb a afr:AFR_0002036 ;                                 # reported as "< 0.001 %"
-    afx:AFX_0002816 chebi:28702 ;
+:pb a afr:AFR_0002099 ;                                 # reported as "< 0.001 %"
+    afx:AFX_0002816 chebi:25016 ;                       # quantifies lead atom
     afx:AFX_0000331 [ qudt:numericValue "0.001"^^xsd:decimal ] ;
     qudt:unit unit:PERCENT .
 ```
@@ -57,6 +63,10 @@ The analysis is also a `crm:E7_Activity`, which joins the AFO and CIDOC CRM
 parts of the graph (who did it: `crm:P14_carried_out_by`; where it is
 published: `crm:P70i_is_documented_in`).
 
+ChEBI ids: only those in [tools/chebi.tsv](../../tools/chebi.tsv), checked against
+ChEBI with `make verify-chebi`. (Until 2026-11-15 several examples used wrong ids,
+e.g. `chebi:28702`, which is not lead.)
+
 ## Not yet decided
-See [docs/open-questions.md](../../docs/open-questions.md): concentration vs. mass
-fraction, object→sample link, formal CRM↔AFO mapping.
+See [docs/open-questions.md](../../docs/open-questions.md): lead isotope ratios,
+formal CRM↔AFO mapping.

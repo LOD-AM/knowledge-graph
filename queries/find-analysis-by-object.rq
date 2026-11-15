@@ -1,16 +1,20 @@
-# All element measurements for one object, via sample -> analysis -> measurement.
-# Pattern: object afx:contains sample; analysis afx:has-input sample and
-# afx:has-output measurement; measurement afx:quantifies element.
+# All element measurements for one object, via sampling -> sample -> analysis -> measurement.
+# Pattern: a sampling (crmsci:S2_Sample_Taking) O3_sampled_from the object or one of its
+# parts and O5_removed the sample; the analysis afx:has-input the sample and
+# afx:has-output the measurements; a measurement afx:quantifies one element.
 # Upper limits ("< 0.001 %") are returned in ?max with an empty ?value.
-PREFIX :      <https://lod-am.net/id/>
-PREFIX crm:   <http://www.cidoc-crm.org/cidoc-crm/>
-PREFIX afx:   <http://purl.allotrope.org/ontologies/property#>
-PREFIX qudt:  <http://qudt.org/schema/qudt#>
-PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX :       <https://lod-am.net/id/>
+PREFIX crm:    <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX crmsci: <http://www.cidoc-crm.org/extensions/crmsci/>
+PREFIX afx:    <http://purl.allotrope.org/ontologies/property#>
+PREFIX qudt:   <http://qudt.org/schema/qudt#>
+PREFIX rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
 
-SELECT ?object ?sample ?analysis ?lab ?element ?value ?max ?unit WHERE {
+SELECT ?object ?part ?sample ?analysis ?lab ?element ?value ?max ?unit WHERE {
   VALUES ?object { :spearhead_1 }
-  ?object   afx:AFX_0001048 ?sample .          # contains
+  ?object   crm:P46_is_composed_of* ?part .    # the object itself or one of its parts
+  ?sampling crmsci:O3_sampled_from ?part ;
+            crmsci:O5_removed ?sample .
   ?analysis afx:AFX_0000399 ?sample ;          # has input
             afx:AFX_0000395 ?m .               # has output
   OPTIONAL { ?analysis crm:P14_carried_out_by/rdfs:label ?lab }
