@@ -30,6 +30,10 @@ Values and units use **QUDT 1.1** (which AFO builds on): `qudt:numericValue`,
 | `afx:AFX_0000395` | has output | analysis → measurement |
 | `afx:AFX_0002816` | quantifies | measurement → element (ChEBI IRI) |
 | `afx:AFX_0000331` | maximum | measurement → upper limit, for "< x" values |
+| `afx:AFX_0001550` | has reference | isotope ratio → denominator nuclide |
+
+Isotope ratios are `afr:AFR_0002368` (analyte molar ratio) from `afp:AFP_0001427`
+(mass spectrometry), see CONVENTIONS.md.
 
 The object → sample link is a CRMsci sampling event (`crmsci:S2_Sample_Taking`,
 see CONVENTIONS.md), not `afx:AFX_0001048` (contains), which AFO defines for

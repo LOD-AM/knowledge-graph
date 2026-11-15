@@ -49,6 +49,7 @@
 
 **How we use it**:
 - **Direct linking**: sampling (CRMsci `S2_Sample_Taking`, `O3_sampled_from` object or part, `O5_removed` sample) → sample ← analysis (`afx:AFX_0000399` has input) → measurements (`afx:AFX_0000395` has output). The analysis is also a `crm:E7_Activity`, which connects the two models.
+  *Update 2026-11-15 (knowledge-graph#6, #14):* objects are linked to the feature they were found in with CRMarchaeo 2.1.1 `AP21i_is_contained_in`; such features are also `A2_Stratigraphic_Volume_Unit`. Lead isotope ratios are `afr:AFR_0002368` (analyte molar ratio) with the numerator nuclide via *quantifies* and the denominator via *has reference*; the nuclides are Wikidata items because ChEBI has only lead-207 and AFO has none.
   *Update 2026-11-15 (knowledge-graph#2, #3):* the earlier object → sample link `afx:AFX_0001048` (contains) is defined for containers and their content, so a sampling event replaced it. CRMsci 3.2 is the CRMsci release for CRM 7.1.3; we use only its sampling terms. The AFO material class is on the sample only.
 - **No formal mapping yet**: For prototype, we use direct links; formal OWL mappings can be added later
 - **Focus**: Chemical composition, dating, material analysis results

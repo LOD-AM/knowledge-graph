@@ -12,6 +12,7 @@ shapes in the same PR. *Why* we chose each ontology/vocabulary is in
 |---|---|---|
 | CIDOC CRM | **7.1.3** (LTS) | `E22_Human-Made_Object`, not `Man-Made`; no `P71` |
 | CRMsci | **3.2** (the release for CRM 7.1.3) | sampling only: `S2_Sample_Taking`, `S13_Sample`, `O3`, `O5` |
+| CRMarchaeo | **2.1.1** (released for CRM 7.1.2; every CRM term it uses exists in 7.1.3) | object in feature: `AP21i_is_contained_in`, `A2_Stratigraphic_Volume_Unit` |
 | Allotrope (AFO) | REC/2025/12 | opaque IDs, QUDT 1.1 units |
 | FaBiO | current SPAR release | with Dublin Core, PRISM, FOAF |
 
@@ -26,7 +27,8 @@ shapes in the same PR. *Why* we chose each ontology/vocabulary is in
 - **Reuse external IRIs** wherever they exist: Getty AAT concept IRIs
   (`http://vocab.getty.edu/aat/<id>`, never `/page/aat/`), PeriodO ARKs,
   Pleiades places (as identifiers, see Sites), ChEBI elements (only ids listed in
-  [tools/chebi.tsv](tools/chebi.tsv), verified against ChEBI), ROR for institutions,
+  [tools/chebi.tsv](tools/chebi.tsv), verified against ChEBI), Wikidata for nuclides and
+  places (only ids in [tools/wikidata.tsv](tools/wikidata.tsv)), ROR for institutions,
   DOI URLs for articles.
 - Prefixes: only those in [tools/prefixes.ttl](tools/prefixes.ttl), bound to
   exactly those namespaces.
@@ -81,12 +83,12 @@ Types are `crm:E55_Type`, materials `crm:E57_Material`; both need a
 :Arslantepe_location_geometry a geo:Geometry ;
     geo:asWKT "POINT (38.3613 38.3821)"^^geo:wktLiteral .              # lon lat (CRS84)
 
-:Palace_Hoard a crm:E25_Human-Made_Feature ;
+:Palace_Hoard a crm:E25_Human-Made_Feature, crmarchaeo:A2_Stratigraphic_Volume_Unit ;
     rdfs:label "Palace Hoard"@en ;
     crm:P46i_forms_part_of :Arslantepe ;
     crm:P8i_witnessed <http://n2t.net/ark:/99152/p03wskdnzgc> .        # dating shortcut, see below
 
-:spearhead_1 crmarchaeo:A21_is_contained_in :Palace_Hoard .
+:spearhead_1 crmarchaeo:AP21i_is_contained_in :Palace_Hoard .     # object found in the feature
 
 <http://n2t.net/ark:/99152/p03wskdnzgc> a crm:E4_Period ;
     skos:inScheme <http://n2t.net/ark:/99152/p03wskd> ;
@@ -101,6 +103,9 @@ Types are `crm:E55_Type`, materials `crm:E57_Material`; both need a
 - **Geometry** is GeoSPARQL (`geo:hasGeometry` → `geo:Geometry` with one
   `geo:asWKT` typed `geo:wktLiteral`), which Fuseki's spatial index understands.
   `osgeo:` is no longer used (`make check` rejects it).
+- **Finds in features:** a feature that contains finds is also a CRMarchaeo
+  `A2_Stratigraphic_Volume_Unit` (a deposit: hoard, grave fill, layer; a kurgan as a
+  whole is a coarse A2), so the object can be `crmarchaeo:AP21i_is_contained_in` it.
 - **Dating** a feature (or a site, when there is no real feature) uses the
   shortcut `crm:P8i_witnessed` → period. We don't model deposition events.
 
@@ -128,7 +133,16 @@ Types are `crm:E55_Type`, materials `crm:E57_Material`; both need a
   `afr:AFR_0002036` (concentration) is only for real concentrations (e.g. ppm in solution).
 - Objects are not typed with an AFO material class; `afm:AFM_0001099` (chemical
   mixture) is on the sample. The object's material is `crm:P45_consists_of`.
-- Lead isotope ratios: pattern still open (knowledge-graph#14).
+- **Lead isotope ratios** (mass spectrometry `afp:AFP_0001427`):
+  ```turtle
+  :ARSL18_pb207_206 a afr:AFR_0002368 ;     # analyte molar ratio
+      afx:AFX_0002816 wd:Q18883443 ;          # quantifies lead-207 (numerator)
+      afx:AFX_0001550 wd:Q18883438 ;          # has reference lead-206 (denominator)
+      qudt:numericValue "0.8374"^^xsd:decimal .   # no qudt:unit: ratios are dimensionless
+  ```
+  Only ratios reported in the publication; any non-empty set per analysis. Nuclides are
+  Wikidata items (lead-204 `Q18883429`, -206 `Q18883438`, -207 `Q18883443`, -208 `Q16670466`):
+  ChEBI has only lead-207 and AFO has no nuclides.
 
 Values reported only as an upper limit (`< 0.001 %`) use
 `afx:AFX_0000331 [ qudt:numericValue "0.001"^^xsd:decimal ]` *instead of*
@@ -158,7 +172,8 @@ Values reported only as an upper limit (`< 0.001 %`) use
 | feature / site | `crm:P8i_witnessed` | period |
 | site | `crm:P1_is_identified_by` | `E42_Identifier` (Pleiades URI) |
 | place | `geo:hasGeometry` | `geo:Geometry` |
-| object | `crmarchaeo:A21_is_contained_in` | feature (term not valid in CRMarchaeo 2.1.1, knowledge-graph#6) |
+| object | `crmarchaeo:AP21i_is_contained_in` | feature (also `crmarchaeo:A2_Stratigraphic_Volume_Unit`) |
+| ratio | `afx:AFX_0002816` / `afx:AFX_0001550` | numerator / denominator nuclide |
 
 ## Modelling scope
 

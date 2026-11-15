@@ -9,6 +9,7 @@
 @prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
 @prefix crm:     <http://www.cidoc-crm.org/cidoc-crm/> .
 @prefix crmsci:  <http://www.cidoc-crm.org/extensions/crmsci/> .
+@prefix crmarchaeo: <http://www.cidoc-crm.org/extensions/crmarchaeo/> .
 @prefix afm:     <http://purl.allotrope.org/ontologies/material#> .
 @prefix owl:     <http://www.w3.org/2002/07/owl#> .
 @prefix geo:     <http://www.opengis.net/ont/geosparql#> .
@@ -105,6 +106,22 @@ lodsh:AnalysisShape a sh:NodeShape ;
     sh:property [ sh:path afx:AFX_0000395 ; sh:minCount 1 ;
         sh:message "An analysis needs its measurements (afx:AFX_0000395 has output)." ] ;
     sh:property [ sh:path crm:P14_carried_out_by ; sh:minCount 1 ; sh:severity sh:Warning ] .
+
+lodsh:IsotopeRatioShape a sh:NodeShape ;
+    sh:targetClass afr:AFR_0002368 ;   # analyte molar ratio (lead isotope ratios, #14)
+    sh:property [ sh:path afx:AFX_0002816 ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ;
+        sh:message "A ratio quantifies exactly one nuclide, the numerator (afx:AFX_0002816)." ] ;
+    sh:property [ sh:path afx:AFX_0001550 ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ;
+        sh:message "A ratio has exactly one reference nuclide, the denominator (afx:AFX_0001550 has reference)." ] ;
+    sh:property [ sh:path qudt:numericValue ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:decimal ;
+        sh:message "A ratio has exactly one value, as reported (qudt:numericValue, xsd:decimal)." ] ;
+    sh:property [ sh:path qudt:unit ; sh:maxCount 0 ;
+        sh:message "Ratios are dimensionless: no qudt:unit." ] .
+
+lodsh:ContainedInShape a sh:NodeShape ;
+    sh:targetObjectsOf crmarchaeo:AP21i_is_contained_in ;
+    sh:class crmarchaeo:A2_Stratigraphic_Volume_Unit ;
+    sh:message "A feature that contains finds is also a crmarchaeo:A2_Stratigraphic_Volume_Unit (#6)." .
 
 lodsh:SampleTakingShape a sh:NodeShape ;
     sh:targetClass crmsci:S2_Sample_Taking ;

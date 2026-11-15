@@ -13,6 +13,7 @@
 @prefix dcterms:   <http://purl.org/dc/terms/> .
 @prefix foaf:      <http://xmlns.com/foaf/0.1/> .
 @prefix aat:       <http://vocab.getty.edu/aat/> .
+@prefix wd:        <http://www.wikidata.org/entity/> .
 @prefix chebi:     <http://purl.obolibrary.org/obo/CHEBI_> .
 @prefix ror:       <https://ror.org/> .
 @prefix geo:       <http://www.opengis.net/ont/geosparql#> .
@@ -56,11 +57,11 @@
 :Arslantepe_location_geometry a geo:Geometry ;
     geo:asWKT "POLYGON ((38.3606437999999983 38.3811190999999994, 38.3607782999999998 38.3811273999999969, 38.3609021999999982 38.3811413000000030, 38.3610826999999972 38.3811717999999971, 38.3612407000000033 38.3812148000000022, 38.3614542999999983 38.3812939000000028, 38.3615853000000016 38.3813521000000009, 38.3618895999999978 38.3815906999999967, 38.3620488999999978 38.3817377000000022, 38.3622011000000001 38.3819098000000025, 38.3622931000000023 38.3820374000000015, 38.3623710000000031 38.3821705000000009, 38.3624099000000029 38.3823176000000004, 38.3623922000000022 38.3825007000000014, 38.3623638999999983 38.3826144000000014, 38.3622931000000023 38.3827392999999972, 38.3620044999999976 38.3830029000000010, 38.3618578000000028 38.3830499999999972, 38.3617056000000005 38.3830972000000017, 38.3615746999999985 38.3831193999999982, 38.3614304999999973 38.3831205999999980, 38.3612737999999993 38.3830888000000030, 38.3610578999999987 38.3830195000000032, 38.3609057000000035 38.3829446000000019, 38.3607713000000032 38.3828640999999990, 38.3606545000000025 38.3827920000000020, 38.3605164000000016 38.3826727000000005, 38.3603854999999996 38.3825533999999990, 38.3602793000000020 38.3824258000000000, 38.3601695999999990 38.3822481999999994, 38.3601023000000012 38.3821094999999985, 38.3600634000000014 38.3819625000000002, 38.3600457000000006 38.3818515000000033, 38.3600350999999975 38.3817238999999972, 38.3601625000000013 38.3814047999999985, 38.3602368000000027 38.3813133000000022, 38.3602934999999974 38.3812521999999987, 38.3603996000000009 38.3811883999999992, 38.3605057999999985 38.3811496000000005, 38.3606437999999983 38.3811190999999994))"^^geo:wktLiteral .
 
-<http://www.wikidata.org/entity/Q43> a crm:E53_Place ;
+wd:Q43 a crm:E53_Place ;
     rdfs:label "Turkey"@en .
 
 
-:Palace_Hoard a crm:E25_Human-Made_Feature ;
+:Palace_Hoard a crm:E25_Human-Made_Feature, crmarchaeo:A2_Stratigraphic_Volume_Unit ;   # A2: finds are contained in it (#6)
     rdfs:label "Palace Hoard"@en ;
     crm:P41i_was_classified_by :assignTypePalace_Hoard ;
     crm:P46i_forms_part_of :Arslantepe ;
@@ -82,7 +83,7 @@
 <http://n2t.net/ark:/99152/p03wskdnzgc> a crm:E4_Period;
     skos:inScheme <http://n2t.net/ark:/99152/p03wskd> ;
     crm:P4_has_time-span :p03wskdnzgc_TIME_SPAN ;
-    crm:P7_took_place_at <http://www.wikidata.org/entity/Q43> .
+    crm:P7_took_place_at wd:Q43 .
 
 :p03wskdnzgc_TIME_SPAN a crm:E52_Time-Span;
     crm:P79_beginning_is_qualified_by "-2000";
@@ -101,7 +102,7 @@
     # ... and the full type assignments (who/where the classification comes from)
     crm:P41i_was_classified_by :assign_spearhead_1_type, :assign_spearhead_1_mat ;
     crm:P46_is_composed_of :spearhead_1_blade, :spearhead_1_tange ;
-    crmarchaeo:A21_is_contained_in :Palace_Hoard ;   # TODO(#6): CRMarchaeo 2.1.1 has AP21i_is_contained_in (range A2)
+    crmarchaeo:AP21i_is_contained_in :Palace_Hoard ;   # CRMarchaeo 2.1.1: is contained in (range A2)
     crm:P70i_is_documented_in <https://doi.org/10.3406/paleo.2002.4745> .
 
 :spearhead_1_id a crm:E42_Identifier ;
@@ -234,6 +235,52 @@ aat:300037118 a crm:E55_Type ;
     afx:AFX_0002816 chebi:27638 ;  # cobalt atom
     afx:AFX_0000331 [ qudt:numericValue "0.001"^^xsd:decimal ] ;  # afx: maximum -> reported as "<0.001 %"
     qudt:unit unit:PERCENT .
+
+# ========== LEAD ISOTOPE ANALYSIS (knowledge-graph#14) ==========
+# Dagger ARSL 18 from Arslantepe, published in the same article. The article reports
+# three ratios for it (207/206, 208/206, 204/206); only reported ratios are stated.
+# Nuclides are Wikidata items (ChEBI has only lead-207). Ratios have no unit.
+:dagger_ARSL18 a crm:E22_Human-Made_Object ;
+    rdfs:label "Dagger ARSL 18"@en ;
+    crm:P1_is_identified_by :dagger_ARSL18_id ;
+    crm:P2_has_type aat:300037058 ;            # daggers (weapons)
+    crm:P45_consists_of aat:300241441 ;        # <copper and copper alloy>
+    crm:P70i_is_documented_in <https://doi.org/10.3406/paleo.2002.4745> .
+
+:dagger_ARSL18_id a crm:E42_Identifier ;
+    crm:P190_has_symbolic_content "ARSL 18" .
+
+aat:300037058 a crm:E55_Type ;
+    skos:prefLabel "daggers (weapons)"@en ;
+    skos:inScheme aat: .
+
+:sampling_ARSL18 a crmsci:S2_Sample_Taking ;
+    crmsci:O3_sampled_from :dagger_ARSL18 ;
+    crmsci:O5_removed :sample_ARSL18 .
+
+:sample_ARSL18 a crmsci:S13_Sample, afm:AFM_0001099 ;   # afm: chemical mixture
+    rdfs:label "Sample from Dagger ARSL 18"@en .
+
+:ARSL18_pb a afp:AFP_0001427, crm:E7_Activity ;   # afp: mass spectrometry
+    rdfs:label "Lead isotope analysis of dagger ARSL 18"@en ;
+    crm:P70i_is_documented_in <https://doi.org/10.3406/paleo.2002.4745> ;
+    afx:AFX_0000399 :sample_ARSL18 ;               # afx: has input
+    afx:AFX_0000395 :ARSL18_pb207_206, :ARSL18_pb208_206, :ARSL18_pb204_206 .   # afx: has output
+
+:ARSL18_pb207_206 a afr:AFR_0002368 ;     # analyte molar ratio
+    afx:AFX_0002816 wd:Q18883443 ;          # quantifies lead-207 (numerator)
+    afx:AFX_0001550 wd:Q18883438 ;          # has reference lead-206 (denominator)
+    qudt:numericValue "0.8374"^^xsd:decimal .
+
+:ARSL18_pb208_206 a afr:AFR_0002368 ;     # analyte molar ratio
+    afx:AFX_0002816 wd:Q16670466 ;          # quantifies lead-208
+    afx:AFX_0001550 wd:Q18883438 ;          # has reference lead-206
+    qudt:numericValue "2.0743"^^xsd:decimal .
+
+:ARSL18_pb204_206 a afr:AFR_0002368 ;     # analyte molar ratio
+    afx:AFX_0002816 wd:Q18883429 ;          # quantifies lead-204
+    afx:AFX_0001550 wd:Q18883438 ;          # has reference lead-206
+    qudt:numericValue "0.05347"^^xsd:decimal .
 
 # ----------------------------------------------------------------------------
 # LITERATURE (FaBiO + PRISM + Dublin Core)

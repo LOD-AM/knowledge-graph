@@ -11,6 +11,8 @@ FABIO_URL="https://sparontologies.github.io/fabio/current/fabio.ttl"
 AFO_URL="https://purl.allotrope.org/voc/afo/merged/REC/2025/12/merged-without-qudt"
 # CRMsci 3.2 is the release for CRM 7.1.3 (sampling: S2_Sample_Taking, S13_Sample)
 CRMSCI_URL="https://cidoc-crm.org/extensions/crmsci/rdfs/3.2/CRMsci_v3.2.rdf"
+# CRMarchaeo 2.1.1 (released for CRM 7.1.2; every CRM term it uses exists in 7.1.3, knowledge-graph#6)
+CRMARCHAEO_URL="https://cidoc-crm.org/extensions/crmarchaeo/rdfs/2.1.1/CRMarchaeo_v2.1.1.rdf"
 
 fetch() { # url file accept
   if [ -s "$CACHE/$2" ]; then echo "cached: $2"; return; fi
@@ -23,3 +25,4 @@ fetch "$CRM_URL" cidoc-crm-7.1.3.rdf "application/rdf+xml"
 fetch "$AFO_URL" afo-2025-12.ttl "text/turtle"
 fetch "$FABIO_URL" fabio.ttl "text/turtle"
 fetch "$CRMSCI_URL" crmsci-3.2.rdf "application/rdf+xml"
+fetch "$CRMARCHAEO_URL" crmarchaeo-2.1.1.rdf "application/rdf+xml"

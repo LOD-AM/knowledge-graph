@@ -12,7 +12,7 @@ SELECT ?site ?work ?doi ?year ?title
 WHERE {
   VALUES ?site { :Arslantepe }
   ?feature crm:P46i_forms_part_of ?site .
-  ?object  crmarchaeo:A21_is_contained_in ?feature ;
+  ?object  crmarchaeo:AP21i_is_contained_in ?feature ;
            crm:P70i_is_documented_in ?work .
   ?work a fabio:JournalArticle ;
         dcterms:title ?title .
