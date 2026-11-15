@@ -8,6 +8,10 @@
 @prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
 @prefix crm:     <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix crmsci:  <http://www.cidoc-crm.org/extensions/crmsci/> .
+@prefix afm:     <http://purl.allotrope.org/ontologies/material#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix geo:     <http://www.opengis.net/ont/geosparql#> .
 @prefix afr:     <http://purl.allotrope.org/ontologies/result#> .
 @prefix afx:     <http://purl.allotrope.org/ontologies/property#> .
 @prefix qudt:    <http://qudt.org/schema/qudt#> .
@@ -27,6 +31,24 @@ lodsh:LocalResourceShape a sh:NodeShape ;
     sh:property [ sh:path rdf:type ; sh:minCount 1 ;
         sh:message "Every https://lod-am.net/id/ resource needs at least one rdf:type." ] .
 
+# --- Labels on main resources (#12) -------------------------------------------
+# Objects, features, sites, samples, analyses and groups carry a language-tagged
+# rdfs:label. Helper nodes (identifiers, type assignments, time-spans, sampling
+# events, measurements) need none; the website names them from their context.
+# Types and materials use skos:prefLabel (TypeShape); persons foaf:name; works dcterms:title.
+lodsh:LabelShape a sh:NodeShape ;
+    sh:targetClass crm:E22_Human-Made_Object, crm:E25_Human-Made_Feature, crm:E27_Site,
+                   crmsci:S13_Sample, crm:E7_Activity, crm:E74_Group ;
+    sh:property [ sh:path rdfs:label ; sh:minCount 1 ; sh:datatype rdf:langString ;
+        sh:message "Main resources need a language-tagged rdfs:label." ] ;
+    sh:property [ sh:path rdfs:label ; sh:severity sh:Warning ;
+        sh:qualifiedValueShape [ sh:languageIn ( "en" ) ] ; sh:qualifiedMinCount 1 ;
+        sh:message "Main resources should have an English label (@en)." ] .
+
+lodsh:PersonShape a sh:NodeShape ;
+    sh:targetClass foaf:Person ;
+    sh:property [ sh:path foaf:name ; sh:minCount 1 ] .
+
 # --- Objects ----------------------------------------------------------------
 lodsh:ObjectShape a sh:NodeShape ;
     sh:targetClass crm:E22_Human-Made_Object ;
@@ -35,7 +57,9 @@ lodsh:ObjectShape a sh:NodeShape ;
     sh:property [ sh:path crm:P45_consists_of ; sh:nodeKind sh:IRI ; sh:severity sh:Warning ;
         sh:minCount 1 ; sh:message "Objects should state their material (crm:P45_consists_of)." ] ;
     sh:property [ sh:path crm:P70i_is_documented_in ; sh:minCount 1 ; sh:severity sh:Warning ;
-        sh:message "Objects should cite the publication they come from (crm:P70i_is_documented_in)." ] .
+        sh:message "Objects should cite the publication they come from (crm:P70i_is_documented_in)." ] ;
+    sh:property [ sh:path rdf:type ; sh:not [ sh:hasValue afm:AFM_0001099 ] ;
+        sh:message "Only samples carry the AFO material class afm:AFM_0001099 (chemical mixture), not objects (#3)." ] .
 
 lodsh:TypeAssignmentShape a sh:NodeShape ;
     sh:targetClass crm:E17_Type_Assignment ;
@@ -50,6 +74,21 @@ lodsh:TypeShape a sh:NodeShape ;
 lodsh:IdentifierShape a sh:NodeShape ;
     sh:targetClass crm:E42_Identifier ;
     sh:property [ sh:path crm:P190_has_symbolic_content ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] .
+
+# --- Sites and places --------------------------------------------------------
+lodsh:SiteShape a sh:NodeShape ;
+    sh:targetClass crm:E27_Site ;
+    sh:property [ sh:path owl:sameAs ; sh:maxCount 0 ;
+        sh:message "Link a site to Pleiades with an E42_Identifier (crm:P1_is_identified_by), not owl:sameAs (#4)." ] .
+
+lodsh:GeometryShape a sh:NodeShape ;
+    sh:targetClass geo:Geometry ;
+    sh:property [ sh:path geo:asWKT ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype geo:wktLiteral ;
+        sh:message "Geometries carry exactly one geo:asWKT literal typed geo:wktLiteral (#8)." ] .
+
+lodsh:PlaceGeometryShape a sh:NodeShape ;
+    sh:targetSubjectsOf geo:hasGeometry ;
+    sh:property [ sh:path geo:hasGeometry ; sh:class geo:Geometry ] .
 
 # --- Time ------------------------------------------------------------------
 lodsh:TimeSpanShape a sh:NodeShape ;
@@ -67,8 +106,20 @@ lodsh:AnalysisShape a sh:NodeShape ;
         sh:message "An analysis needs its measurements (afx:AFX_0000395 has output)." ] ;
     sh:property [ sh:path crm:P14_carried_out_by ; sh:minCount 1 ; sh:severity sh:Warning ] .
 
+lodsh:SampleTakingShape a sh:NodeShape ;
+    sh:targetClass crmsci:S2_Sample_Taking ;
+    sh:property [ sh:path crmsci:O3_sampled_from ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ;
+        sh:message "A sampling names the object or part it was taken from (crmsci:O3_sampled_from)." ] ;
+    sh:property [ sh:path crmsci:O5_removed ; sh:minCount 1 ; sh:class crmsci:S13_Sample ;
+        sh:message "A sampling names its sample (crmsci:O5_removed), typed crmsci:S13_Sample." ] .
+
+lodsh:SampleShape a sh:NodeShape ;
+    sh:targetClass crmsci:S13_Sample ;
+    sh:property [ sh:path [ sh:inversePath crmsci:O5_removed ] ; sh:minCount 1 ;
+        sh:message "Every sample comes from a sampling event (crmsci:S2_Sample_Taking ... crmsci:O5_removed), #2." ] .
+
 lodsh:MeasurementShape a sh:NodeShape ;
-    sh:targetClass afr:AFR_0002036 , afr:AFR_0002099 ;   # concentration, mass fraction
+    sh:targetClass afr:AFR_0002036 , afr:AFR_0002099 ;   # concentration (real concentrations only), mass fraction (wt %)
     sh:property [ sh:path afx:AFX_0002816 ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ;
         sh:message "A measurement quantifies exactly one element/compound (afx:AFX_0002816)." ] ;
     sh:property [ sh:path qudt:unit ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ;

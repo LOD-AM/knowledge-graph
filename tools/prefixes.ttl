@@ -8,6 +8,7 @@
 # CIDOC CRM 7.1.3 and extensions
 @prefix crm:       <http://www.cidoc-crm.org/cidoc-crm/> .
 @prefix crmarchaeo: <http://www.cidoc-crm.org/extensions/crmarchaeo/> .
+@prefix crmsci:    <http://www.cidoc-crm.org/extensions/crmsci/> .
 
 # Allotrope Foundation Ontologies (opaque IDs, e.g. afr:AFR_0002036)
 @prefix afr:       <http://purl.allotrope.org/ontologies/result#> .
@@ -32,8 +33,7 @@
 @prefix ror:       <https://ror.org/> .
 @prefix wd:        <http://www.wikidata.org/entity/> .
 
-# Geometry
-@prefix osgeo:     <http://data.ordnancesurvey.co.uk/ontology/geometry/> .
+# Geometry (GeoSPARQL; osgeo: is no longer used, see CONVENTIONS.md)
 @prefix geo:       <http://www.opengis.net/ont/geosparql#> .
 
 # W3C

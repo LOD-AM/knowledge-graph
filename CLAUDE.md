@@ -19,10 +19,12 @@ environment "LOD-AM" allows these hosts, and its setup script runs
 ## Rules
 - **Read CONVENTIONS.md first.** It is the source of truth for patterns, IRIs and prefixes.
 - **Never invent ontology terms.** Look them up in `.cache/` (after `make fetch`):
-  CRM `cidoc-crm-7.1.3.rdf`, AFO `afo-2025-12.ttl` (search `skos:prefLabel`),
-  FaBiO `fabio.ttl`. AFO IDs are opaque; always put the label in a comment
-  (`afx:AFX_0002816 chebi:28694 ;  # quantifies copper`). Verify Getty AAT IDs
-  via `https://vocab.getty.edu/sparql.json` and say which label you found.
+  CRM `cidoc-crm-7.1.3.rdf`, CRMsci `crmsci-3.2.rdf`, AFO `afo-2025-12.ttl` (search
+  `skos:prefLabel`), FaBiO `fabio.ttl`. AFO IDs are opaque; always put the label in a comment
+  (`afx:AFX_0002816 chebi:28694 ;  # quantifies copper atom`). Verify Getty AAT IDs
+  via `https://vocab.getty.edu/sparql.json` and say which label you found; AAT labels are
+  tagged `@en` *or* `@en-us`, so search both. ChEBI: only ids in `tools/chebi.tsv`; add new
+  ones there and run `make verify-chebi` (EBI OLS, www.ebi.ac.uk).
 - CIDOC CRM is **7.1.3**: `E22_Human-Made_Object`, no `P71_is_listed_in`,
   `P41_classified` goes from E17 to the object.
 - Base IRI `https://lod-am.net/id/`, prefixes only from `tools/prefixes.ttl`.
@@ -42,10 +44,14 @@ environment "LOD-AM" allows these hosts, and its setup script runs
 `data/` generated RDF · `converter/` Node (CommonJS, no deps) ·
 `tools/` Python checks · `docs/decisions/` why · `ontologies/`, `vocabularies/` usage notes
 
-## Where to resume (state 2026-11-13)
-- **Next focus: getting the data sorted.** Open modelling decisions are issues
-  #1–#9, #12 (labels on every resource) and #14 (lead isotope ratios). Then import real data beyond the
-  Arslantepe example (converter, `data/`).
+## Where to resume (state 2026-11-15)
+- Decided and implemented: #1 mass fraction, #2 sampling event (CRMsci 3.2), #3 AFO
+  class on samples only, #4 Pleiades as E42 identifier, #5 `P8i_witnessed`, #8 GeoSPARQL,
+  #12 labels on main resources.
+- **Open:** #6 (object → feature: CRMarchaeo 2.1.1 has `AP21i_is_contained_in` with range
+  A2, our `A21` doesn't exist), #7 (vocabulary for feature types), #9 (CRM ↔ AFO mapping),
+  #14 (isotope pattern agreed; no ChEBI ids for Pb-204/206/208). Then the converter in
+  LOD-AM/ingest (the data stays private there).
 - The website's phases 4–5 (entity pages, Data page, posts about the model)
   wait for this: LOD-AM/website issues labelled `waiting-for-kg`.
 - Known gaps: CRMarchaeo terms aren't checked yet (#6); the Getty SPARQL

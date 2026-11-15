@@ -22,7 +22,7 @@ Use Pleiades as the controlled vocabulary for archaeological sites and site type
 
 **Why**: Global scope with Classical foundation, actively expanding. Community-driven model allows researchers to add new sites directly. Critical for research outside Mediterranean/Orient.
 
-**How**: A `crm:E27_Site` is `owl:sameAs` its Pleiades place, uses a Pleiades place type via `crm:P2_has_type`, and points to Pleiades locations via `crm:P53_has_former_or_current_location`.
+**How** (*updated 2026-11-15, knowledge-graph#4 and #8*): A `crm:E27_Site` carries its Pleiades place URI as a `crm:E42_Identifier` (`crm:P1_is_identified_by`, typed "Pleiades place URI"), never `owl:sameAs`, so Pleiades' own statements are not merged into ours. Locations are our own `crm:E53_Place` with a GeoSPARQL geometry (`geo:hasGeometry` / `geo:asWKT`). *Originally:* a site was `owl:sameAs` its Pleiades place, uses a Pleiades place type via `crm:P2_has_type`, and points to Pleiades locations via `crm:P53_has_former_or_current_location`.
 
 **Official**: https://pleiades.stoa.org/
 

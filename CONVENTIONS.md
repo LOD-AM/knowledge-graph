@@ -11,6 +11,7 @@ shapes in the same PR. *Why* we chose each ontology/vocabulary is in
 | What | Version | Notes |
 |---|---|---|
 | CIDOC CRM | **7.1.3** (LTS) | `E22_Human-Made_Object`, not `Man-Made`; no `P71` |
+| CRMsci | **3.2** (the release for CRM 7.1.3) | sampling only: `S2_Sample_Taking`, `S13_Sample`, `O3`, `O5` |
 | Allotrope (AFO) | REC/2025/12 | opaque IDs, QUDT 1.1 units |
 | FaBiO | current SPAR release | with Dublin Core, PRISM, FOAF |
 
@@ -24,10 +25,22 @@ shapes in the same PR. *Why* we chose each ontology/vocabulary is in
 - Publications without a DOI: `:pub/<citation-key>`.
 - **Reuse external IRIs** wherever they exist: Getty AAT concept IRIs
   (`http://vocab.getty.edu/aat/<id>`, never `/page/aat/`), PeriodO ARKs,
-  Pleiades places, ChEBI elements, ROR for institutions, DOI URLs for articles.
+  Pleiades places (as identifiers, see Sites), ChEBI elements (only ids listed in
+  [tools/chebi.tsv](tools/chebi.tsv), verified against ChEBI), ROR for institutions,
+  DOI URLs for articles.
 - Prefixes: only those in [tools/prefixes.ttl](tools/prefixes.ttl), bound to
   exactly those namespaces.
 - Never commit placeholder IRIs (`example.org`, `http://base/`).
+
+## Labels
+
+Main resources carry a language-tagged `rdfs:label`: objects, features, sites,
+samples, analyses and groups. English (`@en`) should always be there (warning
+if missing); add other languages as they exist (`@de`, `@ru`). Types and
+materials use `skos:prefLabel`, persons `foaf:name`, publications
+`dcterms:title`. Helper nodes (identifiers, type assignments, time-spans,
+sampling events, measurements, geometries) need no label: the website names
+them from their context.
 
 ## Core patterns
 
@@ -54,13 +67,24 @@ Types are `crm:E55_Type`, materials `crm:E57_Material`; both need a
 ### Sites, features, places, periods
 ```turtle
 :Arslantepe a crm:E27_Site ;
+    rdfs:label "Arslantepe"@en ;
     crm:P2_has_type <https://pleiades.stoa.org/vocabularies/settlement> ;
-    owl:sameAs <https://pleiades.stoa.org/places/25078867> ;
-    crm:P53_has_former_or_current_location <pleiades location IRI> .   # E53_Place with osgeo:asWKT
+    crm:P1_is_identified_by :Arslantepe_pleiades_id ;                  # Pleiades: an identifier, never owl:sameAs
+    crm:P53_has_former_or_current_location :Arslantepe_location .
+
+:Arslantepe_pleiades_id a crm:E42_Identifier ;
+    crm:P2_has_type :pleiades_place_uri ;                              # E55_Type "Pleiades place URI"
+    crm:P190_has_symbolic_content "https://pleiades.stoa.org/places/25078867" .
+
+:Arslantepe_location a crm:E53_Place, geo:Feature ;                   # GeoSPARQL
+    geo:hasGeometry :Arslantepe_location_geometry .
+:Arslantepe_location_geometry a geo:Geometry ;
+    geo:asWKT "POINT (38.3613 38.3821)"^^geo:wktLiteral .              # lon lat (CRS84)
 
 :Palace_Hoard a crm:E25_Human-Made_Feature ;
+    rdfs:label "Palace Hoard"@en ;
     crm:P46i_forms_part_of :Arslantepe ;
-    crm:P8i_witnessed <http://n2t.net/ark:/99152/p03wskdnzgc> .        # PeriodO period
+    crm:P8i_witnessed <http://n2t.net/ark:/99152/p03wskdnzgc> .        # dating shortcut, see below
 
 :spearhead_1 crmarchaeo:A21_is_contained_in :Palace_Hoard .
 
@@ -72,10 +96,22 @@ Types are `crm:E55_Type`, materials `crm:E57_Material`; both need a
     crm:P79_beginning_is_qualified_by "-2000" ;
     crm:P80_end_is_qualified_by "-1750" .
 ```
+- **Pleiades** is never `owl:sameAs`: that would merge Pleiades' statements with
+  ours. The site carries the Pleiades URI as an `E42_Identifier`.
+- **Geometry** is GeoSPARQL (`geo:hasGeometry` → `geo:Geometry` with one
+  `geo:asWKT` typed `geo:wktLiteral`), which Fuseki's spatial index understands.
+  `osgeo:` is no longer used (`make check` rejects it).
+- **Dating** a feature (or a site, when there is no real feature) uses the
+  shortcut `crm:P8i_witnessed` → period. We don't model deposition events.
 
 ### Analytics
 ```turtle
-:spearhead_1 afx:AFX_0001048 :sample_ARSL31A .          # contains
+:sampling_ARSL31A a crmsci:S2_Sample_Taking ;            # sampling event (no label needed)
+    crmsci:O3_sampled_from :spearhead_1_blade ;          # the object, or the part sampled
+    crmsci:O5_removed :sample_ARSL31A .
+
+:sample_ARSL31A a crmsci:S13_Sample, afm:AFM_0001099 ;   # the AFO material class only on samples
+    rdfs:label "Sample from Spearhead 1 Blade (ARSL31A)"@en .
 
 :ARSL31A a afp:AFP_0000527, crm:E7_Activity ;            # spectrometry + CRM activity
     crm:P14_carried_out_by :sapienza_lab ;              # crm:E74_Group, owl:sameAs ROR
@@ -83,11 +119,17 @@ Types are `crm:E55_Type`, materials `crm:E57_Material`; both need a
     afx:AFX_0000399 :sample_ARSL31A ;                   # has input   (REQUIRED)
     afx:AFX_0000395 :Cu_measurement .                   # has output  (REQUIRED)
 
-:Cu_measurement a afr:AFR_0002036 ;                      # concentration
-    afx:AFX_0002816 chebi:28694 ;                       # quantifies: exactly one
+:Cu_measurement a afr:AFR_0002099 ;                      # mass fraction
+    afx:AFX_0002816 chebi:28694 ;                       # quantifies copper atom: exactly one
     qudt:numericValue "97"^^xsd:decimal ;               # xsd:decimal
     qudt:unit unit:PERCENT .                            # QUDT IRI, never a string
 ```
+- Element values in wt % are **mass fractions** (`afr:AFR_0002099`).
+  `afr:AFR_0002036` (concentration) is only for real concentrations (e.g. ppm in solution).
+- Objects are not typed with an AFO material class; `afm:AFM_0001099` (chemical
+  mixture) is on the sample. The object's material is `crm:P45_consists_of`.
+- Lead isotope ratios: pattern still open (knowledge-graph#14).
+
 Values reported only as an upper limit (`< 0.001 %`) use
 `afx:AFX_0000331 [ qudt:numericValue "0.001"^^xsd:decimal ]` *instead of*
 `qudt:numericValue`. Exactly one of the two is required.
@@ -107,12 +149,16 @@ Values reported only as an upper limit (`< 0.001 %`) use
 
 | From | Property | To |
 |---|---|---|
-| object | `afx:AFX_0001048` (contains) | sample |
+| sampling | `crmsci:O3_sampled_from` | object or part |
+| sampling | `crmsci:O5_removed` | sample |
 | analysis | `afx:AFX_0000399` (has input) | sample |
 | analysis | `afx:AFX_0000395` (has output) | measurement |
 | object / type / analysis | `crm:P70i_is_documented_in` | publication |
 | feature | `crm:P46i_forms_part_of` | site |
-| object | `crmarchaeo:A21_is_contained_in` | feature |
+| feature / site | `crm:P8i_witnessed` | period |
+| site | `crm:P1_is_identified_by` | `E42_Identifier` (Pleiades URI) |
+| place | `geo:hasGeometry` | `geo:Geometry` |
+| object | `crmarchaeo:A21_is_contained_in` | feature (term not valid in CRMarchaeo 2.1.1, knowledge-graph#6) |
 
 ## Modelling scope
 
