@@ -14,10 +14,10 @@
 :identifier_type a skos:ConceptScheme ;
     skos:prefLabel "LOD-AM kinds of identifiers"@en, "LOD-AM Arten von Kennungen"@de .
 
-:number_as_reported a crm:E55_Type, skos:Concept ;
+:old_identifier a crm:E55_Type, skos:Concept ;
     skos:inScheme :identifier_type ;
-    skos:prefLabel "number as reported"@en, "Nummer wie publiziert"@de ;
-    skos:definition "The number of the find in the source publication (catalogue or inventory number)."@en .
+    skos:prefLabel "old identifier"@en, "alte Kennung"@de ;
+    skos:definition "An earlier identifier of the find as recorded in the source database (e.g. an inventory or catalogue number); its origin is not always known."@en .
 
 :drawing_number a crm:E55_Type, skos:Concept ;
     skos:inScheme :identifier_type ;

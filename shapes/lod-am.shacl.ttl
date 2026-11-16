@@ -79,18 +79,19 @@ lodsh:FindContextShape a sh:NodeShape ;
     sh:severity sh:Warning ;
     sh:message "Objects should have a find context: the feature (crmarchaeo:AP21i_is_contained_in) or, without a feature, the site's place (crm:P53_has_former_or_current_location), #19." .
 
-# Converted finds (LOD-AM/ingest#10): the AAT match of the local type is also stated (no inference)
-lodsh:TypologyShortcutShape a sh:NodeShape ;
+# Converted finds (LOD-AM/ingest#10, knowledge-graph#28): an object typed with a LOD-AM typology
+# concept reaches AAT only through the concept's match, not with its own crm:P2_has_type
+lodsh:TypologyOnlyLocalShape a sh:NodeShape ;
     sh:targetClass crm:E22_Human-Made_Object ;
     sh:sparql [ a sh:SPARQLConstraint ;
-        sh:message "An object typed with a LOD-AM typology concept also has that concept's AAT match as crm:P2_has_type." ;
+        sh:message "An object typed with a LOD-AM typology concept has no AAT type of its own; AAT is reached through the concept's skos:closeMatch / skos:broadMatch." ;
         sh:select """
             PREFIX crm:  <http://www.cidoc-crm.org/cidoc-crm/>
             PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
             SELECT $this ?value WHERE {
-              $this crm:P2_has_type ?t .
-              ?t skos:inScheme <https://lod-am.net/id/typology> ; skos:closeMatch|skos:broadMatch ?value .
-              FILTER NOT EXISTS { $this crm:P2_has_type ?value } }""" ] .
+              $this crm:P2_has_type ?t , ?value .
+              ?t skos:inScheme <https://lod-am.net/id/typology> .
+              FILTER(STRSTARTS(STR(?value), "http://vocab.getty.edu/aat/")) }""" ] .
 
 lodsh:TypologyConceptShape a sh:NodeShape ;
     sh:target [ a sh:SPARQLTarget ; sh:select """

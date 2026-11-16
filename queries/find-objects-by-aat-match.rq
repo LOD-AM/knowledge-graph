@@ -1,0 +1,18 @@
+# Objects whose local type, or a broader concept of it, matches an AAT concept
+# (closeMatch or broadMatch). Objects typed with AAT directly are found too.
+PREFIX crm:  <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX aat:  <http://vocab.getty.edu/aat/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT DISTINCT ?object ?label ?type WHERE {
+  VALUES ?aat { aat:300037058 }   # daggers (weapons)
+  ?object a crm:E22_Human-Made_Object ;
+          rdfs:label ?label ;
+          crm:P2_has_type ?type .
+  FILTER(LANG(?label) = "en")
+  { FILTER(?type = ?aat) }
+  UNION
+  { ?type skos:broader* ?b . ?b skos:closeMatch|skos:broadMatch ?aat }
+}
+ORDER BY ?object

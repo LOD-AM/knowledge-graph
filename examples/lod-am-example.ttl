@@ -297,7 +297,7 @@ aat:300037118 a crm:E55_Type ;
 :dagger_ARSL18 a crm:E22_Human-Made_Object ;
     rdfs:label "Dagger ARSL 18"@en ;
     crm:P1_is_identified_by :dagger_ARSL18_id ;
-    crm:P2_has_type :type_201, aat:300037058 ;  # local typology type + its AAT match (daggers (weapons))
+    crm:P2_has_type :type_201 ;                # local typology type; AAT via its skos:broadMatch
     crm:P45_consists_of aat:300241441 ;        # <copper and copper alloy>
     crm:P53_has_former_or_current_location :Arslantepe_location ;   # found at the site, no feature known (#19)
     crm:P70i_is_documented_in <https://doi.org/10.3406/paleo.2002.4745> .
