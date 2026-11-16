@@ -1,0 +1,17 @@
+# Must FAIL validation: a :not_detected measurement without crm:E54_Dimension (#21).
+@prefix :      <https://lod-am.net/id/> .
+@prefix crm:   <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix afr:   <http://purl.allotrope.org/ontologies/result#> .
+@prefix afx:   <http://purl.allotrope.org/ontologies/property#> .
+@prefix qudt:  <http://qudt.org/schema/qudt#> .
+@prefix unit:  <http://qudt.org/vocab/unit#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix chebi: <http://purl.obolibrary.org/obo/CHEBI_> .
+
+:not_detected a crm:E55_Type ; skos:prefLabel "not detected"@en .
+
+:bad_measurement a afr:AFR_0002099 ;
+    afx:AFX_0002816 chebi:33301 ;
+    crm:P2_has_type :not_detected ;
+    qudt:unit unit:PERCENT .

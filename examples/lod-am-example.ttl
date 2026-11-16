@@ -188,7 +188,7 @@ aat:300037118 a crm:E55_Type ;
     crm:P70i_is_documented_in <https://doi.org/10.3406/paleo.2002.4745> ;
     crm:P14_carried_out_by :sapienza_lab ;
     afx:AFX_0000399 :sample_ARSL31A ;  # afx: has input
-    afx:AFX_0000395 :Cu_measurement, :Ag_measurement, :As_measurement, :Ni_measurement, :Sb_measurement, :Pb_measurement, :Fe_measurement, :Zn_measurement, :Co_measurement .
+    afx:AFX_0000395 :Cu_measurement, :Ag_measurement, :As_measurement, :Ni_measurement, :Sb_measurement, :Pb_measurement, :Fe_measurement, :Zn_measurement, :Co_measurement, :Bi_measurement .
 
 # ========== MEASUREMENTS ==========
 :Cu_measurement a afr:AFR_0002099 ;   # mass fraction (wt %)
@@ -236,6 +236,16 @@ aat:300037118 a crm:E55_Type ;
     afx:AFX_0000331 [ qudt:numericValue "0.001"^^xsd:decimal ] ;  # afx: maximum -> reported as "<0.001 %"
     qudt:unit unit:PERCENT .
 
+# "Not detected" (knowledge-graph#21): the element was looked for but not found, and no
+# detection limit is known. No value; the local type :not_detected instead. Exactly one of
+# qudt:numericValue, afx:AFX_0000331 (maximum) or this type. crm:E54_Dimension makes the node
+# a CRM entity, so crm:P2_has_type is used within its domain.
+# Illustration of the pattern only: this Bi value is not taken from the article.
+:Bi_measurement a afr:AFR_0002099, crm:E54_Dimension ;   # mass fraction (wt %)
+    afx:AFX_0002816 chebi:33301 ;  # bismuth atom
+    crm:P2_has_type :not_detected ;
+    qudt:unit unit:PERCENT .
+
 # ========== LEAD ISOTOPE ANALYSIS (knowledge-graph#14) ==========
 # Dagger ARSL 18 from Arslantepe, published in the same article. The article reports
 # three ratios for it (207/206, 208/206, 204/206); only reported ratios are stated.
@@ -245,6 +255,7 @@ aat:300037118 a crm:E55_Type ;
     crm:P1_is_identified_by :dagger_ARSL18_id ;
     crm:P2_has_type aat:300037058 ;            # daggers (weapons)
     crm:P45_consists_of aat:300241441 ;        # <copper and copper alloy>
+    crm:P53_has_former_or_current_location :Arslantepe_location ;   # found at the site, no feature known (#19)
     crm:P70i_is_documented_in <https://doi.org/10.3406/paleo.2002.4745> .
 
 :dagger_ARSL18_id a crm:E42_Identifier ;
