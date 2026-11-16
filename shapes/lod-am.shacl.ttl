@@ -236,6 +236,18 @@ lodsh:NotDetectedShape a sh:NodeShape ;
     sh:message "A :not_detected measurement is also a crm:E54_Dimension, so crm:P2_has_type is within its domain (#21)." .
 
 # --- Literature ------------------------------------------------------------
+lodsh:PublicationShape a sh:NodeShape ;
+    sh:targetClass fabio:JournalArticle, fabio:Book, fabio:BookChapter, fabio:Thesis, fabio:ConferencePaper ;
+    sh:property [ sh:path dcterms:title ; sh:minCount 1 ; sh:message "Publications need a dcterms:title." ] ;
+    sh:property [ sh:path fabio:hasPublicationYear ; sh:maxCount 1 ; sh:datatype xsd:gYear ] ;
+    sh:property [ sh:path dcterms:creator ; sh:class foaf:Person ] ;
+    sh:property [ sh:path dcterms:contributor ; sh:class foaf:Person ] .
+
+lodsh:ChapterShape a sh:NodeShape ;
+    sh:targetClass fabio:BookChapter ;
+    sh:property [ sh:path dcterms:isPartOf ; sh:class fabio:Book ; sh:maxCount 1 ;
+        sh:message "A book chapter is part of one fabio:Book (dcterms:isPartOf)." ] .
+
 lodsh:ArticleShape a sh:NodeShape ;
     sh:targetClass fabio:JournalArticle ;
     sh:property [ sh:path dcterms:title ; sh:minCount 1 ] ;
@@ -250,7 +262,7 @@ lodsh:ConvertedIriShape a sh:NodeShape ;
         sh:select """
             SELECT DISTINCT ?this WHERE {
               { ?this ?p ?o } UNION { ?s ?p ?this }
-              FILTER(isIRI(?this) && REGEX(STR(?this), "^https://lod-am[.]net/id/(site|feature|find|analysis|period|culture|chronology|type|region|lab)/"))
+              FILTER(isIRI(?this) && REGEX(STR(?this), "^https://lod-am[.]net/id/(site|feature|find|analysis|period|culture|chronology|type|region|lab|person|journal)/"))
             }""" ] ;
     sh:sparql [ a sh:SPARQLConstraint ;
         sh:message "Converted IRIs are https://lod-am.net/id/<kind>/<uuid> or .../<uuid>/<role> (lower-case uuid, role in snake_case), #20." ;

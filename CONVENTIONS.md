@@ -28,7 +28,8 @@ shapes in the same PR. *Why* we chose each ontology/vocabulary is in
   instead of readable names: `https://lod-am.net/id/<kind>/<uuid>`, uuid in lower case with
   hyphens. Kinds: `site` (E27), `feature` (E25), `find` (E22), `analysis` (E7, chemical and
   lead isotope), `period` (phases), `culture`, `chronology` (the system a phase belongs to),
-  `type` (types, type groups and classes of the typology), `region`, `lab`. Helper nodes without a uuid of their own hang below their record with a
+  `type` (types, type groups and classes of the typology), `region`, `lab`, `person` and `journal`
+  (uuid derived from the name or title, see Literature). Publications: `pub/<citation-key>`. Helper nodes without a uuid of their own hang below their record with a
   slash: `<record IRI>/<role>`, role in `snake_case` (`/id/find/<uuid>/id`,
   `/id/site/<uuid>/location`, `/id/analysis/<uuid>/sample`, `/id/analysis/<uuid>/sn`,
   `/id/analysis/<uuid>/pb207_pb206`). `make validate` checks the pattern and that `site`,
@@ -248,6 +249,23 @@ measurement at all. Never write `0` for "not detected".
     prism:startingPage "43" ; prism:endingPage "69" ;
     dcterms:isPartOf :journal_paleorient .              # fabio:Journal
 ```
+
+**Converted literature** (LOD-AM/ingest#12, #14): the FaBiO records come from the owner's
+public Zotero group (https://www.zotero.org/groups/6765723/lod-am/library), one per entry of
+the database's `literature` table, matched by the citation key.
+- IRI: the DOI URL where Zotero has a DOI, else `/id/pub/<citation-key>`. A book chapter's book is
+  `/id/pub/<citation-key>/book`.
+- Class by Zotero item type: `journalArticle` → `fabio:JournalArticle`, `book` → `fabio:Book`,
+  `bookSection` → `fabio:BookChapter` (`dcterms:isPartOf` its `fabio:Book`), `thesis` →
+  `fabio:Thesis`, `conferencePaper` → `fabio:ConferencePaper`; always also `crm:E31_Document`.
+- `dcterms:title` (required), `dcterms:identifier` = the citation key, `fabio:hasPublicationYear`,
+  `prism:doi`, `prism:startingPage` / `prism:endingPage` (else `prism:pageRange`), `prism:volume`,
+  `prism:issueIdentifier`, `prism:isbn`, `dcterms:publisher` (a string, as in Zotero).
+- Authors `dcterms:creator`, editors `dcterms:contributor` (of a chapter: on its book); persons are
+  `foaf:Person` (`/id/person/<uuid>`, uuid from the name; `foaf:name`, `foaf:familyName`,
+  `foaf:givenName`); "others" (et al.) is no person. Journals are `fabio:Journal`
+  (`/id/journal/<uuid>`, uuid from the title).
+- Finds and analyses cite their publication with `crm:P70i_is_documented_in`.
 
 ## Linking the parts
 
