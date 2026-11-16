@@ -1,0 +1,16 @@
+# Must FAIL validation: an object with a typology type but without its AAT match, and a
+# typology concept without a broader concept (LOD-AM/ingest#10).
+@prefix :     <https://lod-am.net/id/> .
+@prefix crm:  <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix aat:  <http://vocab.getty.edu/aat/> .
+
+:typology a skos:ConceptScheme .
+:bad_type a crm:E55_Type, skos:Concept ;
+    skos:prefLabel "bad type"@en ;
+    skos:inScheme :typology ;
+    skos:broadMatch aat:300037058 .
+:bad_object a crm:E22_Human-Made_Object ;
+    rdfs:label "Bad object"@en ;
+    crm:P2_has_type :bad_type .

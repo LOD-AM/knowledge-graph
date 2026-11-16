@@ -79,6 +79,26 @@ lodsh:FindContextShape a sh:NodeShape ;
     sh:severity sh:Warning ;
     sh:message "Objects should have a find context: the feature (crmarchaeo:AP21i_is_contained_in) or, without a feature, the site's place (crm:P53_has_former_or_current_location), #19." .
 
+# Converted finds (LOD-AM/ingest#10): the AAT match of the local type is also stated (no inference)
+lodsh:TypologyShortcutShape a sh:NodeShape ;
+    sh:targetClass crm:E22_Human-Made_Object ;
+    sh:sparql [ a sh:SPARQLConstraint ;
+        sh:message "An object typed with a LOD-AM typology concept also has that concept's AAT match as crm:P2_has_type." ;
+        sh:select """
+            PREFIX crm:  <http://www.cidoc-crm.org/cidoc-crm/>
+            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+            SELECT $this ?value WHERE {
+              $this crm:P2_has_type ?t .
+              ?t skos:inScheme <https://lod-am.net/id/typology> ; skos:closeMatch|skos:broadMatch ?value .
+              FILTER NOT EXISTS { $this crm:P2_has_type ?value } }""" ] .
+
+lodsh:TypologyConceptShape a sh:NodeShape ;
+    sh:target [ a sh:SPARQLTarget ; sh:select """
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        SELECT ?this WHERE { ?this skos:inScheme <https://lod-am.net/id/typology> }""" ] ;
+    sh:or ( [ sh:path skos:broader ; sh:minCount 1 ] [ sh:path skos:topConceptOf ; sh:minCount 1 ] ) ;
+    sh:message "A typology concept has a broader concept, or is a top concept (class) of the typology." .
+
 lodsh:TypeAssignmentShape a sh:NodeShape ;
     sh:targetClass crm:E17_Type_Assignment ;
     sh:property [ sh:path crm:P41_classified ; sh:minCount 1 ; sh:maxCount 1 ] ;

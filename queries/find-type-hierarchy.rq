@@ -1,0 +1,13 @@
+# A typology concept with its broader concepts up to the class, and their AAT matches
+# (LOD-AM/ingest#10). Change the VALUES line to start from another type.
+PREFIX :     <https://lod-am.net/id/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT ?type ?broader ?label ?aat WHERE {
+  VALUES ?type { :type_201 }
+  ?type skos:broader* ?broader .
+  ?broader skos:prefLabel ?label .
+  FILTER(LANG(?label) = "en")
+  OPTIONAL { ?broader skos:closeMatch|skos:broadMatch ?aat }
+}
+ORDER BY ?label
