@@ -1,0 +1,17 @@
+# The phases of a culture, with their chronology system and dates (LOD-AM/ingest#17).
+PREFIX :     <https://lod-am.net/id/>
+PREFIX crm:  <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT ?culture ?phase ?label ?chronology ?begin ?end WHERE {
+  VALUES ?culture { :northern_mesopotamian_late_chalcolithic }
+  ?culture crm:P9_consists_of ?phase .
+  ?phase rdfs:label ?label .
+  FILTER(LANG(?label) = "en")
+  OPTIONAL { ?phase skos:inScheme/skos:prefLabel ?chronology . FILTER(LANG(?chronology) = "en") }
+  OPTIONAL { ?phase crm:P4_has_time-span ?ts .
+             OPTIONAL { ?ts crm:P79_beginning_is_qualified_by ?begin }
+             OPTIONAL { ?ts crm:P80_end_is_qualified_by ?end } }
+}
+ORDER BY ?phase

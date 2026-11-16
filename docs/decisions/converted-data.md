@@ -26,3 +26,14 @@ The owner accepted both proposals.
 - **Location certainty:** a local type on the *place* (not the site), because it says something
   about the point, not about the site. Three values, as in the database's
   `site_location_certainty` column.
+
+## Phases and cultures (2026-11-16, LOD-AM/ingest#17)
+
+The owner: "A culture should consist out of its phases (zt). It's equivalent to find_character_id
+and type_id … take into consideration, that we want to get them into PeriodO later."
+- The culture `P9_consists_of` its phases, like a class and its types; contexts point to the
+  phase only, so the culture is not stated twice and cannot contradict the phase.
+- Each phase is `skos:inScheme` its chronology system (the database's `zt_type`, each with its
+  publication): PeriodO groups period definitions in one collection per source, so each
+  chronology system can become one PeriodO collection, and the phase IRIs can later point to
+  (or be replaced by) PeriodO ARKs.

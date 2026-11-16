@@ -27,8 +27,8 @@ shapes in the same PR. *Why* we chose each ontology/vocabulary is in
 - **Converted data** (records from a database with an `id_uuid`, #20) uses a typed path
   instead of readable names: `https://lod-am.net/id/<kind>/<uuid>`, uuid in lower case with
   hyphens. Kinds: `site` (E27), `feature` (E25), `find` (E22), `analysis` (E7, chemical and
-  lead isotope), `period`, `type` (types, type groups and classes of the typology), `culture`,
-  `region`, `lab`. Helper nodes without a uuid of their own hang below their record with a
+  lead isotope), `period` (phases), `culture`, `chronology` (the system a phase belongs to),
+  `type` (types, type groups and classes of the typology), `region`, `lab`. Helper nodes without a uuid of their own hang below their record with a
   slash: `<record IRI>/<role>`, role in `snake_case` (`/id/find/<uuid>/id`,
   `/id/site/<uuid>/location`, `/id/analysis/<uuid>/sample`, `/id/analysis/<uuid>/sn`,
   `/id/analysis/<uuid>/pb207_pb206`). `make validate` checks the pattern and that `site`,
@@ -145,10 +145,23 @@ Types are `crm:E55_Type`, materials `crm:E57_Material`; both need a
   is a feature of its own, without finds and without dating.
 - **Dating** a feature (or a site, when there is no real feature) uses the
   shortcut `crm:P8i_witnessed` → period. We don't model deposition events.
-  Until the periods are in PeriodO (LOD-AM/ingest#7), the source's periods are local
-  `crm:E4_Period`s (`/id/period/<uuid>`, labels en/de) with an `E52_Time-Span`
-  (`P79`/`P80` in years BC as `"-2800"`). The archaeological culture is an `E4_Period` too
-  (`/id/culture/<uuid>`); a context witnesses both its period and its culture.
+- **Local periods** (until they are in PeriodO, LOD-AM/ingest#7), modelled the way PeriodO
+  organises them (LOD-AM/ingest#17):
+  - a **phase** is a `crm:E4_Period` (`/id/period/<uuid>`, labels en/de) with an `E52_Time-Span`
+    (`P79`/`P80` in years BC as `"-2800"`) and `skos:inScheme` its **chronology system**, a
+    `skos:ConceptScheme` (`/id/chronology/<uuid>`) that stands for the source (one PeriodO
+    collection per source);
+  - a **culture** is an `E4_Period` too (`/id/culture/<uuid>`) that `crm:P9_consists_of` its
+    phases; each phase `crm:P9i_forms_part_of` exactly one culture (both stated);
+  - a context (feature, or site without a feature) `crm:P8i_witnessed` its **phase** only; the
+    culture follows from the phase.
+  ```turtle
+  :Arslantepe_VIA a crm:E4_Period ;
+      rdfs:label "Arslantepe VIA"@en ;
+      skos:inScheme :arslantepe_periods ;                      # chronology system
+      crm:P9i_forms_part_of :northern_mesopotamian_late_chalcolithic ;
+      crm:P4_has_time-span :Arslantepe_VIA_time_span .
+  ```
 
 ### Analytics
 ```turtle
@@ -224,7 +237,8 @@ measurement at all. Never write `0` for "not detected".
 | analysis | `afx:AFX_0000395` (has output) | measurement |
 | object / type / analysis | `crm:P70i_is_documented_in` | publication |
 | feature | `crm:P46i_forms_part_of` | site |
-| feature / site | `crm:P8i_witnessed` | period, culture |
+| feature / site | `crm:P8i_witnessed` | phase (period) |
+| phase | `crm:P9i_forms_part_of` / `skos:inScheme` | culture / chronology system |
 | feature (grave) | `crm:P46i_forms_part_of` | the kurgan (and the site) |
 | site / feature | `crm:P2_has_type` | local type (`skos:closeMatch` / `skos:broadMatch` → AAT) |
 | site | `crm:P1_is_identified_by` | `E42_Identifier` (Pleiades URI) |

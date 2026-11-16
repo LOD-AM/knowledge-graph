@@ -52,7 +52,7 @@ environment "LOD-AM" allows these hosts, and its setup script runs
   resources, #14 lead isotope ratios (Wikidata nuclides), #19 finds without a feature
   (`P53` → site's place), #20 typed IRIs `/id/<kind>/<uuid>`, #21 `:not_detected`.
 - Also implemented: #7 feature types (local SKOS + AAT matches), graves part of their kurgan,
-  local periods and cultures (until PeriodO).
+  local periods (phases in their chronology system, part of a culture; until PeriodO).
 - **Open:** #17 CRM ↔ AFO mapping (later). The converter runs in LOD-AM/ingest (R2RML + Ontop).
 - The website's phases 4–5 (entity pages, Data page, posts about the model)
   wait for this: LOD-AM/website issues labelled `waiting-for-kg`.

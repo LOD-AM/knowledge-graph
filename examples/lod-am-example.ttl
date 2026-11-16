@@ -187,6 +187,25 @@ aat:300037118 a crm:E55_Type ;
     skos:prefLabel "spearhead tang"@en ;
     crm:P70i_is_documented_in <https://doi.org/10.3406/paleo.2002.4745> .
 
+# A local phase of the source database, until it is in PeriodO (LOD-AM/ingest#17):
+# in its chronology system and part of its culture. Values as in the database.
+:arslantepe_periods a skos:ConceptScheme ;
+    skos:prefLabel "Arslantepe periods"@en, "Arslantepe Stufen"@de .
+
+:Arslantepe_VIA a crm:E4_Period ;
+    rdfs:label "Arslantepe VIA"@en, "Arslantepe VIA"@de ;
+    skos:inScheme :arslantepe_periods ;
+    crm:P9i_forms_part_of :northern_mesopotamian_late_chalcolithic ;
+    crm:P4_has_time-span :Arslantepe_VIA_time_span .
+
+:Arslantepe_VIA_time_span a crm:E52_Time-Span ;
+    crm:P79_beginning_is_qualified_by "-3350" ;
+    crm:P80_end_is_qualified_by "-3000" .
+
+:northern_mesopotamian_late_chalcolithic a crm:E4_Period ;
+    rdfs:label "Northern Mesopotamian Late Chalcolithic"@en, "Nordmesopotamisches Spätchalkolithikum"@de ;
+    crm:P9_consists_of :Arslantepe_VIA .
+
 # ----------------------------------------------------------------------------
 # SCIENTIFIC ANALYSIS (Allotrope Foundation Ontologies)
 # ----------------------------------------------------------------------------
