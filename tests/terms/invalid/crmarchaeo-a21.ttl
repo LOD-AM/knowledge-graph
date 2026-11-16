@@ -1,0 +1,15 @@
+@prefix :       <https://lod-am.net/id/> .
+@prefix crm:    <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix crmarchaeo: <http://www.cidoc-crm.org/extensions/crmarchaeo/> .
+@prefix afr:    <http://purl.allotrope.org/ontologies/result#> .
+@prefix afx:    <http://purl.allotrope.org/ontologies/property#> .
+@prefix aat:    <http://vocab.getty.edu/aat/> .
+@prefix qudt:   <http://qudt.org/schema/qudt#> .
+@prefix unit:   <http://qudt.org/vocab/unit#> .
+@prefix wd:     <http://www.wikidata.org/entity/> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+
+# crmarchaeo:A21_is_contained_in does not exist in CRMarchaeo 2.1.1 (use AP21i_is_contained_in).
+:obj a crm:E22_Human-Made_Object ; crmarchaeo:A21_is_contained_in :feat .
+:feat a crm:E25_Human-Made_Feature, crmarchaeo:A2_Stratigraphic_Volume_Unit .

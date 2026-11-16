@@ -1,0 +1,9 @@
+# Wikidata items LOD-AM may use, verified against Wikidata (tools/verify_wikidata.py,
+# `make verify-wikidata`). make check rejects any other wd: IRI.
+# Lead nuclides: ChEBI has only lead-207, AFO has no nuclides (knowledge-graph#14).
+# id	label (en, as in Wikidata)	note
+Q18883429	lead-204	nuclide, isotope ratios
+Q18883438	lead-206	nuclide, isotope ratios
+Q18883443	lead-207	nuclide, isotope ratios (= ChEBI 52455)
+Q16670466	lead-208	nuclide, isotope ratios
+Q43	Turkey	place of a PeriodO period (example)

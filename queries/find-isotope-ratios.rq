@@ -1,0 +1,23 @@
+# Lead isotope ratios per object: numerator / denominator nuclide and the reported value.
+# Pattern: sampling -> sample -> analysis (afx:has input / has output) -> ratio
+# (afr:AFR_0002368 analyte molar ratio, afx:quantifies = numerator, afx:has reference = denominator).
+PREFIX crm:    <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX crmsci: <http://www.cidoc-crm.org/extensions/crmsci/>
+PREFIX afr:    <http://purl.allotrope.org/ontologies/result#>
+PREFIX afx:    <http://purl.allotrope.org/ontologies/property#>
+PREFIX qudt:   <http://qudt.org/schema/qudt#>
+PREFIX rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?object ?objectLabel ?numerator ?denominator ?value WHERE {
+  ?object   crm:P46_is_composed_of* ?part ;
+            rdfs:label ?objectLabel .
+  ?sampling crmsci:O3_sampled_from ?part ;
+            crmsci:O5_removed ?sample .
+  ?analysis afx:AFX_0000399 ?sample ;          # has input
+            afx:AFX_0000395 ?ratio .           # has output
+  ?ratio a afr:AFR_0002368 ;                   # analyte molar ratio
+         afx:AFX_0002816 ?numerator ;          # quantifies
+         afx:AFX_0001550 ?denominator ;        # has reference
+         qudt:numericValue ?value .
+}
+ORDER BY ?object ?numerator ?denominator
