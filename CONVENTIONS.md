@@ -108,6 +108,21 @@ Types are `crm:E55_Type`, materials `crm:E57_Material`; both need a
     crm:P79_beginning_is_qualified_by "-2000" ;
     crm:P80_end_is_qualified_by "-1750" .
 ```
+- **Name as reported** (LOD-AM/ingest#31): the name in the form the source publication uses,
+  before normalisation, links the site to the literature. It is an `E41_Appellation` with
+  `crm:P2_has_type :name_as_reported`, attached with `crm:P1_is_identified_by`; at most one per
+  site. The labels carry the normalised names (`rdfs:label`, one per language).
+  ```turtle
+  :Arslantepe crm:P1_is_identified_by :Arslantepe_name_as_reported .
+  :Arslantepe_name_as_reported a crm:E41_Appellation ;
+      crm:P2_has_type :name_as_reported ;
+      crm:P190_has_symbolic_content "Arslantepe" .
+  ```
+- **Location certainty** (LOD-AM/ingest#31): when the point is not the site itself, the site's
+  place carries one local type, `crm:P2_has_type` → `:location_uncertain` (the source marks the
+  name with "?"), `:location_vicinity` (near the named place) or `:location_area` (only an area is
+  known; the point represents the area). No type = no restriction known. Concepts:
+  `data/vocab/site-names-and-locations.ttl`.
 - **Pleiades** is never `owl:sameAs`: that would merge Pleiades' statements with
   ours. The site carries the Pleiades URI as an `E42_Identifier`.
 - **Geometry** is GeoSPARQL (`geo:hasGeometry` → `geo:Geometry` with one
@@ -204,6 +219,8 @@ measurement at all. Never write `0` for "not detected".
 | object | `crmarchaeo:AP21i_is_contained_in` | feature (also `crmarchaeo:A2_Stratigraphic_Volume_Unit`) |
 | object without feature | `crm:P53_has_former_or_current_location` | the site's place (`E53_Place`) |
 | measurement "not detected" | `crm:P2_has_type` | `:not_detected` |
+| site | `crm:P1_is_identified_by` | `E41_Appellation` typed `:name_as_reported` |
+| place | `crm:P2_has_type` | location certainty (`:location_uncertain`, `:location_vicinity`, `:location_area`) |
 | ratio | `afx:AFX_0002816` / `afx:AFX_0001550` | numerator / denominator nuclide |
 
 ## Modelling scope

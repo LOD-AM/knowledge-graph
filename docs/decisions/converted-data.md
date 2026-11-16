@@ -17,3 +17,12 @@ in LOD-AM/ingest. The patterns are in [CONVENTIONS.md](../../CONVENTIONS.md).
   measurement out would make "not detected" indistinguishable from "not analysed". The node is
   also a `crm:E54_Dimension` so that `crm:P2_has_type` stays within its CRM domain; measured
   values don't get a CRM class yet (that belongs to #17, the CRM ↔ AFO mapping).
+
+## Site names and location certainty (2026-11-16, LOD-AM/ingest#31)
+
+The owner accepted both proposals.
+- **Name as reported:** a typed `E41_Appellation`, not a note: it is a name, and the website
+  and queries can show "as published: …" next to the normalised label.
+- **Location certainty:** a local type on the *place* (not the site), because it says something
+  about the point, not about the site. Three values, as in the database's
+  `site_location_certainty` column.

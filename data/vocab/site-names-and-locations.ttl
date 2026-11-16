@@ -1,0 +1,33 @@
+# LOD-AM local concepts for site names and the certainty of a site's location
+# (owner, LOD-AM/ingest#31, 2026-11-16). Hand-written, not generated. See CONVENTIONS.md, "Sites".
+@prefix :     <https://lod-am.net/id/> .
+@prefix crm:  <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+# --- Kinds of names (appellations) ---------------------------------------------
+:appellation_type a skos:ConceptScheme ;
+    skos:prefLabel "LOD-AM kinds of names"@en, "LOD-AM Namensarten"@de .
+
+:name_as_reported a crm:E55_Type, skos:Concept ;
+    skos:inScheme :appellation_type ;
+    skos:prefLabel "name as reported"@en, "Name wie publiziert"@de ;
+    skos:definition "The name in the form the source publication uses, before LOD-AM normalised it (spelling, romanisation, renaming). It links the record to the literature."@en .
+
+# --- Certainty of a site's location ----------------------------------------------
+:location_certainty a skos:ConceptScheme ;
+    skos:prefLabel "LOD-AM location certainty"@en, "LOD-AM Lagegenauigkeit"@de .
+
+:location_uncertain a crm:E55_Type, skos:Concept ;
+    skos:inScheme :location_certainty ;
+    skos:prefLabel "location uncertain"@en, "Lage unsicher"@de ;
+    skos:definition "The source marks the place name as uncertain (\"?\")."@en .
+
+:location_vicinity a crm:E55_Type, skos:Concept ;
+    skos:inScheme :location_certainty ;
+    skos:prefLabel "in the vicinity of"@en, "in der Nähe von"@de ;
+    skos:definition "The source places the site near the named place; the point is that place, not the site itself."@en .
+
+:location_area a crm:E55_Type, skos:Concept ;
+    skos:inScheme :location_certainty ;
+    skos:prefLabel "only the area is known"@en, "nur das Gebiet bekannt"@de ;
+    skos:definition "Only an area (region, district, island) is known; the point is a representative point of that area, not the site."@en .

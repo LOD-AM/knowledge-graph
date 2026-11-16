@@ -1,0 +1,11 @@
+# Must FAIL validation: a place typed with something that is not a location certainty.
+@prefix :      <https://lod-am.net/id/> .
+@prefix crm:   <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+
+:name_as_reported a crm:E55_Type ; skos:prefLabel "name as reported"@en .
+:location_area a crm:E55_Type ; skos:prefLabel "only the area is known"@en .
+
+:some_type a crm:E55_Type ; skos:prefLabel "some type"@en .
+:bad_place a crm:E53_Place ; crm:P2_has_type :some_type .

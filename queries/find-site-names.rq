@@ -1,0 +1,24 @@
+# Sites with their labels, the name as reported in the literature, and the certainty
+# of their location (empty when no restriction is known).
+PREFIX :     <https://lod-am.net/id/>
+PREFIX crm:  <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT ?site ?label ?asReported ?certainty WHERE {
+  ?site a crm:E27_Site ;
+        rdfs:label ?label .
+  FILTER(LANG(?label) = "en")
+  OPTIONAL {
+    ?site crm:P1_is_identified_by ?name .
+    ?name crm:P2_has_type :name_as_reported ;
+          crm:P190_has_symbolic_content ?asReported .
+  }
+  OPTIONAL {
+    ?site crm:P53_has_former_or_current_location/crm:P2_has_type ?c .
+    ?c skos:inScheme :location_certainty ;
+       skos:prefLabel ?certainty .
+    FILTER(LANG(?certainty) = "en")
+  }
+}
+ORDER BY ?site
