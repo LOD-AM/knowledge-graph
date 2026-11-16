@@ -1,0 +1,12 @@
+# Book chapters with the book they are part of (LOD-AM/ingest#12).
+PREFIX fabio:   <http://purl.org/spar/fabio/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+
+SELECT ?chapter ?key ?year ?book ?bookTitle WHERE {
+  ?chapter a fabio:BookChapter ;
+           dcterms:identifier ?key ;
+           dcterms:isPartOf ?book .
+  OPTIONAL { ?chapter fabio:hasPublicationYear ?year }
+  ?book a fabio:Book ; dcterms:title ?bookTitle .
+}
+ORDER BY ?key

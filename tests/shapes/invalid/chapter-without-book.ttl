@@ -1,0 +1,13 @@
+# Must FAIL validation: a book chapter that is part of a journal, a book without a title,
+# and an editor that is a string (LOD-AM/ingest#12).
+@prefix :        <https://lod-am.net/id/> .
+@prefix crm:     <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix fabio:   <http://purl.org/spar/fabio/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+:pub_chapter a fabio:BookChapter, crm:E31_Document ;
+    dcterms:title "A chapter" ;
+    dcterms:isPartOf :pub_journal .
+:pub_journal a fabio:Journal ; dcterms:title "A journal" .
+:pub_book a fabio:Book, crm:E31_Document ;
+    dcterms:contributor "Somebody" .

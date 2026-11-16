@@ -385,6 +385,21 @@ aat:300037058 a crm:E55_Type ;
     dcterms:isPartOf :journal_paleorient ;
     dcterms:creator :andreas_hauptmann, :sigrid_schmitt-strecker, :friedrich_begemann, :alberto_palmieri .
 
+# A book chapter and its book (Zotero: bookSection; LOD-AM/ingest#12). Values as in the
+# owner's public Zotero group; authors left out here.
+<https://lod-am.net/id/pub/CourcierEtAl2017> a fabio:BookChapter, crm:E31_Document ;
+    dcterms:title "Metallurgy Developments in Azerbaijan from the Neolithic to the Early Bronze Age: Recent archaeometallurgical research in the middle Kura River valley" ;
+    dcterms:identifier "CourcierEtAl2017" ;                 # citation key
+    fabio:hasPublicationYear "2017"^^xsd:gYear ;
+    prism:startingPage "525" ;
+    prism:endingPage "541" ;
+    dcterms:publisher "Brepols" ;
+    dcterms:isPartOf <https://lod-am.net/id/pub/CourcierEtAl2017/book> .
+
+<https://lod-am.net/id/pub/CourcierEtAl2017/book> a fabio:Book, crm:E31_Document ;
+    dcterms:title "Subartu XXXVIII - At the Northern Frontier of Near Eastern Archaeology: Recent research on Caucasia and Anatolia in the Bronse age" ;
+    fabio:hasPublicationYear "2017"^^xsd:gYear .
+
 # ============================================================================
 # Authors (foaf:Person, linked via dcterms:creator)
 # ============================================================================
