@@ -1,0 +1,14 @@
+# Must FAIL validation: a name without symbolic content, and a site with two names as reported.
+@prefix :      <https://lod-am.net/id/> .
+@prefix crm:   <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+
+:name_as_reported a crm:E55_Type ; skos:prefLabel "name as reported"@en .
+:location_area a crm:E55_Type ; skos:prefLabel "only the area is known"@en .
+
+:bad_site a crm:E27_Site ; rdfs:label "Bad site"@en ;
+    crm:P1_is_identified_by :bad_name_1, :bad_name_2 .
+:bad_name_1 a crm:E41_Appellation ; crm:P2_has_type :name_as_reported .
+:bad_name_2 a crm:E41_Appellation ; crm:P2_has_type :name_as_reported ;
+    crm:P190_has_symbolic_content "Bad" .

@@ -38,7 +38,30 @@
     rdfs:label "Arslantepe"@en ;
     crm:P2_has_type <https://pleiades.stoa.org/vocabularies/settlement> ;
     crm:P1_is_identified_by :Arslantepe_pleiades_id ;     # the Pleiades place, as an identifier (no owl:sameAs)
+    crm:P1_is_identified_by :Arslantepe_name_as_reported ;   # the name as the literature gives it
     crm:P53_has_former_or_current_location :Arslantepe_location .
+
+:Arslantepe_name_as_reported a crm:E41_Appellation ;
+    crm:P2_has_type :name_as_reported ;                    # data/vocab/site-names-and-locations.ttl
+    crm:P190_has_symbolic_content "Arslantepe" .
+
+# A site of which only the area is known (LOD-AM/ingest: site_location_certainty "area").
+# The point is a representative point of the area; the place says so with a local type.
+:Akarnania a crm:E27_Site ;
+    rdfs:label "Akarnania"@en ;
+    crm:P1_is_identified_by :Akarnania_name_as_reported ;
+    crm:P53_has_former_or_current_location :Akarnania_location .
+
+:Akarnania_name_as_reported a crm:E41_Appellation ;
+    crm:P2_has_type :name_as_reported ;
+    crm:P190_has_symbolic_content "Akarnanien" .
+
+:Akarnania_location a crm:E53_Place, geo:Feature ;
+    crm:P2_has_type :location_area ;                       # only the area is known
+    geo:hasGeometry :Akarnania_geometry .
+
+:Akarnania_geometry a geo:Geometry ;
+    geo:asWKT "POINT (21 38)"^^geo:wktLiteral .
 
 :Arslantepe_pleiades_id a crm:E42_Identifier ;
     crm:P2_has_type :pleiades_place_uri ;
