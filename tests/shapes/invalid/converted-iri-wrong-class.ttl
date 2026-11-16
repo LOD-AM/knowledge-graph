@@ -1,0 +1,16 @@
+# Must FAIL validation: /id/find/<uuid> typed as a site (#20).
+@prefix :      <https://lod-am.net/id/> .
+@prefix crm:   <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix afr:   <http://purl.allotrope.org/ontologies/result#> .
+@prefix afx:   <http://purl.allotrope.org/ontologies/property#> .
+@prefix qudt:  <http://qudt.org/schema/qudt#> .
+@prefix unit:  <http://qudt.org/vocab/unit#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix chebi: <http://purl.obolibrary.org/obo/CHEBI_> .
+
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+:not_detected a crm:E55_Type ; skos:prefLabel "not detected"@en .
+
+<https://lod-am.net/id/find/0b7e2c1a-5d3f-4a8e-9c61-2f4d8a7b3e10> a crm:E27_Site ;
+    rdfs:label "Wrong class"@en .

@@ -24,6 +24,16 @@ shapes in the same PR. *Why* we chose each ontology/vocabulary is in
   (`:spearhead_1_blade`). Helper nodes: `<parent>_<role>`
   (`:spearhead_1_id`, `:assign_spearhead_1_type`, `:p03wskdnzgc_TIME_SPAN`).
 - Publications without a DOI: `:pub/<citation-key>`.
+- **Converted data** (records from a database with an `id_uuid`, #20) uses a typed path
+  instead of readable names: `https://lod-am.net/id/<kind>/<uuid>`, uuid in lower case with
+  hyphens. Kinds: `site` (E27), `feature` (E25), `find` (E22), `analysis` (E7, chemical and
+  lead isotope), `period`, `type` (types, type groups and classes of the typology), `culture`,
+  `region`, `lab`. Helper nodes without a uuid of their own hang below their record with a
+  slash: `<record IRI>/<role>`, role in `snake_case` (`/id/find/<uuid>/id`,
+  `/id/site/<uuid>/location`, `/id/analysis/<uuid>/sample`, `/id/analysis/<uuid>/sn`,
+  `/id/analysis/<uuid>/pb207_pb206`). `make validate` checks the pattern and that `site`,
+  `feature`, `find` and `analysis` IRIs carry their class. The hand-written `examples/` keep
+  readable names.
 - **Reuse external IRIs** wherever they exist: Getty AAT concept IRIs
   (`http://vocab.getty.edu/aat/<id>`, never `/page/aat/`), PeriodO ARKs,
   Pleiades places (as identifiers, see Sites), ChEBI elements (only ids listed in
@@ -106,6 +116,11 @@ Types are `crm:E55_Type`, materials `crm:E57_Material`; both need a
 - **Finds in features:** a feature that contains finds is also a CRMarchaeo
   `A2_Stratigraphic_Volume_Unit` (a deposit: hoard, grave fill, layer; a kurgan as a
   whole is a coarse A2), so the object can be `crmarchaeo:AP21i_is_contained_in` it.
+- **Finds without a feature** (#19): the object points to its site's place,
+  `crm:P53_has_former_or_current_location` → the site's `E53_Place` (the same node that
+  carries the geometry). "Finds from site X" therefore has two paths:
+  `AP21i_is_contained_in/P46i_forms_part_of` or the shared place (`queries/find-objects-at-site.rq`).
+  Parts of an object (`P46_is_composed_of`) need no context of their own.
 - **Dating** a feature (or a site, when there is no real feature) uses the
   shortcut `crm:P8i_witnessed` → period. We don't model deposition events.
 
@@ -146,7 +161,21 @@ Types are `crm:E55_Type`, materials `crm:E57_Material`; both need a
 
 Values reported only as an upper limit (`< 0.001 %`) use
 `afx:AFX_0000331 [ qudt:numericValue "0.001"^^xsd:decimal ]` *instead of*
-`qudt:numericValue`. Exactly one of the two is required.
+`qudt:numericValue`.
+
+**Not detected** (#21): the element was looked for but not found, and no detection limit
+is known. Same measurement node, but no value; it carries the local type `:not_detected`
+(`data/vocab/measurement-status.ttl`) and is also a `crm:E54_Dimension`, so
+`crm:P2_has_type` is used within its domain (AFO has no term for "not detected"):
+```turtle
+:Bi_measurement a afr:AFR_0002099, crm:E54_Dimension ;   # mass fraction
+    afx:AFX_0002816 chebi:33301 ;                       # quantifies bismuth atom
+    crm:P2_has_type :not_detected ;
+    qudt:unit unit:PERCENT .
+```
+A measurement has **exactly one** of: `qudt:numericValue`, `afx:AFX_0000331` (maximum),
+or `crm:P2_has_type :not_detected`. An element that was *not analysed* gets no
+measurement at all. Never write `0` for "not detected".
 
 ### Literature
 ```turtle
@@ -173,6 +202,8 @@ Values reported only as an upper limit (`< 0.001 %`) use
 | site | `crm:P1_is_identified_by` | `E42_Identifier` (Pleiades URI) |
 | place | `geo:hasGeometry` | `geo:Geometry` |
 | object | `crmarchaeo:AP21i_is_contained_in` | feature (also `crmarchaeo:A2_Stratigraphic_Volume_Unit`) |
+| object without feature | `crm:P53_has_former_or_current_location` | the site's place (`E53_Place`) |
+| measurement "not detected" | `crm:P2_has_type` | `:not_detected` |
 | ratio | `afx:AFX_0002816` / `afx:AFX_0001550` | numerator / denominator nuclide |
 
 ## Modelling scope

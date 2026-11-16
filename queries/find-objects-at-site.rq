@@ -1,0 +1,22 @@
+# All finds from one site (#19): either in one of its features
+# (crmarchaeo:AP21i_is_contained_in / crm:P46i_forms_part_of) or, when no feature
+# is known, located at the site's place (crm:P53_has_former_or_current_location).
+# ?feature is empty for finds without a feature.
+PREFIX :           <https://lod-am.net/id/>
+PREFIX crm:        <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX crmarchaeo: <http://www.cidoc-crm.org/extensions/crmarchaeo/>
+PREFIX rdfs:       <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?object ?label ?feature WHERE {
+  VALUES ?site { :Arslantepe }
+  {
+    ?object crmarchaeo:AP21i_is_contained_in ?feature .
+    ?feature crm:P46i_forms_part_of ?site .
+  } UNION {
+    ?site crm:P53_has_former_or_current_location ?place .
+    ?object a crm:E22_Human-Made_Object ;
+            crm:P53_has_former_or_current_location ?place .
+  }
+  OPTIONAL { ?object rdfs:label ?label }
+}
+ORDER BY ?object

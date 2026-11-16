@@ -1,0 +1,20 @@
+# Must FAIL validation: object located at a site instead of the site's place (#19).
+@prefix :      <https://lod-am.net/id/> .
+@prefix crm:   <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix afr:   <http://purl.allotrope.org/ontologies/result#> .
+@prefix afx:   <http://purl.allotrope.org/ontologies/property#> .
+@prefix qudt:  <http://qudt.org/schema/qudt#> .
+@prefix unit:  <http://qudt.org/vocab/unit#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix chebi: <http://purl.obolibrary.org/obo/CHEBI_> .
+
+:not_detected a crm:E55_Type ; skos:prefLabel "not detected"@en .
+
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+:not_detected_dummy_type a crm:E55_Type ; skos:prefLabel "dummy"@en .
+:some_site a crm:E27_Site ; rdfs:label "Some site"@en .
+:bad_object a crm:E22_Human-Made_Object ;
+    rdfs:label "Bad object"@en ;
+    crm:P2_has_type :not_detected_dummy_type ;
+    crm:P53_has_former_or_current_location :some_site .

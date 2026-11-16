@@ -20,6 +20,7 @@
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix foaf:    <http://xmlns.com/foaf/0.1/> .
 @prefix lodsh:   <https://lod-am.net/shapes/> .
+@prefix :        <https://lod-am.net/id/> .
 
 # --- Every local resource is typed -----------------------------------------
 lodsh:LocalResourceShape a sh:NodeShape ;
@@ -60,7 +61,23 @@ lodsh:ObjectShape a sh:NodeShape ;
     sh:property [ sh:path crm:P70i_is_documented_in ; sh:minCount 1 ; sh:severity sh:Warning ;
         sh:message "Objects should cite the publication they come from (crm:P70i_is_documented_in)." ] ;
     sh:property [ sh:path rdf:type ; sh:not [ sh:hasValue afm:AFM_0001099 ] ;
-        sh:message "Only samples carry the AFO material class afm:AFM_0001099 (chemical mixture), not objects (#3)." ] .
+        sh:message "Only samples carry the AFO material class afm:AFM_0001099 (chemical mixture), not objects (#3)." ] ;
+    sh:property [ sh:path crm:P53_has_former_or_current_location ; sh:class crm:E53_Place ;
+        sh:message "An object without a feature points to its site's place (crm:E53_Place), #19." ] .
+
+# Find context (#19): a find is in a feature, or (no feature known) at its site's place.
+# Parts of an object (targets of crm:P46_is_composed_of) inherit the context of the whole.
+lodsh:FindContextShape a sh:NodeShape ;
+    sh:target [ a sh:SPARQLTarget ; sh:select """
+        PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+        SELECT DISTINCT ?this WHERE {
+          ?this a crm:E22_Human-Made_Object .
+          FILTER NOT EXISTS { ?whole crm:P46_is_composed_of ?this }
+        }""" ] ;
+    sh:or ( [ sh:path crmarchaeo:AP21i_is_contained_in ; sh:minCount 1 ]
+            [ sh:path crm:P53_has_former_or_current_location ; sh:minCount 1 ] ) ;
+    sh:severity sh:Warning ;
+    sh:message "Objects should have a find context: the feature (crmarchaeo:AP21i_is_contained_in) or, without a feature, the site's place (crm:P53_has_former_or_current_location), #19." .
 
 lodsh:TypeAssignmentShape a sh:NodeShape ;
     sh:targetClass crm:E17_Type_Assignment ;
@@ -143,8 +160,15 @@ lodsh:MeasurementShape a sh:NodeShape ;
         sh:message "Units are QUDT unit IRIs (e.g. unit:PERCENT), not strings." ] ;
     sh:property [ sh:path qudt:numericValue ; sh:maxCount 1 ; sh:datatype xsd:decimal ] ;
     sh:xone ( [ sh:path qudt:numericValue ; sh:minCount 1 ]
-              [ sh:path afx:AFX_0000331 ; sh:minCount 1 ] ) ;
-    sh:message "A measurement has either a value (qudt:numericValue) or only an upper limit (afx:AFX_0000331 maximum)." .
+              [ sh:path afx:AFX_0000331 ; sh:minCount 1 ]
+              [ sh:path crm:P2_has_type ; sh:hasValue :not_detected ] ) ;
+    sh:message "A measurement has exactly one of: a value (qudt:numericValue), only an upper limit (afx:AFX_0000331 maximum), or the type :not_detected (#21)." .
+
+lodsh:NotDetectedShape a sh:NodeShape ;
+    sh:targetSubjectsOf crm:P2_has_type ;
+    sh:or ( [ sh:not [ sh:path crm:P2_has_type ; sh:hasValue :not_detected ] ]
+            [ sh:class crm:E54_Dimension ] ) ;
+    sh:message "A :not_detected measurement is also a crm:E54_Dimension, so crm:P2_has_type is within its domain (#21)." .
 
 # --- Literature ------------------------------------------------------------
 lodsh:ArticleShape a sh:NodeShape ;
@@ -152,3 +176,40 @@ lodsh:ArticleShape a sh:NodeShape ;
     sh:property [ sh:path dcterms:title ; sh:minCount 1 ] ;
     sh:property [ sh:path dcterms:creator ; sh:minCount 1 ; sh:class foaf:Person ] ;
     sh:property [ sh:path fabio:hasPublicationYear ; sh:maxCount 1 ; sh:datatype xsd:gYear ] .
+
+# --- IRIs of converted data (#20) ----------------------------------------------
+# Converted records: https://lod-am.net/id/<kind>/<id_uuid>, helper nodes .../<id_uuid>/<role>.
+# The kind in the path must match the class.
+lodsh:ConvertedIriShape a sh:NodeShape ;
+    sh:target [ a sh:SPARQLTarget ;
+        sh:select """
+            SELECT DISTINCT ?this WHERE {
+              { ?this ?p ?o } UNION { ?s ?p ?this }
+              FILTER(isIRI(?this) && REGEX(STR(?this), "^https://lod-am[.]net/id/(site|feature|find|analysis|period|type|culture|region|lab)/"))
+            }""" ] ;
+    sh:sparql [ a sh:SPARQLConstraint ;
+        sh:message "Converted IRIs are https://lod-am.net/id/<kind>/<uuid> or .../<uuid>/<role> (lower-case uuid, role in snake_case), #20." ;
+        sh:select """
+            SELECT $this WHERE {
+              FILTER(!REGEX(STR($this), "^https://lod-am[.]net/id/[a-z]+/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(/[a-z0-9_]+)?$"))
+            }""" ] .
+
+lodsh:SiteIriShape a sh:NodeShape ;
+    sh:target [ a sh:SPARQLTarget ; sh:select """
+        SELECT DISTINCT ?this WHERE { ?this ?p ?o FILTER(REGEX(STR(?this), "^https://lod-am[.]net/id/site/[0-9a-f-]{36}$")) }""" ] ;
+    sh:class crm:E27_Site ; sh:message "IRIs /id/site/<uuid> are crm:E27_Site (#20)." .
+
+lodsh:FeatureIriShape a sh:NodeShape ;
+    sh:target [ a sh:SPARQLTarget ; sh:select """
+        SELECT DISTINCT ?this WHERE { ?this ?p ?o FILTER(REGEX(STR(?this), "^https://lod-am[.]net/id/feature/[0-9a-f-]{36}$")) }""" ] ;
+    sh:class crm:E25_Human-Made_Feature ; sh:message "IRIs /id/feature/<uuid> are crm:E25_Human-Made_Feature (#20)." .
+
+lodsh:FindIriShape a sh:NodeShape ;
+    sh:target [ a sh:SPARQLTarget ; sh:select """
+        SELECT DISTINCT ?this WHERE { ?this ?p ?o FILTER(REGEX(STR(?this), "^https://lod-am[.]net/id/find/[0-9a-f-]{36}$")) }""" ] ;
+    sh:class crm:E22_Human-Made_Object ; sh:message "IRIs /id/find/<uuid> are crm:E22_Human-Made_Object (#20)." .
+
+lodsh:AnalysisIriShape a sh:NodeShape ;
+    sh:target [ a sh:SPARQLTarget ; sh:select """
+        SELECT DISTINCT ?this WHERE { ?this ?p ?o FILTER(REGEX(STR(?this), "^https://lod-am[.]net/id/analysis/[0-9a-f-]{36}$")) }""" ] ;
+    sh:class crm:E7_Activity ; sh:message "IRIs /id/analysis/<uuid> are crm:E7_Activity (#20)." .
