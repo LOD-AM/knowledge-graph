@@ -45,13 +45,14 @@ environment "LOD-AM" allows these hosts, and its setup script runs
 `data/` generated RDF · `converter/` Node (CommonJS, no deps) ·
 `tools/` Python checks · `docs/decisions/` why · `ontologies/`, `vocabularies/` usage notes
 
-## Where to resume (state 2026-11-15)
+## Where to resume (state 2026-11-16)
 - Decided and implemented: #1 mass fraction, #2 sampling event (CRMsci 3.2), #3 AFO
   class on samples only, #4 Pleiades as E42 identifier, #5 `P8i_witnessed`, #6 CRMarchaeo
   2.1.1 (`AP21i_is_contained_in`, features also A2), #8 GeoSPARQL, #12 labels on main
   resources, #14 lead isotope ratios (Wikidata nuclides).
 - **Open:** #7 (local feature-type scheme + AAT, decided; built from LOD-AM/ingest#8);
-  #17 CRM ↔ AFO mapping (later). Then the converter in LOD-AM/ingest (R2RML).
+  #17 CRM ↔ AFO mapping (later); #19 finds without a feature, #20 IRI pattern from
+  `id_uuid`, #21 "not detected" (all for the converter). Then the converter in LOD-AM/ingest (R2RML).
 - The website's phases 4–5 (entity pages, Data page, posts about the model)
   wait for this: LOD-AM/website issues labelled `waiting-for-kg`.
 - Known gaps: the Getty SPARQL
