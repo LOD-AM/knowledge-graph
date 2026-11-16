@@ -1,0 +1,18 @@
+# Features with their local type and the type's AAT match (#7). Remove the VALUES line
+# to list every feature.
+PREFIX :     <https://lod-am.net/id/>
+PREFIX crm:  <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT ?feature ?label ?type ?typeLabel ?aat WHERE {
+  VALUES ?type { :hoard }
+  ?feature a crm:E25_Human-Made_Feature ;
+           rdfs:label ?label ;
+           crm:P2_has_type ?type .
+  FILTER(LANG(?label) = "en")
+  ?type skos:prefLabel ?typeLabel .
+  FILTER(LANG(?typeLabel) = "en")
+  OPTIONAL { ?type skos:closeMatch|skos:broadMatch ?aat }
+}
+ORDER BY ?feature

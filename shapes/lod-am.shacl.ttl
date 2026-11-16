@@ -89,6 +89,12 @@ lodsh:TypeShape a sh:NodeShape ;
     sh:property [ sh:path skos:prefLabel ; sh:minCount 1 ;
         sh:message "Types and materials need a skos:prefLabel." ] .
 
+lodsh:LocalTypeMatchShape a sh:NodeShape ;
+    sh:targetSubjectsOf skos:closeMatch, skos:broadMatch ;
+    sh:property [ sh:path [ sh:alternativePath ( skos:closeMatch skos:broadMatch ) ] ; sh:nodeKind sh:IRI ;
+        sh:pattern "^http://vocab[.]getty[.]edu/aat/[0-9]+$" ;
+        sh:message "Local types match AAT concepts: skos:closeMatch / skos:broadMatch → http://vocab.getty.edu/aat/<id> (#7)." ] .
+
 lodsh:IdentifierShape a sh:NodeShape ;
     sh:targetClass crm:E42_Identifier ;
     sh:property [ sh:path crm:P190_has_symbolic_content ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] .

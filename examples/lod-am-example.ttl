@@ -85,18 +85,20 @@ wd:Q43 a crm:E53_Place ;
 
 
 :Palace_Hoard a crm:E25_Human-Made_Feature, crmarchaeo:A2_Stratigraphic_Volume_Unit ;   # A2: finds are contained in it (#6)
-    rdfs:label "Palace Hoard"@en ;
+    rdfs:label "Palace Hoard"@en, "Palasthort"@de ;
+    crm:P2_has_type :hoard ;                                     # local feature type (#7)
     crm:P41i_was_classified_by :assignTypePalace_Hoard ;
     crm:P46i_forms_part_of :Arslantepe ;
     crm:P8i_witnessed <http://n2t.net/ark:/99152/p03wskdnzgc> .   # dating shortcut (#5)
 
-# TODO(open question): map "hoard" to an AAT concept and use it here.
 :assignTypePalace_Hoard a crm:E17_Type_Assignment ;
     crm:P41_classified :Palace_Hoard ;
     crm:P42_assigned :hoard .
 
-:hoard a crm:E55_Type ;
-    skos:prefLabel "hoard"@en ;
+# Local site/feature type (#7): a SKOS concept with the AAT match where AAT has one
+:hoard a crm:E55_Type, skos:Concept ;
+    skos:prefLabel "hoard"@en, "Hort"@de ;
+    skos:closeMatch aat:300195474 ;                              # hoards (groupings)
     crm:P70i_is_documented_in <https://doi.org/10.3406/paleo.2002.4745> .
 
 # ----------------------------------------------------------------------------

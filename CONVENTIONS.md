@@ -136,8 +136,19 @@ Types are `crm:E55_Type`, materials `crm:E57_Material`; both need a
   carries the geometry). "Finds from site X" therefore has two paths:
   `AP21i_is_contained_in/P46i_forms_part_of` or the shared place (`queries/find-objects-at-site.rq`).
   Parts of an object (`P46_is_composed_of`) need no context of their own.
+- **Feature and site types** (#7): local SKOS concepts (`crm:E55_Type`, `skos:Concept`, labels
+  en/de), from the database's `site_interpretation` (kurgan, grave, layer, excavation unit …),
+  linked with `crm:P2_has_type`. Where AAT has a fitting concept, the local type carries
+  `skos:closeMatch` or `skos:broadMatch` → the AAT concept (`:hoard skos:closeMatch aat:300195474`).
+- **Features within features** (LOD-AM/ingest#8): a grave in a kurgan `crm:P46i_forms_part_of`
+  the kurgan **and** the site (both stated, no inference). A kurgan known only from its graves
+  is a feature of its own, without finds and without dating.
 - **Dating** a feature (or a site, when there is no real feature) uses the
   shortcut `crm:P8i_witnessed` → period. We don't model deposition events.
+  Until the periods are in PeriodO (LOD-AM/ingest#7), the source's periods are local
+  `crm:E4_Period`s (`/id/period/<uuid>`, labels en/de) with an `E52_Time-Span`
+  (`P79`/`P80` in years BC as `"-2800"`). The archaeological culture is an `E4_Period` too
+  (`/id/culture/<uuid>`); a context witnesses both its period and its culture.
 
 ### Analytics
 ```turtle
@@ -213,7 +224,9 @@ measurement at all. Never write `0` for "not detected".
 | analysis | `afx:AFX_0000395` (has output) | measurement |
 | object / type / analysis | `crm:P70i_is_documented_in` | publication |
 | feature | `crm:P46i_forms_part_of` | site |
-| feature / site | `crm:P8i_witnessed` | period |
+| feature / site | `crm:P8i_witnessed` | period, culture |
+| feature (grave) | `crm:P46i_forms_part_of` | the kurgan (and the site) |
+| site / feature | `crm:P2_has_type` | local type (`skos:closeMatch` / `skos:broadMatch` → AAT) |
 | site | `crm:P1_is_identified_by` | `E42_Identifier` (Pleiades URI) |
 | place | `geo:hasGeometry` | `geo:Geometry` |
 | object | `crmarchaeo:AP21i_is_contained_in` | feature (also `crmarchaeo:A2_Stratigraphic_Volume_Unit`) |

@@ -1,0 +1,9 @@
+# Must FAIL validation: a local type matched to something that is not an AAT concept IRI (#7).
+@prefix :     <https://lod-am.net/id/> .
+@prefix crm:  <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+:bad_type a crm:E55_Type, skos:Concept ;
+    skos:prefLabel "bad type"@en ;
+    skos:closeMatch <http://vocab.getty.edu/page/aat/300195474> ;
+    skos:broadMatch "hoards" .

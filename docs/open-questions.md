@@ -10,10 +10,8 @@ event (CRMsci), #3 AFO material class on samples only, #4 Pleiades as identifier
 #5 `P8i_witnessed` shortcut, #6 CRMarchaeo 2.1.1 (`AP21i_is_contained_in`, features
 also A2), #8 GeoSPARQL, #12 labels on main resources, #14 lead isotope ratios.
 Decided on 2026-11-16: #19 finds without a feature (`P53` → the site's place), #20 typed
-IRIs from `id_uuid`, #21 "not detected" (local type `:not_detected`).
+IRIs from `id_uuid`, #21 "not detected" (local type `:not_detected`), #7 feature types
+(local SKOS scheme from the database with AAT matches; LOD-AM/ingest#8).
 
-1. [#7](https://github.com/LOD-AM/knowledge-graph/issues/7) **Feature types.** Decided: a local SKOS scheme of feature types
-   with AAT matches, like the object typology. The list comes from LOD-AM/ingest#8;
-   until then `:Palace_Hoard` keeps the placeholder `:hoard` type.
-2. [#17](https://github.com/LOD-AM/knowledge-graph/issues/17) **Formal CRM ↔ AFO mapping** (from #9): about 1½–2 days, when other
+1. [#17](https://github.com/LOD-AM/knowledge-graph/issues/17) **Formal CRM ↔ AFO mapping** (from #9): about 1½–2 days, when other
    projects consume the data.

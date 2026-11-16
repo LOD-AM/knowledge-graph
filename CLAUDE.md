@@ -51,8 +51,9 @@ environment "LOD-AM" allows these hosts, and its setup script runs
   2.1.1 (`AP21i_is_contained_in`, features also A2), #8 GeoSPARQL, #12 labels on main
   resources, #14 lead isotope ratios (Wikidata nuclides), #19 finds without a feature
   (`P53` → site's place), #20 typed IRIs `/id/<kind>/<uuid>`, #21 `:not_detected`.
-- **Open:** #7 (local feature-type scheme + AAT, decided; built from LOD-AM/ingest#8);
-  #17 CRM ↔ AFO mapping (later). Next: the converter in LOD-AM/ingest (R2RML).
+- Also implemented: #7 feature types (local SKOS + AAT matches), graves part of their kurgan,
+  local periods and cultures (until PeriodO).
+- **Open:** #17 CRM ↔ AFO mapping (later). The converter runs in LOD-AM/ingest (R2RML + Ontop).
 - The website's phases 4–5 (entity pages, Data page, posts about the model)
   wait for this: LOD-AM/website issues labelled `waiting-for-kg`.
 - Known gaps: the Getty SPARQL
