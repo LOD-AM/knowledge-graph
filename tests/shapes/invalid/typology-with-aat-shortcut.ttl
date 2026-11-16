@@ -1,5 +1,5 @@
-# Must FAIL validation: an object with a typology type but without its AAT match, and a
-# typology concept without a broader concept (LOD-AM/ingest#10).
+# Must FAIL validation: an object with a typology type that also carries an AAT type of its
+# own, and a typology concept without a broader concept (LOD-AM/ingest#10, #28).
 @prefix :     <https://lod-am.net/id/> .
 @prefix crm:  <http://www.cidoc-crm.org/cidoc-crm/> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
@@ -13,4 +13,4 @@
     skos:broadMatch aat:300037058 .
 :bad_object a crm:E22_Human-Made_Object ;
     rdfs:label "Bad object"@en ;
-    crm:P2_has_type :bad_type .
+    crm:P2_has_type :bad_type, aat:300037058 .

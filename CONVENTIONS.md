@@ -81,14 +81,16 @@ Types are `crm:E55_Type`, materials `crm:E57_Material`; both need a
   `:typology`, labels en/de). Its hierarchy is `skos:broader`: type → type group (e.g. daggers)
   or class (`find_character`, e.g. daggers and other blades); group → broader group or class.
   Each level carries `skos:closeMatch` / `skos:broadMatch` → AAT where AAT has a concept.
-- `crm:P2_has_type` names the local type **and**, as a shortcut, its AAT match (no inference:
-  queries by AAT type keep working). A type without an AAT match has only the local type.
-- Identifiers are `E42_Identifier`s with a local type: `:number_as_reported` (the number in the
-  publication) and `:drawing_number` (`data/vocab/finds.ttl`).
-- Remarks of the source are a `crm:P3_has_note`. Labels name type, number and site
-  ("Flat axe, unspecified (no. 30-3, Arslantepe)").
+- `crm:P2_has_type` names **only the local type**; AAT is reached only through the type's
+  `skos:closeMatch` / `skos:broadMatch` (owner, #28). Queries by AAT type go through the match
+  (`queries/find-objects-by-aat-match.rq`).
+- Identifiers are `E42_Identifier`s with a local type (`data/vocab/finds.ttl`):
+  `:old_identifier` (an earlier identifier recorded in the source, e.g. `find_old`; only where
+  the source has one) and `:drawing_number` (the number of the drawing in the publication).
+- Remarks of the source are a `crm:P3_has_note`. Labels name type, old identifier (if any) and
+  site ("Flat axe, unspecified (no. 30-3, Arslantepe)", "Awl (Arslantepe)").
 ```turtle
-:dagger_ARSL18 crm:P2_has_type :type_201, aat:300037058 .   # local type + its AAT match
+:dagger_ARSL18 crm:P2_has_type :type_201 .                  # local type only
 :type_201 a crm:E55_Type, skos:Concept ;
     skos:inScheme :typology ;
     skos:prefLabel "flat dagger or dagger, unspecified"@en ;
