@@ -297,10 +297,34 @@ aat:300037118 a crm:E55_Type ;
 :dagger_ARSL18 a crm:E22_Human-Made_Object ;
     rdfs:label "Dagger ARSL 18"@en ;
     crm:P1_is_identified_by :dagger_ARSL18_id ;
-    crm:P2_has_type aat:300037058 ;            # daggers (weapons)
+    crm:P2_has_type :type_201, aat:300037058 ;  # local typology type + its AAT match (daggers (weapons))
     crm:P45_consists_of aat:300241441 ;        # <copper and copper alloy>
     crm:P53_has_former_or_current_location :Arslantepe_location ;   # found at the site, no feature known (#19)
     crm:P70i_is_documented_in <https://doi.org/10.3406/paleo.2002.4745> .
+
+# The local typology (LOD-AM/ingest#10): type 201 of the database, its group and class
+:type_201 a crm:E55_Type, skos:Concept ;
+    skos:inScheme :typology ;
+    skos:prefLabel "flat dagger or dagger, unspecified"@en, "Flachdolch oder Dolch, unbestimmt"@de ;
+    skos:broader :dagger_blades ;
+    skos:broadMatch aat:300037058 .                 # daggers (weapons)
+
+:dagger_blades a crm:E55_Type, skos:Concept ;
+    skos:inScheme :typology ;
+    skos:prefLabel "dagger blades or daggers with organic handle"@en, "Dolchklingen oder Dolche mit organischem Griff"@de ;
+    skos:broader :daggers ;
+    skos:broadMatch aat:300037058 .
+
+:daggers a crm:E55_Type, skos:Concept ;
+    skos:inScheme :typology ;
+    skos:prefLabel "daggers"@en, "Dolche"@de ;
+    skos:broader :daggers_and_other_blades ;
+    skos:closeMatch aat:300037058 .
+
+:daggers_and_other_blades a crm:E55_Type, skos:Concept ;
+    skos:inScheme :typology ;
+    skos:prefLabel "daggers and other blades"@en, "Dolche und andere Klingen"@de ;
+    skos:topConceptOf :typology .
 
 :dagger_ARSL18_id a crm:E42_Identifier ;
     crm:P190_has_symbolic_content "ARSL 18" .

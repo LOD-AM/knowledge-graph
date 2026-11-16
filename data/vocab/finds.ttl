@@ -1,0 +1,25 @@
+# LOD-AM local concepts for finds (LOD-AM/ingest#10, #14). Hand-written, not generated.
+# See CONVENTIONS.md, "Objects".
+@prefix :     <https://lod-am.net/id/> .
+@prefix crm:  <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+# The typology of the source database: the SAM typology as published by Krause 2003, with the
+# owner's additions (LOD-AM/ingest#10). Its concepts are converted from the database (/id/type/<uuid>).
+:typology a skos:ConceptScheme ;
+    skos:prefLabel "LOD-AM typology (SAM, Krause 2003, with additions)"@en,
+                   "LOD-AM-Typologie (SAM, Krause 2003, mit Ergänzungen)"@de .
+
+# --- Kinds of identifiers of a find --------------------------------------------
+:identifier_type a skos:ConceptScheme ;
+    skos:prefLabel "LOD-AM kinds of identifiers"@en, "LOD-AM Arten von Kennungen"@de .
+
+:number_as_reported a crm:E55_Type, skos:Concept ;
+    skos:inScheme :identifier_type ;
+    skos:prefLabel "number as reported"@en, "Nummer wie publiziert"@de ;
+    skos:definition "The number of the find in the source publication (catalogue or inventory number)."@en .
+
+:drawing_number a crm:E55_Type, skos:Concept ;
+    skos:inScheme :identifier_type ;
+    skos:prefLabel "drawing number"@en, "Abbildungsnummer"@de ;
+    skos:definition "The number of the find's drawing or figure in the source publication."@en .
