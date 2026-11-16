@@ -15,3 +15,10 @@ also A2), #8 GeoSPARQL, #12 labels on main resources, #14 lead isotope ratios.
    until then `:Palace_Hoard` keeps the placeholder `:hoard` type.
 2. [#17](https://github.com/LOD-AM/knowledge-graph/issues/17) **Formal CRM ↔ AFO mapping** (from #9): about 1½–2 days, when other
    projects consume the data.
+3. [#19](https://github.com/LOD-AM/knowledge-graph/issues/19) **Finds without a feature** (from LOD-AM/ingest#8):
+   link the object to its site's place (`P53`), an encounter event (CRMsci S19) or an
+   "unspecified context" feature.
+4. [#20](https://github.com/LOD-AM/knowledge-graph/issues/20) **IRI pattern for converted data** from `id_uuid`
+   (from LOD-AM/ingest#14): `/id/find/<uuid>`, `/id/<uuid>` or `:find_<uuid>`; helper nodes.
+5. [#21](https://github.com/LOD-AM/knowledge-graph/issues/21) **"Not detected" element values** without a
+   detection limit (from LOD-AM/ingest#4): value-less measurement with a local type, a note, or omitted.
