@@ -1,0 +1,13 @@
+# Must FAIL validation: a context witnesses a culture (a period with phases) instead of the
+# phase; a phase in two cultures; a culture link stated only one way (LOD-AM/ingest#17).
+@prefix :     <https://lod-am.net/id/> .
+@prefix crm:  <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+:some_site a crm:E27_Site ; rdfs:label "Some site"@en ;
+    crm:P8i_witnessed :culture_a .
+:culture_a a crm:E4_Period ; crm:P9_consists_of :phase_1 .
+:culture_b a crm:E4_Period ; crm:P9_consists_of :phase_1 .
+:phase_1 a crm:E4_Period ; crm:P9i_forms_part_of :culture_a, :culture_b .
+:culture_c a crm:E4_Period ; crm:P9_consists_of :phase_2 .
+:phase_2 a crm:E4_Period .

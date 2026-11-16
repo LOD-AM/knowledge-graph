@@ -159,6 +159,26 @@ lodsh:IsotopeRatioShape a sh:NodeShape ;
     sh:property [ sh:path qudt:unit ; sh:maxCount 0 ;
         sh:message "Ratios are dimensionless: no qudt:unit." ] .
 
+# Phases and cultures (LOD-AM/ingest#17): contexts witness a phase, which is part of one culture
+lodsh:WitnessedPhaseShape a sh:NodeShape ;
+    sh:targetObjectsOf crm:P8i_witnessed ;
+    sh:property [ sh:path crm:P9_consists_of ; sh:maxCount 0 ;
+        sh:message "Contexts witness the phase, not the culture: a period that consists of other periods is not a target of crm:P8i_witnessed." ] .
+
+lodsh:PhaseShape a sh:NodeShape ;
+    sh:targetSubjectsOf crm:P9i_forms_part_of ;
+    sh:property [ sh:path crm:P9i_forms_part_of ; sh:maxCount 1 ;
+        sh:message "A phase is part of exactly one culture (crm:P9i_forms_part_of)." ] .
+
+lodsh:CultureShape a sh:NodeShape ;
+    sh:targetSubjectsOf crm:P9_consists_of ;
+    sh:sparql [ a sh:SPARQLConstraint ;
+        sh:message "Culture and phase state the link both ways (crm:P9_consists_of and crm:P9i_forms_part_of)." ;
+        sh:select """
+            PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+            SELECT $this ?value WHERE { $this crm:P9_consists_of ?value .
+              FILTER NOT EXISTS { ?value crm:P9i_forms_part_of $this } }""" ] .
+
 lodsh:ContainedInShape a sh:NodeShape ;
     sh:targetObjectsOf crmarchaeo:AP21i_is_contained_in ;
     sh:class crmarchaeo:A2_Stratigraphic_Volume_Unit ;
@@ -209,7 +229,7 @@ lodsh:ConvertedIriShape a sh:NodeShape ;
         sh:select """
             SELECT DISTINCT ?this WHERE {
               { ?this ?p ?o } UNION { ?s ?p ?this }
-              FILTER(isIRI(?this) && REGEX(STR(?this), "^https://lod-am[.]net/id/(site|feature|find|analysis|period|type|culture|region|lab)/"))
+              FILTER(isIRI(?this) && REGEX(STR(?this), "^https://lod-am[.]net/id/(site|feature|find|analysis|period|culture|chronology|type|region|lab)/"))
             }""" ] ;
     sh:sparql [ a sh:SPARQLConstraint ;
         sh:message "Converted IRIs are https://lod-am.net/id/<kind>/<uuid> or .../<uuid>/<role> (lower-case uuid, role in snake_case), #20." ;
