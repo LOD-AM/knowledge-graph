@@ -267,6 +267,18 @@ the database's `literature` table, matched by the citation key.
   (`/id/journal/<uuid>`, uuid from the title).
 - Finds and analyses cite their publication with `crm:P70i_is_documented_in`.
 
+### Topics
+A small SKOS vocabulary of subjects for the field LOD-AM works in (`data/vocab/topics.ttl`,
+scheme `:topics`, concepts `:topic_<name>`), used to tag blog posts on lod-am.net.
+- Each topic has `skos:prefLabel` in English and German and sits in a hierarchy (`skos:broader`;
+  five top concepts: archaeology, Linked Data, research data management, digital humanities,
+  self-hosting).
+- Topics match **Wikidata** (not AAT): `skos:exactMatch` (same meaning), `skos:closeMatch`
+  (near) or `skos:broadMatch` (Wikidata only has something broader). Every item is in
+  `tools/wikidata.tsv`. No match where Wikidata's item means something else (e.g. its
+  "provenance" is ownership history, not raw-material provenance).
+- Sites and other records of the data are not topics: link the record itself.
+
 ## Linking the parts
 
 | From | Property | To |

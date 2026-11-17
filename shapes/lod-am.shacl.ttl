@@ -111,7 +111,11 @@ lodsh:TypeShape a sh:NodeShape ;
         sh:message "Types and materials need a skos:prefLabel." ] .
 
 lodsh:LocalTypeMatchShape a sh:NodeShape ;
-    sh:targetSubjectsOf skos:closeMatch, skos:broadMatch ;
+    # Local types (typology, site/feature types) match AAT; topics match Wikidata (TopicShape)
+    sh:target [ a sh:SPARQLTarget ; sh:select """
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        SELECT DISTINCT ?this WHERE { ?this skos:closeMatch|skos:broadMatch ?m .
+          FILTER NOT EXISTS { ?this skos:inScheme <https://lod-am.net/id/topics> } }""" ] ;
     sh:property [ sh:path [ sh:alternativePath ( skos:closeMatch skos:broadMatch ) ] ; sh:nodeKind sh:IRI ;
         sh:pattern "^http://vocab[.]getty[.]edu/aat/[0-9]+$" ;
         sh:message "Local types match AAT concepts: skos:closeMatch / skos:broadMatch → http://vocab.getty.edu/aat/<id> (#7)." ] .
@@ -290,3 +294,13 @@ lodsh:AnalysisIriShape a sh:NodeShape ;
     sh:target [ a sh:SPARQLTarget ; sh:select """
         SELECT DISTINCT ?this WHERE { ?this ?p ?o FILTER(REGEX(STR(?this), "^https://lod-am[.]net/id/analysis/[0-9a-f-]{36}$")) }""" ] ;
     sh:class crm:E7_Activity ; sh:message "IRIs /id/analysis/<uuid> are crm:E7_Activity (#20)." .
+
+lodsh:TopicShape a sh:NodeShape ;
+    sh:target [ a sh:SPARQLTarget ; sh:select """
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        SELECT ?this WHERE { ?this skos:inScheme <https://lod-am.net/id/topics> }""" ] ;
+    sh:property [ sh:path skos:prefLabel ; sh:minCount 1 ;
+        sh:message "A topic needs a skos:prefLabel." ] ;
+    sh:property [ sh:path [ sh:alternativePath ( skos:exactMatch skos:closeMatch skos:broadMatch ) ] ;
+        sh:nodeKind sh:IRI ; sh:pattern "^http://www[.]wikidata[.]org/entity/Q[0-9]+$" ;
+        sh:message "Topics match Wikidata items (skos:exactMatch / closeMatch / broadMatch → wd:Q…, listed in tools/wikidata.tsv)." ] .
