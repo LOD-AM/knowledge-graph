@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """knowledge-graph is the source of the shared "LOD-AM project" block that
-website and triplestore copy into their CLAUDE.md (and check in CI).
+website, triplestore, ingest and planning copy into their CLAUDE.md (and check in CI).
 Make sure it exists here and is the last section, so copies can take
 everything from the marker to the end of the file."""
 import sys
