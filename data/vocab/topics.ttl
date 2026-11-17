@@ -1,0 +1,257 @@
+# LOD-AM topics: a small SKOS vocabulary for the field LOD-AM works in (archaeometallurgy,
+# archaeology of the regions in the data, Linked Data and research data management).
+# Used to tag blog posts on lod-am.net; reusable for anything that needs a subject.
+# Hand-written (owner's request, 2026-11-17). Every Wikidata item is in tools/wikidata.tsv
+# and checked with `make verify-wikidata`.
+#   skos:exactMatch  = the Wikidata item means the same
+#   skos:closeMatch  = near enough to use instead in most cases
+#   skos:broadMatch  = Wikidata only has a broader item
+# German labels: from Wikidata where it has one; the others are marked "de: draft" below.
+# Places that are records in the data (sites) are not topics: link the record instead.
+@prefix :     <https://lod-am.net/id/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix wd:   <http://www.wikidata.org/entity/> .
+
+:topics a skos:ConceptScheme ;
+    skos:prefLabel "LOD-AM topics"@en, "LOD-AM Themen"@de ;
+    skos:hasTopConcept :topic_archaeology, :topic_linked_data, :topic_research_data_management,
+        :topic_digital_humanities, :topic_self_hosting .
+
+# --- Archaeology and archaeometallurgy ---------------------------------------------------------
+
+:topic_archaeology a skos:Concept ;
+    skos:inScheme :topics ; skos:topConceptOf :topics ;
+    skos:prefLabel "archaeology"@en, "Archäologie"@de ;
+    skos:exactMatch wd:Q23498 .
+
+:topic_archaeometry a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "archaeometry"@en, "Archäometrie"@de ;
+    skos:altLabel "archaeological science"@en ;
+    skos:broader :topic_archaeology ;
+    skos:exactMatch wd:Q637284 .
+
+:topic_archaeometallurgy a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "archaeometallurgy"@en, "Archäometallurgie"@de ;
+    skos:broader :topic_archaeometry ;
+    skos:exactMatch wd:Q637254 .
+
+:topic_history_of_metallurgy a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "history of metallurgy"@en, "Geschichte der Metallurgie"@de ;   # de: draft
+    skos:broader :topic_archaeometallurgy ;
+    skos:exactMatch wd:Q20073577 ;
+    skos:related :topic_metallurgy .
+
+:topic_metallurgy a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "metallurgy"@en, "Metallurgie"@de ;
+    skos:scopeNote "The materials science of metals, for posts about technical background."@en ;
+    skos:broader :topic_archaeometallurgy ;
+    skos:exactMatch wd:Q11467 .
+
+:topic_arsenical_copper a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "arsenical copper"@en, "Arsenkupfer"@de ;                       # de: draft
+    skos:altLabel "arsenical bronze"@en, "Arsenbronze"@de ;
+    skos:broader :topic_archaeometallurgy ;
+    skos:exactMatch wd:Q3645335 .
+
+:topic_chemical_analysis a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "chemical analysis"@en, "chemische Analyse"@de ;                 # de: draft
+    skos:scopeNote "Element composition of metal objects (mass fractions)."@en ;
+    skos:broader :topic_archaeometallurgy ;
+    skos:closeMatch wd:Q2533665 .
+
+:topic_lead_isotope_analysis a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "lead isotope analysis"@en, "Bleiisotopenanalyse"@de ;            # de: draft
+    skos:broader :topic_archaeometallurgy ;
+    skos:broadMatch wd:Q1674549 .
+
+:topic_provenance a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "raw material provenance"@en, "Rohstoffherkunft"@de ;            # de: draft
+    skos:scopeNote "Where the metal of an object came from (ores, mining regions). Not the ownership history of an object: Wikidata's 'provenance' (Q1773840) means that, so there is no match."@en ;
+    skos:broader :topic_archaeometallurgy ;
+    skos:related :topic_lead_isotope_analysis, :topic_chemical_analysis .
+
+:topic_typology a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "typology"@en, "Typologie"@de ;                                 # de: draft
+    skos:scopeNote "Classification of archaeological objects by form."@en ;
+    skos:broader :topic_archaeology ;
+    skos:exactMatch wd:Q917904 .
+
+:topic_dating a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "dating and chronology"@en, "Datierung und Chronologie"@de ;                 # de: draft
+    skos:broader :topic_archaeology ;
+    skos:closeMatch wd:Q12764401 .
+
+:topic_chalcolithic a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "Chalcolithic"@en, "Kupfersteinzeit"@de ;
+    skos:altLabel "Eneolithic"@en ;
+    skos:broader :topic_dating ;
+    skos:exactMatch wd:Q130253 .
+
+:topic_bronze_age a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "Bronze Age"@en, "Bronzezeit"@de ;
+    skos:broader :topic_dating ;
+    skos:exactMatch wd:Q11761 .
+
+:topic_early_bronze_age a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "Early Bronze Age"@en, "Frühbronzezeit"@de ;                    # de: draft
+    skos:broader :topic_bronze_age ;
+    skos:broadMatch wd:Q11761 .
+
+:topic_caucasus a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "Caucasus"@en, "Kaukasus"@de ;
+    skos:scopeNote "The region as a topic; single sites are records in the data."@en ;
+    skos:broader :topic_archaeology ;
+    skos:exactMatch wd:Q18869 .
+
+:topic_anatolia a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "Anatolia"@en, "Anatolien"@de ;
+    skos:scopeNote "The region as a topic; single sites are records in the data."@en ;
+    skos:broader :topic_archaeology ;
+    skos:exactMatch wd:Q51614 .
+
+:topic_digital_archaeology a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "digital archaeology"@en, "digitale Archäologie"@de ;            # de: draft
+    skos:broader :topic_archaeology, :topic_digital_humanities ;
+    skos:exactMatch wd:Q39046232 .
+
+# --- Linked Data -------------------------------------------------------------------------------
+
+:topic_linked_data a skos:Concept ;
+    skos:inScheme :topics ; skos:topConceptOf :topics ;
+    skos:prefLabel "Linked Data"@en, "Linked Data"@de ;
+    skos:exactMatch wd:Q515701 ;
+    skos:related :topic_semantic_web, :topic_open_data .
+
+:topic_semantic_web a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "Semantic Web"@en, "Semantic Web"@de ;
+    skos:broader :topic_linked_data ;
+    skos:exactMatch wd:Q54837 .
+
+:topic_rdf a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "RDF"@en, "RDF"@de ;
+    skos:altLabel "Resource Description Framework"@en ;
+    skos:broader :topic_linked_data ;
+    skos:exactMatch wd:Q54872 .
+
+:topic_sparql a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "SPARQL"@en, "SPARQL"@de ;
+    skos:broader :topic_linked_data ;
+    skos:exactMatch wd:Q54871 .
+
+:topic_triplestore a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "triplestore"@en, "Triplestore"@de ;
+    skos:broader :topic_linked_data ;
+    skos:exactMatch wd:Q3539533 .
+
+:topic_knowledge_graphs a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "knowledge graphs"@en, "Wissensgraphen"@de ;
+    skos:broader :topic_linked_data ;
+    skos:exactMatch wd:Q33002955 .
+
+:topic_ontologies a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "ontologies"@en, "Ontologien"@de ;
+    skos:scopeNote "Ontologies in information science (CIDOC CRM, Allotrope, FaBiO …)."@en ;
+    skos:broader :topic_linked_data ;
+    skos:exactMatch wd:Q324254 .
+
+:topic_cidoc_crm a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "CIDOC CRM"@en, "CIDOC CRM"@de ;
+    skos:altLabel "CIDOC Conceptual Reference Model"@en ;
+    skos:broader :topic_ontologies ;
+    skos:exactMatch wd:Q624005 .
+
+:topic_controlled_vocabularies a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "controlled vocabularies"@en, "kontrollierte Vokabulare"@de ;
+    skos:altLabel "vocabularies"@en ;
+    skos:broader :topic_linked_data ;
+    skos:exactMatch wd:Q1469824 .
+
+:topic_skos a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "SKOS"@en, "SKOS"@de ;
+    skos:altLabel "Simple Knowledge Organization System"@en ;
+    skos:broader :topic_controlled_vocabularies ;
+    skos:exactMatch wd:Q2288360 .
+
+:topic_gazetteers a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "gazetteers"@en, "Ortslexika"@de ;
+    skos:scopeNote "Place vocabularies such as Pleiades or GeoNames."@en ;
+    skos:broader :topic_controlled_vocabularies ;
+    skos:exactMatch wd:Q1006160 .
+
+# --- Research data -----------------------------------------------------------------------------
+
+:topic_research_data_management a skos:Concept ;
+    skos:inScheme :topics ; skos:topConceptOf :topics ;
+    skos:prefLabel "research data management"@en, "Forschungsdatenmanagement"@de ;
+    skos:exactMatch wd:Q30089794 .
+
+:topic_open_data a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "open data"@en, "Open Data"@de ;
+    skos:broader :topic_research_data_management ;
+    skos:exactMatch wd:Q309901 .
+
+:topic_fair_data a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "FAIR data"@en, "FAIRe Daten"@de ;
+    skos:scopeNote "No Wikidata match yet: the item for the FAIR principles (Q29032648) has no English label, which the Wikidata check requires."@en ;
+    skos:broader :topic_research_data_management .
+
+:topic_data_modelling a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "data modelling"@en, "Datenmodellierung"@de ;
+    skos:broader :topic_research_data_management ;
+    skos:exactMatch wd:Q367664 .
+
+:topic_legacy_data a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "legacy data"@en, "Altdaten"@de ;                                # de: draft
+    skos:scopeNote "Data from older publications and databases, with their gaps and inconsistencies. No Wikidata match: 'legacy system' (Q445962) means old software."@en ;
+    skos:broader :topic_research_data_management ;
+    skos:related :topic_data_cleaning .
+
+:topic_data_cleaning a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "data cleaning"@en, "Datenbereinigung"@de ;
+    skos:broader :topic_research_data_management ;
+    skos:exactMatch wd:Q1172378 .
+
+# --- Digital humanities and infrastructure ------------------------------------------------------
+
+:topic_digital_humanities a skos:Concept ;
+    skos:inScheme :topics ; skos:topConceptOf :topics ;
+    skos:prefLabel "digital humanities"@en, "Digital Humanities"@de ;
+    skos:exactMatch wd:Q1026962 .
+
+:topic_self_hosting a skos:Concept ;
+    skos:inScheme :topics ; skos:topConceptOf :topics ;
+    skos:prefLabel "self-hosting"@en, "Self-Hosting"@de ;                                  # de: draft
+    skos:altLabel "homelab"@en, "infrastructure"@en ;
+    skos:scopeNote "Running LOD-AM's services on one's own hardware (homelab, Docker, web server)."@en ;
+    skos:exactMatch wd:Q65090673 .

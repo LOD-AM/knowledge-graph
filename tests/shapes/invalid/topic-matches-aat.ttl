@@ -1,0 +1,10 @@
+# Must FAIL validation: a topic matches an AAT concept instead of a Wikidata item.
+@prefix :     <https://lod-am.net/id/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+:topics a skos:ConceptScheme .
+
+:topic_bad a skos:Concept ;
+    skos:inScheme :topics ;
+    skos:prefLabel "bad topic"@en ;
+    skos:closeMatch <http://vocab.getty.edu/aat/300024663> .

@@ -79,3 +79,16 @@ See [CONVENTIONS.md](../../CONVENTIONS.md#linking-the-parts).
 - Getty AAT: https://www.getty.edu/research/tools/vocabularies/aat/
 - Allotrope Framework: https://www.allotrope.org/
 - FABIO: http://purl.org/spar/fabio/
+
+## Addendum 2026-11-17: Wikidata for topics
+
+Blog posts on lod-am.net need subjects, and free tags had become inconsistent (singular and
+plural, post kinds mixed with topics, a site as a tag). The owner chose a small local SKOS
+vocabulary, `data/vocab/topics.ttl`, matched to **Wikidata**:
+
+- Wikidata covers both halves of the field (archaeometallurgy, periods, regions *and* Linked
+  Data, RDM, self-hosting), which AAT does not; LOD-AM already uses Wikidata (nuclides) with a
+  verified id list (`tools/wikidata.tsv`).
+- Local concepts keep LOD-AM's own wording and hierarchy; the match says how close Wikidata is
+  (exact / close / broad). Where Wikidata's item means something else, there is no match.
+- Records of the data (sites, publications) are linked directly, not turned into topics.

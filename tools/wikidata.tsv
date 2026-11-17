@@ -7,3 +7,35 @@ Q18883438	lead-206	nuclide, isotope ratios
 Q18883443	lead-207	nuclide, isotope ratios (= ChEBI 52455)
 Q16670466	lead-208	nuclide, isotope ratios
 Q43	Turkey	place of a PeriodO period (example)
+Q23498	archaeology	topic (data/vocab/topics.ttl)
+Q637284	archaeological science	topic: archaeometry
+Q637254	archaeometallurgy	topic
+Q20073577	history of metallurgy	topic
+Q11467	metallurgy	topic
+Q3645335	Arsenical bronze	topic: arsenical copper
+Q2533665	elemental analysis	topic: chemical analysis (closeMatch)
+Q1674549	isotope geochemistry	topic: lead isotope analysis (broadMatch)
+Q917904	typology	topic (archaeological typology)
+Q12764401	chronological dating	topic: dating and chronology (closeMatch)
+Q130253	Chalcolithic	topic
+Q11761	Bronze Age	topic; Early Bronze Age (broadMatch)
+Q18869	Caucasus	topic
+Q51614	Anatolia	topic
+Q39046232	digital archaeology	topic
+Q515701	linked data	topic
+Q54837	Semantic Web	topic
+Q54872	Resource Description Framework	topic: RDF
+Q54871	SPARQL	topic
+Q3539533	triplestore	topic
+Q33002955	knowledge graph	topic
+Q324254	ontology	topic: ontologies (information science)
+Q624005	CIDOC Conceptual Reference Model	topic: CIDOC CRM
+Q1469824	controlled vocabulary	topic
+Q2288360	SKOS	topic
+Q1006160	gazetteer	topic
+Q30089794	research data management	topic
+Q309901	open data	topic
+Q367664	data modeling	topic: data modelling
+Q1172378	data cleansing	topic: data cleaning
+Q1026962	digital humanities	topic
+Q65090673	self-hosting	topic (homelab)
