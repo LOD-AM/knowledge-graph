@@ -195,6 +195,19 @@ lodsh:PhaseShape a sh:NodeShape ;
     sh:property [ sh:path crm:P9i_forms_part_of ; sh:maxCount 1 ;
         sh:message "A phase is part of exactly one culture (crm:P9i_forms_part_of)." ] .
 
+# A chronology system names its source publication (owner, 2026-11-19; as PeriodO collections)
+lodsh:ChronologySystemShape a sh:NodeShape ;
+    # the scheme of a phase (a local crm:E4_Period), and every converted /id/chronology/<uuid>
+    sh:target [ a sh:SPARQLTarget ; sh:select """
+        PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        SELECT DISTINCT ?this WHERE {
+          { ?phase a crm:E4_Period ; skos:inScheme ?this .
+            FILTER(STRSTARTS(STR(?phase), "https://lod-am.net/id/")) }
+          UNION { ?this ?p ?o FILTER(REGEX(STR(?this), "^https://lod-am[.]net/id/chronology/[0-9a-f-]{36}$")) } }""" ] ;
+    sh:property [ sh:path dcterms:source ; sh:minCount 1 ; sh:maxCount 1 ; sh:class crm:E31_Document ;
+        sh:message "A chronology system (the scheme of the phases) names its source publication with exactly one dcterms:source (a crm:E31_Document)." ] .
+
 lodsh:CultureShape a sh:NodeShape ;
     sh:targetSubjectsOf crm:P9_consists_of ;
     sh:sparql [ a sh:SPARQLConstraint ;

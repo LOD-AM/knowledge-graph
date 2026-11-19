@@ -190,7 +190,8 @@ aat:300037118 a crm:E55_Type ;
 # A local phase of the source database, until it is in PeriodO (LOD-AM/ingest#17):
 # in its chronology system and part of its culture. Values as in the database.
 :arslantepe_periods a skos:ConceptScheme ;
-    skos:prefLabel "Arslantepe periods"@en, "Arslantepe Stufen"@de .
+    skos:prefLabel "Arslantepe periods"@en, "Arslantepe Stufen"@de ;
+    dcterms:source <https://lod-am.net/id/pub/vignola2019changes> .   # source of the chronology (owner, 2026-11-19)
 
 :Arslantepe_VIA a crm:E4_Period ;
     rdfs:label "Arslantepe VIA"@en, "Arslantepe VIA"@de ;
@@ -384,6 +385,25 @@ aat:300037058 a crm:E55_Type ;
     prism:endingPage "69" ;
     dcterms:isPartOf :journal_paleorient ;
     dcterms:creator :andreas_hauptmann, :sigrid_schmitt-strecker, :friedrich_begemann, :alberto_palmieri .
+
+# The source of a chronology system (dcterms:source above). No DOI, so the IRI is
+# /id/pub/<citation key>. Values as in the owner's public Zotero group; co-authors left out here.
+<https://lod-am.net/id/pub/vignola2019changes> a fabio:JournalArticle, crm:E31_Document ;
+    dcterms:title "Changes in the Near Eastern chronology between the 5th and the 3rd millennium BC: New AMS 14C dates from Arslantepe (Turkey)" ;
+    fabio:hasPublicationYear "2019"^^xsd:gYear ;
+    dcterms:identifier "vignola2019changes" ;
+    prism:startingPage "276" ;
+    prism:endingPage "282" ;
+    dcterms:isPartOf :journal_nimb ;
+    dcterms:creator :c_vignola .
+
+:journal_nimb a fabio:Journal ;
+    dcterms:title "Nuclear Instruments and Methods in Physics Research Section B: Beam Interactions with Materials and Atoms" .
+
+:c_vignola a foaf:Person ;
+    foaf:givenName "C" ;
+    foaf:familyName "Vignola" ;
+    foaf:name "C Vignola" .
 
 # A book chapter and its book (Zotero: bookSection; LOD-AM/ingest#12). Values as in the
 # owner's public Zotero group; authors left out here.

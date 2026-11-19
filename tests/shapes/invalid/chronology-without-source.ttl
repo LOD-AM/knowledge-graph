@@ -1,0 +1,13 @@
+# Must FAIL validation: a phase's chronology system without its source publication
+# (dcterms:source, owner 2026-11-19), and one whose source is not a publication.
+@prefix :        <https://lod-am.net/id/> .
+@prefix crm:     <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+
+:some_periods a skos:ConceptScheme ; skos:prefLabel "Some periods"@en .
+:phase_1 a crm:E4_Period ; rdfs:label "Phase 1"@en ; skos:inScheme :some_periods .
+
+:other_periods a skos:ConceptScheme ; skos:prefLabel "Other periods"@en ;
+    <http://purl.org/dc/terms/source> "Someone 2020" .
+:phase_2 a crm:E4_Period ; rdfs:label "Phase 2"@en ; skos:inScheme :other_periods .

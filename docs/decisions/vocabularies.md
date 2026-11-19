@@ -92,3 +92,17 @@ vocabulary, `data/vocab/topics.ttl`, matched to **Wikidata**:
 - Local concepts keep LOD-AM's own wording and hierarchy; the match says how close Wikidata is
   (exact / close / broad). Where Wikidata's item means something else, there is no match.
 - Records of the data (sites, publications) are linked directly, not turned into topics.
+
+## Addendum 2026-11-19: the source of a chronology system
+
+Every chronology system of the database (`zt_type`) comes from one publication
+(`zt_type.literature_id`). The local `skos:ConceptScheme` that stands for it now names that
+publication with **`dcterms:source`** (owner, 2026-11-19).
+
+- **Why `dcterms:source`:** a chronology system is the stand-in for a PeriodO period collection,
+  and PeriodO records a collection's source with `dcterms:source`. The scheme stays a plain
+  `skos:ConceptScheme`, so moving to PeriodO later needs no remodelling.
+- **Rejected:** `crm:P70i_is_documented_in`, the property finds and analyses use. Its domain is
+  CRM `E1`, so the scheme would have had to become a CRM class as well (e.g. `E32_Authority_Document`)
+  only for this link.
+- Shape: `lodsh:ChronologySystemShape` (exactly one `dcterms:source`, a `crm:E31_Document`).
