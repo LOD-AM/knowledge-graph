@@ -173,12 +173,17 @@ Types are `crm:E55_Type`, materials `crm:E57_Material`; both need a
   - a **phase** is a `crm:E4_Period` (`/id/period/<uuid>`, labels en/de) with an `E52_Time-Span`
     (`P79`/`P80` in years BC as `"-2800"`) and `skos:inScheme` its **chronology system**, a
     `skos:ConceptScheme` (`/id/chronology/<uuid>`) that stands for the source (one PeriodO
-    collection per source);
+    collection per source) and names it with `dcterms:source` → the publication (owner,
+    2026-11-19; PeriodO uses `dcterms:source` for a collection's source);
   - a **culture** is an `E4_Period` too (`/id/culture/<uuid>`) that `crm:P9_consists_of` its
     phases; each phase `crm:P9i_forms_part_of` exactly one culture (both stated);
   - a context (feature, or site without a feature) `crm:P8i_witnessed` its **phase** only; the
     culture follows from the phase.
   ```turtle
+  :arslantepe_periods a skos:ConceptScheme ;
+      skos:prefLabel "Arslantepe periods"@en ;
+      dcterms:source <https://lod-am.net/id/pub/vignola2019changes> .   # the chronology's source
+
   :Arslantepe_VIA a crm:E4_Period ;
       rdfs:label "Arslantepe VIA"@en ;
       skos:inScheme :arslantepe_periods ;                      # chronology system
@@ -291,6 +296,7 @@ scheme `:topics`, concepts `:topic_<name>`), used to tag blog posts on lod-am.ne
 | feature | `crm:P46i_forms_part_of` | site |
 | feature / site | `crm:P8i_witnessed` | phase (period) |
 | phase | `crm:P9i_forms_part_of` / `skos:inScheme` | culture / chronology system |
+| chronology system | `dcterms:source` | publication of the chronology |
 | feature (grave) | `crm:P46i_forms_part_of` | the kurgan (and the site) |
 | site / feature | `crm:P2_has_type` | local type (`skos:closeMatch` / `skos:broadMatch` → AAT) |
 | site | `crm:P1_is_identified_by` | `E42_Identifier` (Pleiades URI) |
