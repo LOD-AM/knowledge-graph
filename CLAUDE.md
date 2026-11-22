@@ -54,7 +54,7 @@ environment "LOD-AM" allows these hosts, and its setup script runs
 - Also implemented: #7 feature types (local SKOS + AAT matches), graves part of their kurgan,
   local periods (phases in their chronology system, part of a culture; until PeriodO).
 - **Open:** CRM ↔ AFO mapping (later; tracked in LOD-AM/planning). The converter runs in
-  LOD-AM/ingest (R2RML + Ontop); its output for released publications feeds the website's entity pages.
+  LOD-AM/pipeline (R2RML + Ontop, on the data LXC); its output for released publications feeds the website's entity pages.
 - Known gaps: the Getty SPARQL
   endpoint is sometimes degraded (the converter then refuses to write).
 
@@ -67,7 +67,8 @@ Source of truth: knowledge-graph `CLAUDE.md`. Edit it there first, then copy it 
 LOD-AM = Linked Open Data for Ancient Metallurgy, a one-person research project (https://lod-am.net).
 - `LOD-AM/knowledge-graph`: data model, vocabularies, converters, data. **Authority for all modelling rules** (`CONVENTIONS.md`).
 - `LOD-AM/triplestore`: Apache Jena Fuseki (Docker) that serves the knowledge graph.
-- `LOD-AM/ingest` (**private**): the owner's research database (dump), converter (R2RML) and its output; the database as a whole stays private until the owner says otherwise.
+- `LOD-AM/ingest` (**private**): the owner's research database (dump), its checks and correction rounds; the database as a whole stays private until the owner says otherwise.
+- `LOD-AM/pipeline`: the data pipeline, code only (database snapshot → R2RML/Ontop → enrichment → checks → released publications); runs on the data LXC, never with data on GitHub.
 - `LOD-AM/website`: Eleventy site and blog, self-hosted.
 - `LOD-AM/planning` (**private**): project management for all repos: one issue per task, state in labels (see its README).
 - `LOD-AM/ontologies`, `vocabularies`, `converter`: **superseded** by knowledge-graph; don't edit.
