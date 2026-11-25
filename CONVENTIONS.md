@@ -86,8 +86,9 @@ Types are `crm:E55_Type`, materials `crm:E57_Material`; both need a
   `skos:closeMatch` / `skos:broadMatch` (owner, #28). Queries by AAT type go through the match
   (`queries/find-objects-by-aat-match.rq`).
 - Identifiers are `E42_Identifier`s with a local type (`data/vocab/finds.ttl`):
-  `:old_identifier` (an earlier identifier recorded in the source, e.g. `find_old`; only where
-  the source has one) and `:drawing_number` (the number of the drawing in the publication).
+  `:old_identifier` (the number the source publication gives the find, database column
+  `find_no_reported`; only where the source has one) and `:drawing_number` (the number of the
+  drawing in the publication). Internal database ids are never published (LOD-AM/planning#27).
 - Remarks of the source are a `crm:P3_has_note`. Labels name type, old identifier (if any) and
   site ("Flat axe, unspecified (no. 30-3, Arslantepe)", "Awl (Arslantepe)").
 ```turtle
@@ -211,6 +212,12 @@ Types are `crm:E55_Type`, materials `crm:E57_Material`; both need a
     qudt:numericValue "97"^^xsd:decimal ;               # xsd:decimal
     qudt:unit unit:PERCENT .                            # QUDT IRI, never a string
 ```
+- An analysis carries `dcterms:identifier` = the number the publication gives it (lab or
+  analysis number, database column `analysis_no_reported`), and its label and its sample's label
+  name that number ("Chemical analysis ARSL 12 of …"). Where the publication gives none, there is
+  no identifier and the labels have no number ("Chemical analysis of …"); internal database ids
+  are never published (owner, LOD-AM/planning#27). Remarks of the source are a `crm:P3_has_note`
+  on the analysis, as for finds.
 - Element values in wt % are **mass fractions** (`afr:AFR_0002099`).
   `afr:AFR_0002036` (concentration) is only for real concentrations (e.g. ppm in solution).
 - Objects are not typed with an AFO material class; `afm:AFM_0001099` (chemical
