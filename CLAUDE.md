@@ -45,7 +45,7 @@ environment "LOD-AM" allows these hosts, and its setup script runs
 `data/` generated RDF · `converter/` Node (CommonJS, no deps) ·
 `tools/` Python checks · `docs/decisions/` why · `ontologies/`, `vocabularies/` usage notes
 
-## Where to resume (state 2026-11-17)
+## Where to resume (state 2026-11-26)
 - Decided and implemented: #1 mass fraction, #2 sampling event (CRMsci 3.2), #3 AFO
   class on samples only, #4 Pleiades as E42 identifier, #5 `P8i_witnessed`, #6 CRMarchaeo
   2.1.1 (`AP21i_is_contained_in`, features also A2), #8 GeoSPARQL, #12 labels on main
@@ -55,6 +55,10 @@ environment "LOD-AM" allows these hosts, and its setup script runs
   local periods (phases in their chronology system, part of a culture; until PeriodO).
 - **Open:** CRM ↔ AFO mapping (later; tracked in LOD-AM/planning). The converter runs in
   LOD-AM/pipeline (R2RML + Ontop, on the data LXC); its output for released publications feeds the website's entity pages.
+- Since then: chronology systems name their source (`dcterms:source`, #33), the topics vocabulary for the
+  website (#32), only reported numbers as identifiers of finds and analyses, analysis remarks as
+  `P3_has_note` (#35). The ontology downloads are checked against `tools/ontologies.sha256`
+  (FaBiO comes from `…/current/`: a change upstream now fails `make fetch` instead of changing the checks).
 - Known gaps: the Getty SPARQL
   endpoint is sometimes degraded (the converter then refuses to write).
 
