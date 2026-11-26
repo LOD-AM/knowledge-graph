@@ -1,0 +1,12 @@
+# Version bumps as PRs. A new rdflib/pySHACL can change what the checks accept: CI must pass,
+# and the pipeline (KG_COMMIT) picks a bump up only when KG_COMMIT is moved by hand.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly
+  - package-ecosystem: pip             # requirements.txt (rdflib, pyshacl)
+    directory: "/"
+    schedule:
+      interval: monthly

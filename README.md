@@ -33,8 +33,10 @@ make validate  # SHACL validation of examples/ and data/ against shapes/
 make test-queries   # each query returns exactly the expected rows
 ```
 
-`make fetch` downloads CIDOC CRM 7.1.3, AFO 2025/12 and FaBiO into `.cache/`
-(not committed). CI runs `make` on every push and pull request.
+`make fetch` downloads CIDOC CRM 7.1.3, CRMsci 3.2, CRMarchaeo 2.1.1, AFO 2025/12 and FaBiO into
+`.cache/` (not committed) and checks each file against `tools/ontologies.sha256`. A file that
+changed upstream fails the fetch, so the checks never change without a commit: look at the new
+version, then update its checksum in a PR of its own. CI runs `make` on every push and pull request.
 
 ## Rules
 
