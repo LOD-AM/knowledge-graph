@@ -73,6 +73,7 @@ LOD-AM = Linked Open Data for Ancient Metallurgy, a one-person research project 
 - `LOD-AM/triplestore`: Apache Jena Fuseki (Docker) that serves the knowledge graph.
 - `LOD-AM/ingest` (**private**): the owner's research database (dump), its checks and correction rounds; the database as a whole stays private until the owner says otherwise.
 - `LOD-AM/pipeline`: the data pipeline, code only (database snapshot → R2RML/Ontop → enrichment → checks → released publications); runs on the data LXC, never with data on GitHub.
+- `LOD-AM/extractor` (**private**): extracts analysis data from publications with local models on the owner's AI machine, as proposals for review that go into the research database (ingest).
 - `LOD-AM/website`: Eleventy site and blog, self-hosted.
 - `LOD-AM/planning` (**private**): project management for all repos: one issue per task, state in labels (see its README).
 - `LOD-AM/ontologies`, `vocabularies`, `converter`: **superseded** by knowledge-graph; don't edit.
