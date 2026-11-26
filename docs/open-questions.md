@@ -15,3 +15,9 @@ IRIs from `id_uuid`, #21 "not detected" (local type `:not_detected`), #7 feature
 
 1. [#17](https://github.com/LOD-AM/knowledge-graph/issues/17) **Formal CRM ↔ AFO mapping** (from #9): about 1½–2 days, when other
    projects consume the data.
+2. **Statistical analyses and arguments** (LOD-AM/planning#47): two new data layers,
+   analysis runs in R (MaRDI/MathModDB) and scientific arguments. Open decisions:
+   - LOD-AM/planning#48 IRIs for data releases
+   - LOD-AM/planning#49 analysis runs: CRMdig 4.0 (`D10_Software_Execution`) vs PROV-O, links to MaRDI items
+   - LOD-AM/planning#50 how a run names the records it analysed (`L10_had_input` only takes digital objects)
+   - LOD-AM/planning#51 arguments: CRMinf 1.0 vs AMO
