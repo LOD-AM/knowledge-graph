@@ -23,9 +23,9 @@ IRIs from `id_uuid`, #21 "not detected" (local type `:not_detected`), #7 feature
    - LOD-AM/planning#52 computed values only as results of a documented run
    - LOD-AM/planning#50 the run `prov:used` a `prov:Collection` that `prov:hadMember` each
      analysed record and `prov:wasDerivedFrom` the release
-   Still open:
-   - LOD-AM/planning#48 release identifier: the version DOI of the website release?
+   - LOD-AM/planning#48 a release is identified by the version DOI of its website release
+     (Zenodo), plus its `manifest_sha256`; no `/id/release/` IRI
 3. **Base IRI on w3id.org** (LOD-AM/planning#53): decided by the owner (2026-11-26/27):
    full switch to `https://w3id.org/lod-am/id/<kind>/<uuid>`, forwarded 1:1 to `lod-am.net`;
    no `owl:sameAs` to the old IRIs; graph names stay. Registration files: `docs/w3id/lod-am/`.
-   To implement once w3id has merged the registration; blocks LOD-AM/planning#48.
+   To implement once w3id has merged the registration (perma-id/w3id.org#7325).
