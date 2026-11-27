@@ -11,8 +11,8 @@ For every Turtle file given (default: examples/ and data/):
      as far as the explicit rdf:type statements allow us to tell (PROV-O domains and ranges
      are not checked: records are CRM-typed and stand as prov:Entity without being typed so,
      CONVENTIONS.md "Statistical analyses");
-  6. every ChEBI IRI is in tools/chebi.tsv and every Wikidata IRI in tools/wikidata.tsv
-     (ids verified against ChEBI / Wikidata).
+  6. every ChEBI IRI is in tools/chebi.tsv, every Wikidata IRI in tools/wikidata.tsv and every
+     MaRDI IRI in tools/mardi.tsv (ids verified against ChEBI / Wikidata / the MaRDI portal).
 
 Exit code 1 if any error was found. Run `make fetch` first.
 """
@@ -28,6 +28,7 @@ CRM = "http://www.cidoc-crm.org/cidoc-crm/"
 CRMSCI = "http://www.cidoc-crm.org/extensions/crmsci/"
 CRMARCHAEO = "http://www.cidoc-crm.org/extensions/crmarchaeo/"
 WD = "http://www.wikidata.org/entity/"
+MARDI = "https://portal.mardi4nfdi.de/entity/"
 CHEBI = "http://purl.obolibrary.org/obo/CHEBI_"
 AF = "http://purl.allotrope.org/ontologies/"
 FABIO = "http://purl.org/spar/fabio/"
@@ -79,7 +80,7 @@ def short(u):
     return str(u).replace(CRM, "crm:").replace(CRMSCI, "crmsci:").replace(CRMARCHAEO, "crmarchaeo:").replace(AF, "af:").replace(FABIO, "fabio:").replace(PROV, "prov:")
 
 
-def check_file(path, crm, afo, fabio, canonical, chebi, wikidata):
+def check_file(path, crm, afo, fabio, canonical, chebi, wikidata, mardi):
     errors = []
     g = Graph()
     try:
@@ -121,6 +122,8 @@ def check_file(path, crm, afo, fabio, canonical, chebi, wikidata):
             errors.append(f"ChEBI {str(n)[len(CHEBI) - 6:]} is not in tools/chebi.tsv (verify it with tools/verify_chebi.py first)")
         if isinstance(n, URIRef) and str(n).startswith(WD) and str(n)[len(WD):] not in wikidata:
             errors.append(f"Wikidata {str(n)[len(WD):]} is not in tools/wikidata.tsv (verify it with tools/verify_wikidata.py first)")
+        if isinstance(n, URIRef) and str(n).startswith(MARDI) and str(n)[len(MARDI):] not in mardi:
+            errors.append(f"MaRDI {str(n)[len(MARDI):]} is not in tools/mardi.tsv (verify it with tools/verify_mardi.py first)")
 
     for s, p, o in g:
         if not is_crm(p):
@@ -152,10 +155,10 @@ def main(argv):
     def ids(name):
         return {l.split("\t")[0] for l in (ROOT / "tools" / name).read_text(encoding="utf-8").splitlines()
                 if l.strip() and not l.startswith("#")}
-    chebi, wikidata = ids("chebi.tsv"), ids("wikidata.tsv")
+    chebi, wikidata, mardi = ids("chebi.tsv"), ids("wikidata.tsv"), ids("mardi.tsv")
     failed = 0
     for f in files:
-        errs = check_file(f, crm, afo, fabio, canonical, chebi, wikidata)
+        errs = check_file(f, crm, afo, fabio, canonical, chebi, wikidata, mardi)
         rel = f.resolve().relative_to(ROOT) if f.resolve().is_relative_to(ROOT) else f
         if errs:
             failed += 1

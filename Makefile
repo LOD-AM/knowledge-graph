@@ -1,7 +1,7 @@
 # LOD-AM knowledge graph: checks. Run `make` before every commit.
 PY ?= python3
 
-.PHONY: all fetch check validate test-terms test-shapes test-queries test-converter install verify-chebi verify-wikidata
+.PHONY: all fetch check validate test-terms test-shapes test-queries test-converter install verify-chebi verify-wikidata verify-mardi
 
 all: check validate test-terms test-shapes test-queries test-converter check-claude-md
 
@@ -19,6 +19,9 @@ verify-chebi:       ## tools/chebi.tsv against ChEBI (needs www.ebi.ac.uk); run 
 
 verify-wikidata:    ## tools/wikidata.tsv against Wikidata (needs www.wikidata.org); run when you add an id
 	$(PY) tools/verify_wikidata.py
+
+verify-mardi:       ## tools/mardi.tsv against the MaRDI portal (needs portal.mardi4nfdi.de); run when you add an id
+	$(PY) tools/verify_mardi.py
 
 validate:           ## SHACL: LOD-AM conventions
 	$(PY) tools/validate.py

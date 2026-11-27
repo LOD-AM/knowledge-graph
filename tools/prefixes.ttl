@@ -32,6 +32,7 @@
 @prefix chebi:     <http://purl.obolibrary.org/obo/CHEBI_> .
 @prefix ror:       <https://ror.org/> .
 @prefix wd:        <http://www.wikidata.org/entity/> .
+@prefix mardi:     <https://portal.mardi4nfdi.de/entity/> .   # MaRDI knowledge graph (methods, software)
 
 # Geometry (GeoSPARQL; osgeo: is no longer used, see CONVENTIONS.md)
 @prefix geo:       <http://www.opengis.net/ont/geosparql#> .
