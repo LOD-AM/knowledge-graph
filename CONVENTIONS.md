@@ -15,6 +15,7 @@ shapes in the same PR. *Why* we chose each ontology/vocabulary is in
 | CRMarchaeo | **2.1.1** (released for CRM 7.1.2; every CRM term it uses exists in 7.1.3) | object in feature: `AP21i_is_contained_in`, `A2_Stratigraphic_Volume_Unit` |
 | Allotrope (AFO) | REC/2025/12 | opaque IDs, QUDT 1.1 units |
 | FaBiO | current SPAR release | with Dublin Core, PRISM, FOAF |
+| PROV-O | W3C Recommendation 2013-04-30 | statistical analysis runs only |
 
 ## IRIs
 
@@ -29,7 +30,8 @@ shapes in the same PR. *Why* we chose each ontology/vocabulary is in
   hyphens. Kinds: `site` (E27), `feature` (E25), `find` (E22), `analysis` (E7, chemical and
   lead isotope), `period` (phases), `culture`, `chronology` (the system a phase belongs to),
   `type` (types, type groups and classes of the typology), `region`, `lab`, `person` and `journal`
-  (uuid derived from the name or title, see Literature). Publications: `pub/<citation-key>`. Helper nodes without a uuid of their own hang below their record with a
+  (uuid derived from the name or title, see Literature), `run` (a statistical analysis run, see
+  Statistical analyses). Publications: `pub/<citation-key>`. Helper nodes without a uuid of their own hang below their record with a
   slash: `<record IRI>/<role>`, role in `snake_case` (`/id/find/<uuid>/id`,
   `/id/site/<uuid>/location`, `/id/analysis/<uuid>/sample`, `/id/analysis/<uuid>/sn`,
   `/id/analysis/<uuid>/pb207_pb206`). `make validate` checks the pattern and that `site`,
@@ -251,6 +253,49 @@ A measurement has **exactly one** of: `qudt:numericValue`, `afx:AFX_0000331` (ma
 or `crm:P2_has_type :not_detected`. An element that was *not analysed* gets no
 measurement at all. Never write `0` for "not detected".
 
+### Statistical analyses
+A **run** of an R analysis in [LOD-AM/analyses](https://github.com/LOD-AM/analyses) on released
+data is a PROV-O activity (LOD-AM/planning#49; PROV-O is also what nanopublications use for
+provenance, #51). Runs are written by the analyses repo (`/id/run/<uuid>`, helper nodes
+`/id/run/<uuid>/input` and `/id/run/<uuid>/association`); the example keeps readable names.
+```turtle
+:run_example a prov:Activity ;
+    rdfs:label "Summary statistics of …"@en ;               # REQUIRED, as for main resources
+    dcterms:description "What was asked; which records were left out and why."@en ;
+    prov:used :run_example_input ;                         # exactly one input collection
+    prov:generated <https://github.com/LOD-AM/analyses/blob/<commit>/results/summary.csv> ;
+    prov:wasAssociatedWith :person_1 ;                     # shortcut (no inference)
+    prov:qualifiedAssociation :run_example_association ;
+    prov:endedAtTime "2026-11-27T15:30:00Z"^^xsd:dateTime .
+
+:run_example_association a prov:Association ;
+    prov:agent :person_1 ;                                 # foaf:Person
+    prov:hadPlan <https://github.com/LOD-AM/analyses/blob/<commit>/R/summary.R> .   # code at a commit
+
+:run_example_input a prov:Collection ;                     # the analysed records (#50)
+    prov:hadMember :analysis_1, :analysis_2 ;              # every one of them, nothing else
+    prov:wasDerivedFrom <https://doi.org/10.5281/zenodo.24469235> ;   # the data release (#48)
+    dcterms:source <https://github.com/LOD-AM/analyses/blob/<commit>/queries/summary.rq> .  # the query
+
+<https://doi.org/10.5281/zenodo.24469235> a prov:Entity ;
+    rdfs:label "LOD-AM release 0.2.1"@en ;
+    dcterms:identifier "7e6fde30…" .                       # sha256 of the release manifest
+```
+- **The data release** is the **version DOI** of the website release on Zenodo (not the concept
+  DOI, which moves), as `prov:wasDerivedFrom` of the input. Its `dcterms:identifier` is the
+  sha256 of the release's `manifest.json` (the pipeline's `manifest_sha256`; the website release
+  carries the file as `data/release-manifest.json`), so DOI and data can be matched. There is
+  no LOD-AM IRI for releases (owner, #48).
+- **The analysed records** are the `prov:hadMember`s of the input collection: LOD-AM IRIs, as
+  many as the run used. `queries/find-runs-using-record.rq` finds the runs of a record.
+- **The code** is the file of LOD-AM/analyses at the commit the run used
+  (`https://github.com/LOD-AM/analyses/blob/<40-hex commit>/…`), as `prov:hadPlan`; the query
+  that selected the records is the input's `dcterms:source`. Results are the files the run
+  wrote (`prov:generated`). Computed values appear only as results of a run, never as
+  properties of a record (#52).
+- Records stay CRM/AFO-typed: they are used as `prov:Entity` without being typed so, and
+  `make check` checks PROV-O terms for existence, not their domains and ranges.
+
 ### Literature
 ```turtle
 <https://doi.org/10.3406/paleo.2002.4745> a fabio:JournalArticle, crm:E31_Document ;
@@ -314,11 +359,15 @@ scheme `:topics`, concepts `:topic_<name>`), used to tag blog posts on lod-am.ne
 | site | `crm:P1_is_identified_by` | `E41_Appellation` typed `:name_as_reported` |
 | place | `crm:P2_has_type` | location certainty (`:location_uncertain`, `:location_vicinity`, `:location_area`) |
 | ratio | `afx:AFX_0002816` / `afx:AFX_0001550` | numerator / denominator nuclide |
+| run | `prov:used` | input collection (`prov:Collection`) |
+| input collection | `prov:hadMember` | each analysed record |
+| input collection | `prov:wasDerivedFrom` | data release (version DOI) |
+| run | `prov:qualifiedAssociation` → `prov:hadPlan` | the code at a commit |
 
 ## Modelling scope
 
-- **Minimal events:** only analysis and sampling events. No excavation,
-  conservation, movement or ownership events.
+- **Minimal events:** only analysis and sampling events, and runs of statistical analyses
+  (PROV-O). No excavation, conservation, movement or ownership events.
 - **No inference:** the triplestore has reasoning off, so state what queries
   need explicitly (shortcuts *and* full paths where both are used).
 - **No external ontology/vocabulary dumps** in the repo. Reference them and

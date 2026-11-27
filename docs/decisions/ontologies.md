@@ -88,6 +88,27 @@
 
 ---
 
+### 4. PROV-O for Statistical Analysis Runs (owner, 2026-11-27)
+
+**Decision**: A run of an R analysis on LOD-AM data is a `prov:Activity` (LOD-AM/planning#49). It
+uses one `prov:Collection` of the analysed records (#50), taken from one data release, which is
+the version DOI of the website release on Zenodo plus the sha256 of its manifest (#48).
+
+**Why**:
+- Scientific arguments about the data will be nanopublications (#51), whose provenance graph is
+  PROV-O; runs in PROV-O can be cited from there without a mapping.
+- CRMdig 4.0 was the alternative inside the CRM family, but its input property
+  (`crmdig:L10_had_input`) only takes digital objects, so a run could not list the analysed finds,
+  samples or analyses directly. `prov:hadMember` takes any entity.
+- A Zenodo version DOI is already minted for every website release, archives the released data
+  with it, and is citable; a release IRI of our own would add nothing.
+- MathModDB (MaRDI) is no OWL vocabulary to import (it is part of the MaRDI Wikibase since
+  2025); runs will link to MaRDI items by IRI (property still open, docs/open-questions.md).
+
+**Official**: https://www.w3.org/TR/prov-o/ (checked against `prov-o-20130430.ttl`)
+
+---
+
 ## Integration Approach
 
 ### Direct Links Between Ontologies
@@ -109,8 +130,9 @@ Skip events that don't add value to our use cases (excavation, conservation, mov
 ### Future Considerations
 
 - **Formal mappings**: Create OWL mappings between CIDOC CRM and AFO when interoperability needs grow
-- **Additional ontologies**: CRMsci, CRMdig, CRMarchaeo, GeoSPARQL may be added later
-- **Scientific argumentation**: AMO (Argument Model Ontology) for interpretive content
+- **Additional ontologies**: CRMsci, CRMarchaeo and GeoSPARQL are in use since (CONVENTIONS.md); PROV-O for analysis runs (section 4)
+- **Scientific argumentation**: nanopublications, written with Nanodash and mirrored on lod-am.net
+  (owner, 2026-11-27, LOD-AM/planning#51), instead of AMO or CRMinf
 
 ---
 

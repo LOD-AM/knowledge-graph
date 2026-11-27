@@ -15,16 +15,14 @@ IRIs from `id_uuid`, #21 "not detected" (local type `:not_detected`), #7 feature
 
 1. [#17](https://github.com/LOD-AM/knowledge-graph/issues/17) **Formal CRM ↔ AFO mapping** (from #9): about 1½–2 days, when other
    projects consume the data.
-2. **Statistical analyses and arguments** (LOD-AM/planning#47): two new data layers,
-   analysis runs in R (MaRDI/MathModDB) and scientific arguments. Decided by the owner on
-   2026-11-27, to implement in CONVENTIONS.md, shapes and examples:
-   - LOD-AM/planning#49 analysis runs in **PROV-O** (fits the nanopublications' provenance graph)
-   - LOD-AM/planning#51 arguments as **nanopublications**, mirrored on the LOD-AM website
-   - LOD-AM/planning#52 computed values only as results of a documented run
-   - LOD-AM/planning#50 the run `prov:used` a `prov:Collection` that `prov:hadMember` each
-     analysed record and `prov:wasDerivedFrom` the release
-   - LOD-AM/planning#48 a release is identified by the version DOI of its website release
-     (Zenodo), plus its `manifest_sha256`; no `/id/release/` IRI
+2. **Statistical analyses and arguments** (LOD-AM/planning#47). Runs are modelled
+   (CONVENTIONS.md "Statistical analyses": #48, #49, #50). Decided, still to implement:
+   arguments as nanopublications mirrored on the website (#51); computed values only as
+   results of a documented run (#52, website). Open (to raise with the owner on #49 / #50):
+   - the property that links a run to MaRDI items (model, task, algorithm, software)
+   - records the run left out (outliers, missing values): only described in
+     `dcterms:description`, or listed?
+   - results as values in the RDF (and their typing), or only as files (as now)
 3. **Base IRI on w3id.org** (LOD-AM/planning#53): decided by the owner (2026-11-26/27):
    full switch to `https://w3id.org/lod-am/id/<kind>/<uuid>`, forwarded 1:1 to `lod-am.net`;
    no `owl:sameAs` to the old IRIs; graph names stay. Registration files: `docs/w3id/lod-am/`.

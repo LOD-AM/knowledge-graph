@@ -1,0 +1,24 @@
+@prefix :       <https://lod-am.net/id/> .
+@prefix crm:    <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix prov:   <http://www.w3.org/ns/prov#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf:   <http://xmlns.com/foaf/0.1/> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+
+# A release without the sha256 of its manifest (LOD-AM/planning#48).
+:r a prov:Activity ; rdfs:label "Run"@en ;
+    prov:used :r_input ;
+    prov:generated <https://github.com/LOD-AM/analyses/blob/0123456789abcdef0123456789abcdef01234567/results/r.csv> ;
+    prov:wasAssociatedWith :p ;
+    prov:qualifiedAssociation :r_association ;
+    prov:endedAtTime "2026-11-27T15:30:00Z"^^xsd:dateTime .
+:r_association a prov:Association ; prov:agent :p ;
+    prov:hadPlan <https://github.com/LOD-AM/analyses/blob/0123456789abcdef0123456789abcdef01234567/R/r.R> .
+:r_input a prov:Collection ;
+    prov:hadMember :a ;
+    prov:wasDerivedFrom <https://doi.org/10.5281/zenodo.24469235> ;
+    dcterms:source <https://github.com/LOD-AM/analyses/blob/0123456789abcdef0123456789abcdef01234567/queries/r.rq> .
+<https://doi.org/10.5281/zenodo.24469235> a prov:Entity .
+:a a crm:E27_Site ; rdfs:label "Site"@en .
+:p a foaf:Person ; foaf:name "P" .

@@ -1,0 +1,2 @@
+record	run	label	release	code	result	ended
+https://lod-am.net/id/ARSL31A	https://lod-am.net/id/run_example	Summary statistics of the example analyses (illustrative run)	https://doi.org/10.5281/zenodo.24469235	https://github.com/LOD-AM/analyses/blob/0000000000000000000000000000000000000000/R/example-summary.R	https://github.com/LOD-AM/analyses/blob/0000000000000000000000000000000000000000/results/example-summary.csv	2026-11-27T15:30:00+00:00
