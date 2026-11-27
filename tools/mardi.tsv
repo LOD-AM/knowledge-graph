@@ -7,3 +7,4 @@ Q56805	R	software: environment for statistical computing (not Q13519, the progra
 Q7271028	arithmetic mean	method (type of statistic), example run
 Q7266439	standard deviation	method (descriptive statistic), example run
 Q7265849	median	method (type of statistic; Wikidata Q226995), not Q7278326 (median of a distribution function)
+Q7265848	quartile	method (type of statistic; Wikidata Q2786686), not Q7280259 (quartile of a distribution function)
