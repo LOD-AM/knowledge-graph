@@ -14,6 +14,7 @@
 @prefix foaf:      <http://xmlns.com/foaf/0.1/> .
 @prefix aat:       <http://vocab.getty.edu/aat/> .
 @prefix wd:        <http://www.wikidata.org/entity/> .
+@prefix mardi:     <https://portal.mardi4nfdi.de/entity/> .
 @prefix chebi:     <http://purl.obolibrary.org/obo/CHEBI_> .
 @prefix ror:       <https://ror.org/> .
 @prefix geo:       <http://www.opengis.net/ont/geosparql#> .
@@ -368,7 +369,7 @@ aat:300037058 a crm:E55_Type ;
 # ----------------------------------------------------------------------------
 # One run of an R analysis in LOD-AM/analyses. It used a collection of records
 # (here: the two example analyses), taken from one data release, and generated a
-# result file. The release is the version DOI of the website release on Zenodo,
+# result file. Methods and software are MaRDI items (tools/mardi.tsv). The release is the version DOI of the website release on Zenodo,
 # with the sha256 of the release's manifest (data/release-manifest.json there).
 # ILLUSTRATIVE until the first real run: the commit in the code and result IRIs
 # (000…) stands for the commit of LOD-AM/analyses that the run used.
@@ -378,15 +379,23 @@ aat:300037058 a crm:E55_Type ;
     dcterms:description "Descriptive statistics of the element values of the example analyses."@en ;
     prov:used :run_example_input ;                       # the analysed records
     prov:generated <https://github.com/LOD-AM/analyses/blob/0000000000000000000000000000000000000000/results/example-summary.csv> ;
-    prov:wasAssociatedWith :fabian_fricke ;              # shortcut (no inference)
-    prov:qualifiedAssociation :run_example_association ;
+    prov:wasAssociatedWith :fabian_fricke, mardi:Q56805 ;   # shortcuts (no inference)
+    prov:qualifiedAssociation :run_example_association, :run_example_software ;
     prov:endedAtTime "2026-11-27T15:30:00Z"^^xsd:dateTime .
 
 :run_example_association a prov:Association ;
     prov:agent :fabian_fricke ;
-    prov:hadPlan <https://github.com/LOD-AM/analyses/blob/0000000000000000000000000000000000000000/R/example-summary.R> .
+    prov:hadPlan <https://github.com/LOD-AM/analyses/blob/0000000000000000000000000000000000000000/R/example-summary.R> ,   # the code
+        mardi:Q7271028 ,                                 # MaRDI: arithmetic mean
+        mardi:Q7266439 .                                 # MaRDI: standard deviation
+
+:run_example_software a prov:Association ;
+    prov:agent mardi:Q56805 .                            # MaRDI: R (the software)
 
 <https://github.com/LOD-AM/analyses/blob/0000000000000000000000000000000000000000/R/example-summary.R> a prov:Plan .
+mardi:Q7271028 a prov:Plan .                             # arithmetic mean
+mardi:Q7266439 a prov:Plan .                             # standard deviation
+mardi:Q56805 a prov:SoftwareAgent .                      # R
 <https://github.com/LOD-AM/analyses/blob/0000000000000000000000000000000000000000/results/example-summary.csv> a prov:Entity .
 
 :run_example_input a prov:Collection ;

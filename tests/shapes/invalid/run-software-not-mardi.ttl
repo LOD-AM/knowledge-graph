@@ -1,0 +1,28 @@
+@prefix :       <https://lod-am.net/id/> .
+@prefix crm:    <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix prov:   <http://www.w3.org/ns/prov#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf:   <http://xmlns.com/foaf/0.1/> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+
+# Software of a run that is not a MaRDI item (LOD-AM/planning#49).
+:r a prov:Activity ; rdfs:label "Run"@en ;
+    prov:used :r_input ;
+    prov:generated <https://github.com/LOD-AM/analyses/blob/0123456789abcdef0123456789abcdef01234567/results/r.csv> ;
+    prov:wasAssociatedWith :p ;
+    prov:qualifiedAssociation :r_association, :r_software ;
+    prov:endedAtTime "2026-11-27T15:30:00Z"^^xsd:dateTime .
+:r_association a prov:Association ; prov:agent :p ;
+    prov:hadPlan <https://github.com/LOD-AM/analyses/blob/0123456789abcdef0123456789abcdef01234567/R/r.R> .
+:r_input a prov:Collection ;
+    prov:hadMember :a ;
+    prov:wasDerivedFrom <https://doi.org/10.5281/zenodo.24469235> ;
+    dcterms:source <https://github.com/LOD-AM/analyses/blob/0123456789abcdef0123456789abcdef01234567/queries/r.rq> .
+<https://doi.org/10.5281/zenodo.24469235> a prov:Entity ;
+    dcterms:identifier "7e6fde30b95209428b92094ecaa961c0c75f1c2ab689a99dbea0e168167956d2" .
+:a a crm:E27_Site ; rdfs:label "Site"@en .
+:p a foaf:Person ; foaf:name "P" .
+:r_software a prov:Association ; prov:agent <https://www.r-project.org/> .
+<https://www.r-project.org/> a prov:SoftwareAgent .
+<https://github.com/LOD-AM/analyses/blob/0123456789abcdef0123456789abcdef01234567/R/r.R> a prov:Plan .

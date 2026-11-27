@@ -22,3 +22,4 @@
 <https://doi.org/10.5281/zenodo.24469235> a prov:Entity .
 :a a crm:E27_Site ; rdfs:label "Site"@en .
 :p a foaf:Person ; foaf:name "P" .
+<https://github.com/LOD-AM/analyses/blob/0123456789abcdef0123456789abcdef01234567/R/r.R> a prov:Plan .

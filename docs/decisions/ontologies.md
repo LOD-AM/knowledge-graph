@@ -103,7 +103,10 @@ the version DOI of the website release on Zenodo plus the sha256 of its manifest
 - A Zenodo version DOI is already minted for every website release, archives the released data
   with it, and is citable; a release IRI of our own would add nothing.
 - MathModDB (MaRDI) is no OWL vocabulary to import (it is part of the MaRDI Wikibase since
-  2025); runs will link to MaRDI items by IRI (property still open, docs/open-questions.md).
+  2025), so runs link to MaRDI items by IRI, within PROV-O: methods as further plans
+  (`prov:hadPlan`), software as `prov:SoftwareAgent` (owner, 2026-11-27). The CRM technique
+  properties (`P32`, `P33`) would need the run to be a `crm:E7_Activity`, which LOD-AM reserves
+  for chemical and isotope analyses.
 
 **Official**: https://www.w3.org/TR/prov-o/ (checked against `prov-o-20130430.ttl`)
 

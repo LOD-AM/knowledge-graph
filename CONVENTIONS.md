@@ -37,7 +37,8 @@ shapes in the same PR. *Why* we chose each ontology/vocabulary is in
   `/id/analysis/<uuid>/pb207_pb206`). `make validate` checks the pattern and that `site`,
   `feature`, `find` and `analysis` IRIs carry their class. The hand-written `examples/` keep
   readable names.
-- **Reuse external IRIs** wherever they exist: Getty AAT concept IRIs
+- **Reuse external IRIs** wherever they exist: MaRDI items for statistical methods and software
+  (only ids in [tools/mardi.tsv](tools/mardi.tsv)), Getty AAT concept IRIs
   (`http://vocab.getty.edu/aat/<id>`, never `/page/aat/`), PeriodO ARKs,
   Pleiades places (as identifiers, see Sites), ChEBI elements (only ids listed in
   [tools/chebi.tsv](tools/chebi.tsv), verified against ChEBI), Wikidata for nuclides and
@@ -264,13 +265,21 @@ provenance, #51). Runs are written by the analyses repo (`/id/run/<uuid>`, helpe
     dcterms:description "What the run asked."@en ;
     prov:used :run_example_input ;                         # exactly one input collection
     prov:generated <https://github.com/LOD-AM/analyses/blob/<commit>/results/summary.csv> ;
-    prov:wasAssociatedWith :person_1 ;                     # shortcut (no inference)
-    prov:qualifiedAssociation :run_example_association ;
+    prov:wasAssociatedWith :person_1, mardi:Q56805 ;       # shortcuts (no inference)
+    prov:qualifiedAssociation :run_example_association, :run_example_software ;
     prov:endedAtTime "2026-11-27T15:30:00Z"^^xsd:dateTime .
 
 :run_example_association a prov:Association ;
     prov:agent :person_1 ;                                 # foaf:Person
-    prov:hadPlan <https://github.com/LOD-AM/analyses/blob/<commit>/R/summary.R> .   # code at a commit
+    prov:hadPlan <https://github.com/LOD-AM/analyses/blob/<commit>/R/summary.R> ,  # code at a commit
+        mardi:Q7271028 .                                   # MaRDI method: arithmetic mean
+
+:run_example_software a prov:Association ;
+    prov:agent mardi:Q56805 .                              # MaRDI software: R
+
+<https://github.com/LOD-AM/analyses/blob/<commit>/R/summary.R> a prov:Plan .
+mardi:Q7271028 a prov:Plan .
+mardi:Q56805 a prov:SoftwareAgent .
 
 :run_example_input a prov:Collection ;                     # the analysed records (#50)
     prov:hadMember :analysis_1, :analysis_2 ;              # every one of them, nothing else
@@ -296,6 +305,14 @@ provenance, #51). Runs are written by the analyses repo (`/id/run/<uuid>`, helpe
   that selected the records is the input's `dcterms:source`. Results are the files the run
   wrote in LOD-AM/analyses (`prov:generated`), not values in the RDF (owner, #49). Computed values appear only as results of a run, never as
   properties of a record (#52).
+- **MaRDI** (the MaRDI knowledge graph; MathModDB and MathAlgoDB are part of it): the methods
+  a run followed (algorithm, model, computational task, statistic) are further `prov:hadPlan`s of
+  the person's association, next to the code; the software (R, R packages) is a MaRDI software
+  item as the `prov:agent` of an association of its own, typed `prov:SoftwareAgent`, plus the
+  `prov:wasAssociatedWith` shortcut (owner, #49). MaRDI IRIs are
+  `https://portal.mardi4nfdi.de/entity/Q<n>` (prefix `mardi:`), only ids listed in
+  [tools/mardi.tsv](tools/mardi.tsv), verified against the portal (`make verify-mardi`). R the
+  software is `mardi:Q56805`, not `Q13519` (R the programming language).
 - Records stay CRM/AFO-typed: they are used as `prov:Entity` without being typed so, and
   `make check` checks PROV-O terms for existence, not their domains and ranges.
 
@@ -365,7 +382,8 @@ scheme `:topics`, concepts `:topic_<name>`), used to tag blog posts on lod-am.ne
 | run | `prov:used` | input collection (`prov:Collection`) |
 | input collection | `prov:hadMember` | each analysed record |
 | input collection | `prov:wasDerivedFrom` | data release (version DOI) |
-| run | `prov:qualifiedAssociation` → `prov:hadPlan` | the code at a commit |
+| run | `prov:qualifiedAssociation` → `prov:hadPlan` | the code at a commit; MaRDI methods |
+| run | `prov:qualifiedAssociation` → `prov:agent` | the person; MaRDI software (`prov:SoftwareAgent`) |
 
 ## Modelling scope
 

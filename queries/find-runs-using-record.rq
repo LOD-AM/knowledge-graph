@@ -2,7 +2,8 @@
 # release they read (version DOI of the website release, #48), the code and the results.
 # Pattern: the run prov:used one prov:Collection whose prov:hadMember are the analysed
 # records; the collection prov:wasDerivedFrom the release; the code is the prov:hadPlan
-# of the run's prov:qualifiedAssociation.
+# of the run's prov:qualifiedAssociation that is a file of LOD-AM/analyses (the other plans
+# are MaRDI methods).
 PREFIX :     <https://lod-am.net/id/>
 PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -16,5 +17,6 @@ SELECT ?record ?run ?label ?release ?code ?result ?ended WHERE {
          prov:qualifiedAssociation/prov:hadPlan ?code ;
          prov:generated ?result ;
          prov:endedAtTime ?ended .
+  FILTER(STRSTARTS(STR(?code), "https://github.com/LOD-AM/analyses/"))   # the code, not the MaRDI methods
 }
 ORDER BY ?run ?result

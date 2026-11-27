@@ -18,8 +18,7 @@ IRIs from `id_uuid`, #21 "not detected" (local type `:not_detected`), #7 feature
 2. **Statistical analyses and arguments** (LOD-AM/planning#47). Runs are modelled
    (CONVENTIONS.md "Statistical analyses": #48, #49, #50). Decided, still to implement:
    arguments as nanopublications mirrored on the website (#51); computed values only as
-   results of a documented run (#52, website). Open (#49): the property that links a run to
-   MaRDI items (model, task, algorithm, software).
+   results of a documented run (#52, website).
 3. **Base IRI on w3id.org** (LOD-AM/planning#53): decided by the owner (2026-11-26/27):
    full switch to `https://w3id.org/lod-am/id/<kind>/<uuid>`, forwarded 1:1 to `lod-am.net`;
    no `owl:sameAs` to the old IRIs; graph names stay. Registration files: `docs/w3id/lod-am/`.
