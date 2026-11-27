@@ -1,18 +1,14 @@
-# LOD-AM
+# /lod-am/
 
-Persistent identifiers for [LOD-AM](https://lod-am.net), Linked Open Data for Ancient
-Metallurgy: a research knowledge graph of archaeometallurgical finds, samples,
-analyses, sites and publications (CIDOC CRM).
+Permanent identifiers for the LOD-AM (Linked Open Data for Ancient Metallurgy) project.
 
-IRIs have the form `https://w3id.org/lod-am/id/<kind>/<uuid>`. Every path under
-`https://w3id.org/lod-am/` redirects to the same path under `https://lod-am.net/`,
-which serves HTML, Turtle or JSON-LD by content negotiation.
+`https://w3id.org/lod-am/id/<kind>/<uuid>` redirects to `https://lod-am.net/id/<kind>/<uuid>`.
 
-Data model and sources: https://github.com/LOD-AM/knowledge-graph
+Documentation: <https://github.com/LOD-AM/knowledge-graph/tree/main/docs>
 
-## Contact
+## Contacts
 
-This space is administered by:
+- Fabian Fricke
+  - <info@lod-am.net>
+  - GitHub: [@FFricke](https://github.com/FFricke)
 
-**Fabian Fricke**
-GitHub: [FFricke](https://github.com/FFricke)
