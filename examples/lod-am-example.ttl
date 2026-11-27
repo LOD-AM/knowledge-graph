@@ -375,7 +375,7 @@ aat:300037058 a crm:E55_Type ;
 
 :run_example a prov:Activity ;
     rdfs:label "Summary statistics of the example analyses (illustrative run)"@en ;
-    dcterms:description "Descriptive statistics of the element values of the example analyses; no record excluded."@en ;
+    dcterms:description "Descriptive statistics of the element values of the example analyses."@en ;
     prov:used :run_example_input ;                       # the analysed records
     prov:generated <https://github.com/LOD-AM/analyses/blob/0000000000000000000000000000000000000000/results/example-summary.csv> ;
     prov:wasAssociatedWith :fabian_fricke ;              # shortcut (no inference)

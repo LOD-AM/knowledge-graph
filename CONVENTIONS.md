@@ -261,7 +261,7 @@ provenance, #51). Runs are written by the analyses repo (`/id/run/<uuid>`, helpe
 ```turtle
 :run_example a prov:Activity ;
     rdfs:label "Summary statistics of …"@en ;               # REQUIRED, as for main resources
-    dcterms:description "What was asked; which records were left out and why."@en ;
+    dcterms:description "What the run asked."@en ;
     prov:used :run_example_input ;                         # exactly one input collection
     prov:generated <https://github.com/LOD-AM/analyses/blob/<commit>/results/summary.csv> ;
     prov:wasAssociatedWith :person_1 ;                     # shortcut (no inference)
@@ -286,12 +286,15 @@ provenance, #51). Runs are written by the analyses repo (`/id/run/<uuid>`, helpe
   sha256 of the release's `manifest.json` (the pipeline's `manifest_sha256`; the website release
   carries the file as `data/release-manifest.json`), so DOI and data can be matched. There is
   no LOD-AM IRI for releases (owner, #48).
-- **The analysed records** are the `prov:hadMember`s of the input collection: LOD-AM IRIs, as
-  many as the run used. `queries/find-runs-using-record.rq` finds the runs of a record.
+- **The analysed records** are the `prov:hadMember`s of the input collection: the LOD-AM records
+  the run actually used, of any kind (finds, samples, analyses, sites …; owner, #50). Records the
+  query selected but the code left out (outliers, missing values) are not members and are not
+  listed: the query and the R code document them. `queries/find-runs-using-record.rq` finds the
+  runs of a record.
 - **The code** is the file of LOD-AM/analyses at the commit the run used
   (`https://github.com/LOD-AM/analyses/blob/<40-hex commit>/…`), as `prov:hadPlan`; the query
   that selected the records is the input's `dcterms:source`. Results are the files the run
-  wrote (`prov:generated`). Computed values appear only as results of a run, never as
+  wrote in LOD-AM/analyses (`prov:generated`), not values in the RDF (owner, #49). Computed values appear only as results of a run, never as
   properties of a record (#52).
 - Records stay CRM/AFO-typed: they are used as `prov:Entity` without being typed so, and
   `make check` checks PROV-O terms for existence, not their domains and ranges.
