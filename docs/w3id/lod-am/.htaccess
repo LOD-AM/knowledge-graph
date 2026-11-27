@@ -1,0 +1,8 @@
+# w3id.org/lod-am: persistent identifiers of LOD-AM (Linked Open Data for Ancient Metallurgy)
+# Every path is forwarded 1:1 to lod-am.net, which does content negotiation
+# for record IRIs (/id/...) itself. Temporary redirects (302), so the target
+# can move without clients caching the old location.
+Options +FollowSymLinks
+RewriteEngine on
+
+RewriteRule ^(.*)$ https://lod-am.net/$1 [R=302,L]

@@ -21,6 +21,7 @@ IRIs from `id_uuid`, #21 "not detected" (local type `:not_detected`), #7 feature
    - LOD-AM/planning#49 analysis runs: CRMdig 4.0 (`D10_Software_Execution`) vs PROV-O, links to MaRDI items
    - LOD-AM/planning#50 how a run names the records it analysed (`L10_had_input` only takes digital objects)
    - LOD-AM/planning#51 arguments: CRMinf 1.0 vs AMO
-3. **Base IRI on w3id.org** (LOD-AM/planning#53): decided by the owner on 2026-11-26 that LOD-AM
-   moves to w3id. Open: the path (`w3id.org/lod-am/`), full switch vs alias, keeping `/id/`,
-   old IRIs, graph names. Blocks LOD-AM/planning#48.
+3. **Base IRI on w3id.org** (LOD-AM/planning#53): decided by the owner (2026-11-26/27):
+   full switch to `https://w3id.org/lod-am/id/<kind>/<uuid>`, forwarded 1:1 to `lod-am.net`;
+   no `owl:sameAs` to the old IRIs; graph names stay. Registration files: `docs/w3id/lod-am/`.
+   To implement once w3id has merged the registration; blocks LOD-AM/planning#48.
