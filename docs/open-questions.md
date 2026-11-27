@@ -16,11 +16,15 @@ IRIs from `id_uuid`, #21 "not detected" (local type `:not_detected`), #7 feature
 1. [#17](https://github.com/LOD-AM/knowledge-graph/issues/17) **Formal CRM ↔ AFO mapping** (from #9): about 1½–2 days, when other
    projects consume the data.
 2. **Statistical analyses and arguments** (LOD-AM/planning#47): two new data layers,
-   analysis runs in R (MaRDI/MathModDB) and scientific arguments. Open decisions:
-   - LOD-AM/planning#48 IRIs for data releases
-   - LOD-AM/planning#49 analysis runs: CRMdig 4.0 (`D10_Software_Execution`) vs PROV-O, links to MaRDI items
-   - LOD-AM/planning#50 how a run names the records it analysed (`L10_had_input` only takes digital objects)
-   - LOD-AM/planning#51 arguments: CRMinf 1.0 vs AMO
+   analysis runs in R (MaRDI/MathModDB) and scientific arguments. Decided by the owner on
+   2026-11-27, to implement in CONVENTIONS.md, shapes and examples:
+   - LOD-AM/planning#49 analysis runs in **PROV-O** (fits the nanopublications' provenance graph)
+   - LOD-AM/planning#51 arguments as **nanopublications**, mirrored on the LOD-AM website
+   - LOD-AM/planning#52 computed values only as results of a documented run
+   Still open:
+   - LOD-AM/planning#48 release identifier: the version DOI of the website release?
+   - LOD-AM/planning#50 option A (a data object that names every analysed record),
+     to be restated in PROV-O terms
 3. **Base IRI on w3id.org** (LOD-AM/planning#53): decided by the owner (2026-11-26/27):
    full switch to `https://w3id.org/lod-am/id/<kind>/<uuid>`, forwarded 1:1 to `lod-am.net`;
    no `owl:sameAs` to the old IRIs; graph names stay. Registration files: `docs/w3id/lod-am/`.
