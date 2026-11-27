@@ -1,0 +1,10 @@
+@prefix :       <https://lod-am.net/id/> .
+@prefix crm:    <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix prov:   <http://www.w3.org/ns/prov#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf:   <http://xmlns.com/foaf/0.1/> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+
+# A PROV-O term that does not exist.
+:r a prov:Activity ; prov:usedData :a .

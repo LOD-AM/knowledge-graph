@@ -13,6 +13,8 @@ AFO_URL="https://purl.allotrope.org/voc/afo/merged/REC/2025/12/merged-without-qu
 CRMSCI_URL="https://cidoc-crm.org/extensions/crmsci/rdfs/3.2/CRMsci_v3.2.rdf"
 # CRMarchaeo 2.1.1 (released for CRM 7.1.2; every CRM term it uses exists in 7.1.3, knowledge-graph#6)
 CRMARCHAEO_URL="https://cidoc-crm.org/extensions/crmarchaeo/rdfs/2.1.1/CRMarchaeo_v2.1.1.rdf"
+# PROV-O, the dated file of the W3C Recommendation (analysis runs, LOD-AM/planning#49)
+PROV_URL="https://www.w3.org/ns/prov-o-20130430.ttl"
 
 # Each file must match its sha256 in tools/ontologies.sha256, downloaded or cached: the checks must
 # not change because a host changed a file (FaBiO has no versioned URL, only .../current/). On a
@@ -43,3 +45,4 @@ fetch "$AFO_URL" afo-2025-12.ttl "text/turtle"
 fetch "$FABIO_URL" fabio.ttl "text/turtle"
 fetch "$CRMSCI_URL" crmsci-3.2.rdf "application/rdf+xml"
 fetch "$CRMARCHAEO_URL" crmarchaeo-2.1.1.rdf "application/rdf+xml"
+fetch "$PROV_URL" prov-o-20130430.ttl "text/turtle"

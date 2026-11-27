@@ -36,6 +36,9 @@
 # Geometry (GeoSPARQL; osgeo: is no longer used, see CONVENTIONS.md)
 @prefix geo:       <http://www.opengis.net/ont/geosparql#> .
 
+# Provenance of analysis runs (PROV-O, W3C Recommendation 2013-04-30)
+@prefix prov:      <http://www.w3.org/ns/prov#> .
+
 # W3C
 @prefix rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:      <http://www.w3.org/2000/01/rdf-schema#> .

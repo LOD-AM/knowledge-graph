@@ -5,10 +5,12 @@ For every Turtle file given (default: examples/ and data/):
   1. it parses;
   2. its prefixes match tools/prefixes.ttl;
   3. it uses no forbidden namespaces (fake or HTML-page IRIs);
-  4. every CIDOC CRM / CRMsci / CRMarchaeo / Allotrope / FaBiO term it uses exists in
-     CRM 7.1.3 / CRMsci 3.2 / CRMarchaeo 2.1.1 / AFO 2025/12 / FaBiO;
+  4. every CIDOC CRM / CRMsci / CRMarchaeo / Allotrope / FaBiO / PROV-O term it uses exists in
+     CRM 7.1.3 / CRMsci 3.2 / CRMarchaeo 2.1.1 / AFO 2025/12 / FaBiO / PROV-O 2013-04-30;
   5. every CRM, CRMsci and CRMarchaeo property is used within its rdfs:domain and rdfs:range,
-     as far as the explicit rdf:type statements allow us to tell;
+     as far as the explicit rdf:type statements allow us to tell (PROV-O domains and ranges
+     are not checked: records are CRM-typed and stand as prov:Entity without being typed so,
+     CONVENTIONS.md "Statistical analyses");
   6. every ChEBI IRI is in tools/chebi.tsv and every Wikidata IRI in tools/wikidata.tsv
      (ids verified against ChEBI / Wikidata).
 
@@ -29,6 +31,7 @@ WD = "http://www.wikidata.org/entity/"
 CHEBI = "http://purl.obolibrary.org/obo/CHEBI_"
 AF = "http://purl.allotrope.org/ontologies/"
 FABIO = "http://purl.org/spar/fabio/"
+PROV = "http://www.w3.org/ns/prov#"
 FORBIDDEN = {
     "http://www.allotrope.org/": "not an Allotrope namespace; use http://purl.allotrope.org/ontologies/{result,material,process,property}#",
     "http://vocab.getty.edu/page/": "HTML page IRI; use the concept IRI http://vocab.getty.edu/aat/<id>",
@@ -44,6 +47,7 @@ def load_reference():
     crm.parse(CACHE / "crmarchaeo-2.1.1.rdf", format="xml")
     afo = Graph().parse(CACHE / "afo-2025-12.ttl", format="turtle")
     fabio = Graph().parse(CACHE / "fabio.ttl", format="turtle")
+    fabio.parse(CACHE / "prov-o-20130430.ttl", format="turtle")   # small vocabularies checked for existence only
     return crm, afo, fabio
 
 
@@ -72,7 +76,7 @@ def crm_types(g, crm, node):
 
 
 def short(u):
-    return str(u).replace(CRM, "crm:").replace(CRMSCI, "crmsci:").replace(CRMARCHAEO, "crmarchaeo:").replace(AF, "af:").replace(FABIO, "fabio:")
+    return str(u).replace(CRM, "crm:").replace(CRMSCI, "crmsci:").replace(CRMARCHAEO, "crmarchaeo:").replace(AF, "af:").replace(FABIO, "fabio:").replace(PROV, "prov:")
 
 
 def check_file(path, crm, afo, fabio, canonical, chebi, wikidata):
@@ -109,6 +113,8 @@ def check_file(path, crm, afo, fabio, canonical, chebi, wikidata):
             errors.append(f"unknown Allotrope term {short(t)}")
         if st.startswith(FABIO) and (t, None, None) not in fabio:
             errors.append(f"unknown FaBiO term {short(t)}")
+        if st.startswith(PROV) and (t, None, None) not in fabio:
+            errors.append(f"unknown PROV-O term {short(t)}")
 
     for n in set(g.subjects()) | set(g.objects()):
         if isinstance(n, URIRef) and str(n).startswith(CHEBI) and str(n)[len(CHEBI) - 6:] not in chebi:
