@@ -1,0 +1,8 @@
+# MaRDI items LOD-AM may use (portal.mardi4nfdi.de, the MaRDI knowledge graph), verified
+# against the portal (tools/verify_mardi.py, `make verify-mardi`). make check rejects any
+# other mardi: IRI. Analysis runs link to them (CONVENTIONS.md "Statistical analyses",
+# LOD-AM/planning#49): methods as prov:hadPlan, software as prov:SoftwareAgent.
+# id	label (en, as in MaRDI)	note
+Q56805	R	software: environment for statistical computing (not Q13519, the programming language)
+Q7271028	arithmetic mean	method (type of statistic), example run
+Q7266439	standard deviation	method (descriptive statistic), example run

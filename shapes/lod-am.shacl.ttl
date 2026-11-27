@@ -19,6 +19,7 @@
 @prefix fabio:   <http://purl.org/spar/fabio/> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix foaf:    <http://xmlns.com/foaf/0.1/> .
+@prefix prov:    <http://www.w3.org/ns/prov#> .
 @prefix lodsh:   <https://lod-am.net/shapes/> .
 @prefix :        <https://lod-am.net/id/> .
 
@@ -34,13 +35,13 @@ lodsh:LocalResourceShape a sh:NodeShape ;
         sh:message "Every https://lod-am.net/id/ resource needs at least one rdf:type." ] .
 
 # --- Labels on main resources (#12) -------------------------------------------
-# Objects, features, sites, samples, analyses and groups carry a language-tagged
+# Objects, features, sites, samples, analyses, groups and analysis runs carry a language-tagged
 # rdfs:label. Helper nodes (identifiers, type assignments, time-spans, sampling
 # events, measurements) need none; the website names them from their context.
 # Types and materials use skos:prefLabel (TypeShape); persons foaf:name; works dcterms:title.
 lodsh:LabelShape a sh:NodeShape ;
     sh:targetClass crm:E22_Human-Made_Object, crm:E25_Human-Made_Feature, crm:E27_Site,
-                   crmsci:S13_Sample, crm:E7_Activity, crm:E74_Group ;
+                   crmsci:S13_Sample, crm:E7_Activity, crm:E74_Group, prov:Activity ;
     sh:property [ sh:path rdfs:label ; sh:minCount 1 ; sh:datatype rdf:langString ;
         sh:message "Main resources need a language-tagged rdfs:label." ] ;
     sh:property [ sh:path rdfs:label ; sh:severity sh:Warning ;
@@ -271,6 +272,67 @@ lodsh:ArticleShape a sh:NodeShape ;
     sh:property [ sh:path dcterms:creator ; sh:minCount 1 ; sh:class foaf:Person ] ;
     sh:property [ sh:path fabio:hasPublicationYear ; sh:maxCount 1 ; sh:datatype xsd:gYear ] .
 
+# --- Statistical analyses (PROV-O, LOD-AM/planning#48, #49, #50) -----------------
+# A run of an R analysis in LOD-AM/analyses: one input collection (the analysed records,
+# from one data release), at least one result, the person with the code at a commit (and the
+# MaRDI methods), the MaRDI software, the end time.
+lodsh:RunShape a sh:NodeShape ;
+    sh:targetClass prov:Activity ;
+    sh:property [ sh:path prov:used ; sh:minCount 1 ; sh:maxCount 1 ; sh:class prov:Collection ;
+        sh:message "A run uses exactly one input collection (prov:used → prov:Collection of the analysed records)." ] ;
+    sh:property [ sh:path prov:generated ; sh:minCount 1 ; sh:nodeKind sh:IRI ;
+        sh:message "A run names its results (prov:generated → the result files)." ] ;
+    sh:property [ sh:path prov:wasAssociatedWith ;
+        sh:or ( [ sh:class foaf:Person ] [ sh:class prov:SoftwareAgent ] ) ;
+        sh:qualifiedValueShape [ sh:class foaf:Person ] ; sh:qualifiedMinCount 1 ;
+        sh:message "A run names who ran it and the software (prov:wasAssociatedWith → foaf:Person, prov:SoftwareAgent; shortcuts of the associations)." ] ;
+    sh:property [ sh:path prov:qualifiedAssociation ; sh:minCount 1 ; sh:node lodsh:AssociationShape ;
+        sh:qualifiedValueShape lodsh:PersonAssociationShape ; sh:qualifiedMinCount 1 ; sh:qualifiedMaxCount 1 ;
+        sh:message "A run has exactly one association with the person and the code, and one per MaRDI software item." ] ;
+    sh:property [ sh:path prov:endedAtTime ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:dateTime ;
+        sh:message "A run has one prov:endedAtTime (xsd:dateTime)." ] .
+
+lodsh:AssociationShape a sh:NodeShape ;
+    sh:xone ( lodsh:PersonAssociationShape lodsh:SoftwareAssociationShape ) ;
+    sh:message "An association of a run is either the person with the code (and MaRDI methods) or a MaRDI software item." .
+
+# The person who ran it, the code at a commit of LOD-AM/analyses, and MaRDI methods (algorithm, model, task).
+lodsh:PersonAssociationShape a sh:NodeShape ;
+    sh:property [ sh:path prov:agent ; sh:minCount 1 ; sh:maxCount 1 ; sh:class foaf:Person ] ;
+    sh:property [ sh:path prov:hadPlan ; sh:class prov:Plan ; sh:nodeKind sh:IRI ;
+        sh:pattern "^(https://github[.]com/LOD-AM/analyses/blob/[0-9a-f]{40}/|https://portal[.]mardi4nfdi[.]de/entity/Q[0-9]+$)" ;
+        sh:qualifiedValueShape [ sh:pattern "^https://github[.]com/LOD-AM/analyses/blob/[0-9a-f]{40}/" ] ;
+        sh:qualifiedMinCount 1 ; sh:qualifiedMaxCount 1 ;
+        sh:message "Plans of a run (prov:Plan): exactly one code file of LOD-AM/analyses at a commit (https://github.com/LOD-AM/analyses/blob/<commit>/…), plus MaRDI methods (mardi:Q…)." ] .
+
+# Software (R, R packages) as a MaRDI software item.
+lodsh:SoftwareAssociationShape a sh:NodeShape ;
+    sh:property [ sh:path prov:agent ; sh:minCount 1 ; sh:maxCount 1 ; sh:class prov:SoftwareAgent ;
+        sh:pattern "^https://portal[.]mardi4nfdi[.]de/entity/Q[0-9]+$" ;
+        sh:message "Software of a run is a MaRDI software item (mardi:Q…, a prov:SoftwareAgent)." ] ;
+    sh:property [ sh:path prov:hadPlan ; sh:maxCount 0 ] .
+
+lodsh:RunInputShape a sh:NodeShape ;
+    sh:targetClass prov:Collection ;
+    sh:property [ sh:path prov:hadMember ; sh:minCount 1 ; sh:nodeKind sh:IRI ;
+        sh:pattern "^https://lod-am[.]net/id/" ;
+        sh:message "The input collection lists every analysed LOD-AM record (prov:hadMember)." ] ;
+    sh:property [ sh:path prov:wasDerivedFrom ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ;
+        sh:pattern "^https://doi[.]org/10[.]5281/zenodo[.][0-9]+$" ; sh:node lodsh:ReleaseShape ;
+        sh:message "The input comes from one data release: the version DOI of its website release (https://doi.org/10.5281/zenodo.<n>), #48." ] ;
+    sh:property [ sh:path dcterms:source ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ;
+        sh:message "The input collection names the query that selected it (dcterms:source → the .rq file in LOD-AM/analyses)." ] .
+
+lodsh:ReleaseShape a sh:NodeShape ;
+    sh:property [ sh:path dcterms:identifier ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:pattern "^[0-9a-f]{64}$" ;
+        sh:message "A release carries the sha256 of its manifest (data/release-manifest.json of the website release) as dcterms:identifier." ] .
+
+lodsh:RunIriShape a sh:NodeShape ;
+    sh:target [ a sh:SPARQLTarget ; sh:select """
+        SELECT DISTINCT ?this WHERE { ?this ?p ?o FILTER(REGEX(STR(?this), "^https://lod-am[.]net/id/run/[0-9a-f-]{36}$")) }""" ] ;
+    sh:class prov:Activity ; sh:message "IRIs /id/run/<uuid> are prov:Activity (analysis runs)." .
+
 # --- IRIs of converted data (#20) ----------------------------------------------
 # Converted records: https://lod-am.net/id/<kind>/<id_uuid>, helper nodes .../<id_uuid>/<role>.
 # The kind in the path must match the class.
@@ -279,7 +341,7 @@ lodsh:ConvertedIriShape a sh:NodeShape ;
         sh:select """
             SELECT DISTINCT ?this WHERE {
               { ?this ?p ?o } UNION { ?s ?p ?this }
-              FILTER(isIRI(?this) && REGEX(STR(?this), "^https://lod-am[.]net/id/(site|feature|find|analysis|period|culture|chronology|type|region|lab|person|journal)/"))
+              FILTER(isIRI(?this) && REGEX(STR(?this), "^https://lod-am[.]net/id/(site|feature|find|analysis|period|culture|chronology|type|region|lab|person|journal|run)/"))
             }""" ] ;
     sh:sparql [ a sh:SPARQLConstraint ;
         sh:message "Converted IRIs are https://lod-am.net/id/<kind>/<uuid> or .../<uuid>/<role> (lower-case uuid, role in snake_case), #20." ;

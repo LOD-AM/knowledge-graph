@@ -25,7 +25,9 @@ environment "LOD-AM" allows these hosts, and its setup script runs
   via `https://vocab.getty.edu/sparql.json` and say which label you found; AAT labels are
   tagged `@en` *or* `@en-us`, so search both. ChEBI: only ids in `tools/chebi.tsv`; add new
   ones there and run `make verify-chebi` (EBI OLS, www.ebi.ac.uk). Same for Wikidata:
-  `tools/wikidata.tsv`, `make verify-wikidata` (www.wikidata.org, descriptive User-Agent).
+  `tools/wikidata.tsv`, `make verify-wikidata` (www.wikidata.org, descriptive User-Agent). Same for
+  MaRDI (methods and software of analysis runs): `tools/mardi.tsv`, `make verify-mardi`
+  (portal.mardi4nfdi.de). PROV-O is checked against `.cache/prov-o-20130430.ttl`.
 - CIDOC CRM is **7.1.3**: `E22_Human-Made_Object`, no `P71_is_listed_in`,
   `P41_classified` goes from E17 to the object.
 - Base IRI `https://lod-am.net/id/`, prefixes only from `tools/prefixes.ttl`.

@@ -5,12 +5,14 @@ For every Turtle file given (default: examples/ and data/):
   1. it parses;
   2. its prefixes match tools/prefixes.ttl;
   3. it uses no forbidden namespaces (fake or HTML-page IRIs);
-  4. every CIDOC CRM / CRMsci / CRMarchaeo / Allotrope / FaBiO term it uses exists in
-     CRM 7.1.3 / CRMsci 3.2 / CRMarchaeo 2.1.1 / AFO 2025/12 / FaBiO;
+  4. every CIDOC CRM / CRMsci / CRMarchaeo / Allotrope / FaBiO / PROV-O term it uses exists in
+     CRM 7.1.3 / CRMsci 3.2 / CRMarchaeo 2.1.1 / AFO 2025/12 / FaBiO / PROV-O 2013-04-30;
   5. every CRM, CRMsci and CRMarchaeo property is used within its rdfs:domain and rdfs:range,
-     as far as the explicit rdf:type statements allow us to tell;
-  6. every ChEBI IRI is in tools/chebi.tsv and every Wikidata IRI in tools/wikidata.tsv
-     (ids verified against ChEBI / Wikidata).
+     as far as the explicit rdf:type statements allow us to tell (PROV-O domains and ranges
+     are not checked: records are CRM-typed and stand as prov:Entity without being typed so,
+     CONVENTIONS.md "Statistical analyses");
+  6. every ChEBI IRI is in tools/chebi.tsv, every Wikidata IRI in tools/wikidata.tsv and every
+     MaRDI IRI in tools/mardi.tsv (ids verified against ChEBI / Wikidata / the MaRDI portal).
 
 Exit code 1 if any error was found. Run `make fetch` first.
 """
@@ -26,9 +28,11 @@ CRM = "http://www.cidoc-crm.org/cidoc-crm/"
 CRMSCI = "http://www.cidoc-crm.org/extensions/crmsci/"
 CRMARCHAEO = "http://www.cidoc-crm.org/extensions/crmarchaeo/"
 WD = "http://www.wikidata.org/entity/"
+MARDI = "https://portal.mardi4nfdi.de/entity/"
 CHEBI = "http://purl.obolibrary.org/obo/CHEBI_"
 AF = "http://purl.allotrope.org/ontologies/"
 FABIO = "http://purl.org/spar/fabio/"
+PROV = "http://www.w3.org/ns/prov#"
 FORBIDDEN = {
     "http://www.allotrope.org/": "not an Allotrope namespace; use http://purl.allotrope.org/ontologies/{result,material,process,property}#",
     "http://vocab.getty.edu/page/": "HTML page IRI; use the concept IRI http://vocab.getty.edu/aat/<id>",
@@ -44,6 +48,7 @@ def load_reference():
     crm.parse(CACHE / "crmarchaeo-2.1.1.rdf", format="xml")
     afo = Graph().parse(CACHE / "afo-2025-12.ttl", format="turtle")
     fabio = Graph().parse(CACHE / "fabio.ttl", format="turtle")
+    fabio.parse(CACHE / "prov-o-20130430.ttl", format="turtle")   # small vocabularies checked for existence only
     return crm, afo, fabio
 
 
@@ -72,10 +77,10 @@ def crm_types(g, crm, node):
 
 
 def short(u):
-    return str(u).replace(CRM, "crm:").replace(CRMSCI, "crmsci:").replace(CRMARCHAEO, "crmarchaeo:").replace(AF, "af:").replace(FABIO, "fabio:")
+    return str(u).replace(CRM, "crm:").replace(CRMSCI, "crmsci:").replace(CRMARCHAEO, "crmarchaeo:").replace(AF, "af:").replace(FABIO, "fabio:").replace(PROV, "prov:")
 
 
-def check_file(path, crm, afo, fabio, canonical, chebi, wikidata):
+def check_file(path, crm, afo, fabio, canonical, chebi, wikidata, mardi):
     errors = []
     g = Graph()
     try:
@@ -109,12 +114,16 @@ def check_file(path, crm, afo, fabio, canonical, chebi, wikidata):
             errors.append(f"unknown Allotrope term {short(t)}")
         if st.startswith(FABIO) and (t, None, None) not in fabio:
             errors.append(f"unknown FaBiO term {short(t)}")
+        if st.startswith(PROV) and (t, None, None) not in fabio:
+            errors.append(f"unknown PROV-O term {short(t)}")
 
     for n in set(g.subjects()) | set(g.objects()):
         if isinstance(n, URIRef) and str(n).startswith(CHEBI) and str(n)[len(CHEBI) - 6:] not in chebi:
             errors.append(f"ChEBI {str(n)[len(CHEBI) - 6:]} is not in tools/chebi.tsv (verify it with tools/verify_chebi.py first)")
         if isinstance(n, URIRef) and str(n).startswith(WD) and str(n)[len(WD):] not in wikidata:
             errors.append(f"Wikidata {str(n)[len(WD):]} is not in tools/wikidata.tsv (verify it with tools/verify_wikidata.py first)")
+        if isinstance(n, URIRef) and str(n).startswith(MARDI) and str(n)[len(MARDI):] not in mardi:
+            errors.append(f"MaRDI {str(n)[len(MARDI):]} is not in tools/mardi.tsv (verify it with tools/verify_mardi.py first)")
 
     for s, p, o in g:
         if not is_crm(p):
@@ -146,10 +155,10 @@ def main(argv):
     def ids(name):
         return {l.split("\t")[0] for l in (ROOT / "tools" / name).read_text(encoding="utf-8").splitlines()
                 if l.strip() and not l.startswith("#")}
-    chebi, wikidata = ids("chebi.tsv"), ids("wikidata.tsv")
+    chebi, wikidata, mardi = ids("chebi.tsv"), ids("wikidata.tsv"), ids("mardi.tsv")
     failed = 0
     for f in files:
-        errs = check_file(f, crm, afo, fabio, canonical, chebi, wikidata)
+        errs = check_file(f, crm, afo, fabio, canonical, chebi, wikidata, mardi)
         rel = f.resolve().relative_to(ROOT) if f.resolve().is_relative_to(ROOT) else f
         if errs:
             failed += 1

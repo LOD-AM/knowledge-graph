@@ -1,0 +1,6 @@
+@prefix :       <https://lod-am.net/id/> .
+@prefix prov:   <http://www.w3.org/ns/prov#> .
+@prefix mardi:  <https://portal.mardi4nfdi.de/entity/> .
+
+# A MaRDI item that is not in tools/mardi.tsv (Q13519 is R the programming language, not the software).
+:r a prov:Activity ; prov:wasAssociatedWith mardi:Q13519 .
