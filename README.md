@@ -50,6 +50,13 @@ version, then update its checksum in a PR of its own. CI runs `make` on every pu
 - [LOD-AM/triplestore](https://github.com/LOD-AM/triplestore): Fuseki deployment that serves this data
 - [LOD-AM/website](https://github.com/LOD-AM/website): project website and blog
 
+## Releases and citing
+A GitHub release with every merged model change (`CONVENTIONS.md`, `shapes/`): versions
+`MAJOR.MINOR`, minor for additions, major for changes that break existing data or queries
+(owner, LOD-AM/planning#54). Zenodo archives each release and mints a version DOI; cite that
+version DOI (`CITATION.cff` has the metadata). References inside LOD-AM always use version DOIs,
+never the concept DOI.
+
 ## License
 
 Documentation, data and examples: [CC BY 4.0](licenses/CC-BY-4.0.txt).
